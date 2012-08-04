@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'MOTabView' target in the 'MOTabView' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0160A7B41591CA540095F791 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0160A7B31591CA540095F791 /* Foundation.framework */; };
+		0160A7D31591CFBA0095F791 /* MOScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0160A7D11591CFBA0095F791 /* MOScrollView.h */; };
+		0160A7D41591CFBA0095F791 /* MOScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160A7D21591CFBA0095F791 /* MOScrollView.m */; };
+		0180B79615CD17E200A06867 /* MOTabContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0180B78F15CD17E200A06867 /* MOTabContentView.h */; };
+		0180B79715CD17E200A06867 /* MOTabContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0180B79015CD17E200A06867 /* MOTabContentView.m */; };
+		0180B79815CD17E200A06867 /* MOTabView-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 0180B79115CD17E200A06867 /* MOTabView-Prefix.pch */; };
+		0180B79915CD17E200A06867 /* MOTabView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0180B79215CD17E200A06867 /* MOTabView.h */; };
+		0180B79A15CD17E200A06867 /* MOTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0180B79315CD17E200A06867 /* MOTabView.m */; };
+		0180B79B15CD17E200A06867 /* MOTabViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0180B79415CD17E200A06867 /* MOTabViewController.h */; };
+		0180B79C15CD17E200A06867 /* MOTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0180B79515CD17E200A06867 /* MOTabViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0160A7B01591CA540095F791 /* libMOTabView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMOTabView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0160A7B31591CA540095F791 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0160A7D11591CFBA0095F791 /* MOScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOScrollView.h; path = MOScrollView/MOScrollView/MOScrollView.h; sourceTree = "<group>"; };
+		0160A7D21591CFBA0095F791 /* MOScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOScrollView.m; path = MOScrollView/MOScrollView/MOScrollView.m; sourceTree = "<group>"; };
+		0180B78F15CD17E200A06867 /* MOTabContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabContentView.h; path = MOTabView/MOTabContentView.h; sourceTree = SOURCE_ROOT; };
+		0180B79015CD17E200A06867 /* MOTabContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabContentView.m; path = MOTabView/MOTabContentView.m; sourceTree = SOURCE_ROOT; };
+		0180B79115CD17E200A06867 /* MOTabView-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MOTabView-Prefix.pch"; path = "MOTabView/MOTabView-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		0180B79215CD17E200A06867 /* MOTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabView.h; path = MOTabView/MOTabView.h; sourceTree = SOURCE_ROOT; };
+		0180B79315CD17E200A06867 /* MOTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabView.m; path = MOTabView/MOTabView.m; sourceTree = SOURCE_ROOT; };
+		0180B79415CD17E200A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = MOTabView/MOTabViewController.h; sourceTree = SOURCE_ROOT; };
+		0180B79515CD17E200A06867 /* MOTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabViewController.m; path = MOTabView/MOTabViewController.m; sourceTree = SOURCE_ROOT; };
+		0180B7AC15CD1A2400A06867 /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = closeButton.png; path = MOTabView/Images/closeButton.png; sourceTree = SOURCE_ROOT; };
+		0180B7AD15CD1A2400A06867 /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "closeButton@2x.png"; path = "MOTabView/Images/closeButton@2x.png"; sourceTree = SOURCE_ROOT; };
+		01DC9F381591F50300DBEE83 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		01DC9F3B1591F50300DBEE83 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		01DC9F5A1591F66E00DBEE83 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0160A7AD1591CA540095F791 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0160A7B41591CA540095F791 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0160A7A51591CA530095F791 = {
+			isa = PBXGroup;
+			children = (
+				0160A7B51591CA540095F791 /* MOTabView */,
+				0160A7D51591CFC40095F791 /* MOScrollView */,
+				0160A7B21591CA540095F791 /* Frameworks */,
+				0160A7B11591CA540095F791 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0160A7B11591CA540095F791 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0160A7B01591CA540095F791 /* libMOTabView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0160A7B21591CA540095F791 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				01DC9F5A1591F66E00DBEE83 /* QuartzCore.framework */,
+				0160A7B31591CA540095F791 /* Foundation.framework */,
+				01DC9F381591F50300DBEE83 /* UIKit.framework */,
+				01DC9F3B1591F50300DBEE83 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0160A7B51591CA540095F791 /* MOTabView */ = {
+			isa = PBXGroup;
+			children = (
+				0180B79415CD17E200A06867 /* MOTabViewController.h */,
+				0180B79515CD17E200A06867 /* MOTabViewController.m */,
+				0180B79215CD17E200A06867 /* MOTabView.h */,
+				0180B79315CD17E200A06867 /* MOTabView.m */,
+				0180B78F15CD17E200A06867 /* MOTabContentView.h */,
+				0180B79015CD17E200A06867 /* MOTabContentView.m */,
+				01AE8B7615CAA64B00657C6C /* Images */,
+				0160A7B61591CA540095F791 /* Supporting Files */,
+			);
+			name = MOTabView;
+			path = MOPageScrollView;
+			sourceTree = "<group>";
+		};
+		0160A7B61591CA540095F791 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0180B79115CD17E200A06867 /* MOTabView-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0160A7D51591CFC40095F791 /* MOScrollView */ = {
+			isa = PBXGroup;
+			children = (
+				0160A7D11591CFBA0095F791 /* MOScrollView.h */,
+				0160A7D21591CFBA0095F791 /* MOScrollView.m */,
+			);
+			name = MOScrollView;
+			sourceTree = "<group>";
+		};
+		01AE8B7615CAA64B00657C6C /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				0180B7AC15CD1A2400A06867 /* closeButton.png */,
+				0180B7AD15CD1A2400A06867 /* closeButton@2x.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0160A7AE1591CA540095F791 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0160A7D31591CFBA0095F791 /* MOScrollView.h in Headers */,
+				0180B79615CD17E200A06867 /* MOTabContentView.h in Headers */,
+				0180B79815CD17E200A06867 /* MOTabView-Prefix.pch in Headers */,
+				0180B79915CD17E200A06867 /* MOTabView.h in Headers */,
+				0180B79B15CD17E200A06867 /* MOTabViewController.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0160A7AF1591CA540095F791 /* MOTabView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0160A7BD1591CA540095F791 /* Build configuration list for PBXNativeTarget "MOTabView" */;
+			buildPhases = (
+				0160A7AC1591CA540095F791 /* Sources */,
+				0160A7AD1591CA540095F791 /* Frameworks */,
+				0160A7AE1591CA540095F791 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MOTabView;
+			productName = MOPageScrollView;
+			productReference = 0160A7B01591CA540095F791 /* libMOTabView.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0160A7A71591CA530095F791 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "Monoid - Development and Consulting - Jan Christiansen";
+			};
+			buildConfigurationList = 0160A7AA1591CA530095F791 /* Build configuration list for PBXProject "MOTabView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0160A7A51591CA530095F791;
+			productRefGroup = 0160A7B11591CA540095F791 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0160A7AF1591CA540095F791 /* MOTabView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0160A7AC1591CA540095F791 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0160A7D41591CFBA0095F791 /* MOScrollView.m in Sources */,
+				0180B79715CD17E200A06867 /* MOTabContentView.m in Sources */,
+				0180B79A15CD17E200A06867 /* MOTabView.m in Sources */,
+				0180B79C15CD17E200A06867 /* MOTabViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0160A7BB1591CA540095F791 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		0160A7BC1591CA540095F791 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0160A7BE1591CA540095F791 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/MOTabView.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MOTabView/MOTabView-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0160A7BF1591CA540095F791 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/MOTabView.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MOTabView/MOTabView-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0160A7AA1591CA530095F791 /* Build configuration list for PBXProject "MOTabView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0160A7BB1591CA540095F791 /* Debug */,
+				0160A7BC1591CA540095F791 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0160A7BD1591CA540095F791 /* Build configuration list for PBXNativeTarget "MOTabView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0160A7BE1591CA540095F791 /* Debug */,
+				0160A7BF1591CA540095F791 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0160A7A71591CA530095F791 /* Project object */;
+}
