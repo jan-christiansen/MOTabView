@@ -111,8 +111,17 @@ static const float kWidthFactor = 0.73;
 - (void)initialize {
 
     // timing function used to scroll the MOScrollView
+    // testing all timing functions of MOScrollView
+//    _timingFunction = [CAMediaTimingFunction
+//                       functionWithName:kCAMediaTimingFunctionDefault];
+//    _timingFunction = [CAMediaTimingFunction
+//                       functionWithName:kCAMediaTimingFunctionEaseIn];
+//    _timingFunction = [CAMediaTimingFunction
+//                       functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    _timingFunction = [CAMediaTimingFunction
+//                       functionWithName:kCAMediaTimingFunctionEaseOut];
     _timingFunction = [CAMediaTimingFunction
-                       functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+                       functionWithName:kCAMediaTimingFunctionLinear];
 
     // background view
     _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
