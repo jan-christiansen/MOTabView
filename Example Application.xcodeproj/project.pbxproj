@@ -16,8 +16,8 @@
 		01193FCA15CABD680042D7D6 /* ExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01193FC915CABD680042D7D6 /* ExampleViewController.m */; };
 		01193FDE15CAC7330042D7D6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01193FDD15CAC7330042D7D6 /* QuartzCore.framework */; };
 		01395D3515CBDFF2003797E9 /* libMOTabView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01395D3315CBDEB1003797E9 /* libMOTabView.a */; };
-		01B1D7EC15D0255E00DFE12B /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7EA15D0255E00DFE12B /* closeButton.png */; };
-		01B1D7ED15D0255E00DFE12B /* closeButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7EB15D0255E00DFE12B /* closeButton@2x.png */; };
+		01B1D7FD15D02DF300DFE12B /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FA15D02DF300DFE12B /* closeButton.png */; };
+		01B1D7FE15D02DF300DFE12B /* closeButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,8 +46,8 @@
 		01193FCC15CABDF90042D7D6 /* MOTabView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MOTabView.xcodeproj; sourceTree = "<group>"; };
 		01193FDD15CAC7330042D7D6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0180B7A515CD18AB00A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = ../MOTabView/MOTabViewController.h; sourceTree = "<group>"; };
-		01B1D7EA15D0255E00DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = file; name = closeButton.png; path = MOTabView/Images/closeButton.png; sourceTree = "<group>"; };
-		01B1D7EB15D0255E00DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = file; name = "closeButton@2x.png"; path = "MOTabView/Images/closeButton@2x.png"; sourceTree = "<group>"; };
+		01B1D7FA15D02DF300DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = file; path = closeButton.png; sourceTree = "<group>"; };
+		01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = file; path = "closeButton@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +102,7 @@
 				01193FAE15CABC790042D7D6 /* AppDelegate.m */,
 				01193FC815CABD680042D7D6 /* ExampleViewController.h */,
 				01193FC915CABD680042D7D6 /* ExampleViewController.m */,
-				011BBE8C15CBC04C0037D621 /* Images */,
+				01B1D7FC15D02DF300DFE12B /* Images */,
 				01193FA515CABC790042D7D6 /* Supporting Files */,
 				01193FD915CABE0D0042D7D6 /* Library Headers */,
 			);
@@ -128,22 +128,22 @@
 			name = "Library Headers";
 			sourceTree = "<group>";
 		};
-		011BBE8C15CBC04C0037D621 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				01B1D7EA15D0255E00DFE12B /* closeButton.png */,
-				01B1D7EB15D0255E00DFE12B /* closeButton@2x.png */,
-			);
-			name = Images;
-			path = ../MOPageScrollView/Images;
-			sourceTree = "<group>";
-		};
 		01395D2F15CBDEB1003797E9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				01395D3315CBDEB1003797E9 /* libMOTabView.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		01B1D7FC15D02DF300DFE12B /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				01B1D7FA15D02DF300DFE12B /* closeButton.png */,
+				01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */,
+			);
+			name = Images;
+			path = ../MOTabView/Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -214,8 +214,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				01193FA915CABC790042D7D6 /* InfoPlist.strings in Resources */,
-				01B1D7EC15D0255E00DFE12B /* closeButton.png in Resources */,
-				01B1D7ED15D0255E00DFE12B /* closeButton@2x.png in Resources */,
+				01B1D7FD15D02DF300DFE12B /* closeButton.png in Resources */,
+				01B1D7FE15D02DF300DFE12B /* closeButton@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

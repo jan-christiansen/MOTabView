@@ -31,8 +31,8 @@
 		0180B79315CD17E200A06867 /* MOTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabView.m; path = MOTabView/MOTabView.m; sourceTree = SOURCE_ROOT; };
 		0180B79415CD17E200A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = MOTabView/MOTabViewController.h; sourceTree = SOURCE_ROOT; };
 		0180B79515CD17E200A06867 /* MOTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabViewController.m; path = MOTabView/MOTabViewController.m; sourceTree = SOURCE_ROOT; };
-		0180B7AC15CD1A2400A06867 /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = closeButton.png; path = MOTabView/Images/closeButton.png; sourceTree = SOURCE_ROOT; };
-		0180B7AD15CD1A2400A06867 /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "closeButton@2x.png"; path = "MOTabView/Images/closeButton@2x.png"; sourceTree = SOURCE_ROOT; };
+		01B1D7F815D02DEB00DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
+		01B1D7F915D02DEB00DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeButton@2x.png"; sourceTree = "<group>"; };
 		01DC9F381591F50300DBEE83 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01DC9F3B1591F50300DBEE83 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		01DC9F5A1591F66E00DBEE83 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -88,7 +88,7 @@
 				0180B79315CD17E200A06867 /* MOTabView.m */,
 				0180B78F15CD17E200A06867 /* MOTabContentView.h */,
 				0180B79015CD17E200A06867 /* MOTabContentView.m */,
-				01AE8B7615CAA64B00657C6C /* Images */,
+				01B1D7F715D02DEB00DFE12B /* Images */,
 				0160A7B61591CA540095F791 /* Supporting Files */,
 			);
 			name = MOTabView;
@@ -112,14 +112,15 @@
 			name = MOScrollView;
 			sourceTree = "<group>";
 		};
-		01AE8B7615CAA64B00657C6C /* Images */ = {
+		01B1D7F715D02DEB00DFE12B /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				0180B7AC15CD1A2400A06867 /* closeButton.png */,
-				0180B7AD15CD1A2400A06867 /* closeButton@2x.png */,
+				01B1D7F815D02DEB00DFE12B /* closeButton.png */,
+				01B1D7F915D02DEB00DFE12B /* closeButton@2x.png */,
 			);
-			path = Images;
-			sourceTree = "<group>";
+			name = Images;
+			path = MOTabView/Images;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
