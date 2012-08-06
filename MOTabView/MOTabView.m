@@ -270,88 +270,91 @@ static const float kWidthFactor = 0.73;
     int newIndex = round(fractionalIndex);
     float distance = fabs(round(fractionalIndex) - fractionalIndex);
 
-    if (newIndex != _currentIndex) {
+    //
+    int numberOfViews = [_dataSource numberOfViewsInTabView:self];
 
-        if (newIndex > _currentIndex) {
+    if (newIndex >= 0 && newIndex < numberOfViews) {
 
-            // scroll one view to the right
-            [_leftTabContentView removeFromSuperview];
+        if (newIndex != _currentIndex) {
 
-            _leftTabContentView = _centerTabContentView;
+            if (newIndex > _currentIndex) {
 
-            //
-            int numberOfViews = [_dataSource numberOfViewsInTabView:self];
+                // scroll one view to the right
+                [_leftTabContentView removeFromSuperview];
 
-            if (newIndex < numberOfViews && !_rightTabContentView) {
+                _leftTabContentView = _centerTabContentView;
 
-                // add additional view to the right
-                UIView *contentView = [_dataSource tabView:self
-                                              viewForIndex:newIndex];
-                CGRect nextFrame = _centerTabContentView.frame;
-                nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
-                _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
-                _rightTabContentView.deletable = YES;
-                _rightTabContentView.delegate = self;
-                [_rightTabContentView addContentView:contentView];
-                [_rightTabContentView deselectAnimated:NO];
-                _hideFinalTabContentView = YES;
-                _rightTabContentView.alpha = 0;
+                if (newIndex < numberOfViews && !_rightTabContentView) {
 
-                [_scrollView addSubview:_rightTabContentView];
-            }
-            _centerTabContentView = _rightTabContentView;
-
-            if (newIndex+1 < numberOfViews) {
-                // add additional view to the right
-                UIView *contentView = [_dataSource tabView:self
-                                              viewForIndex:newIndex+1];
-                CGRect nextFrame = _centerTabContentView.frame;
-                nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
-                _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
-                _rightTabContentView.deletable = YES;
-                _rightTabContentView.delegate = self;
-                [_rightTabContentView addContentView:contentView];
-                [_rightTabContentView deselectAnimated:NO];
-
-                if (_hideFinalTabContentView && newIndex+1 == numberOfViews-1) {
+                    // add additional view to the right
+                    UIView *contentView = [_dataSource tabView:self
+                                                  viewForIndex:newIndex];
+                    CGRect nextFrame = _centerTabContentView.frame;
+                    nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
+                    _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
+                    _rightTabContentView.deletable = YES;
+                    _rightTabContentView.delegate = self;
+                    [_rightTabContentView addContentView:contentView];
+                    [_rightTabContentView deselectAnimated:NO];
+                    _hideFinalTabContentView = YES;
                     _rightTabContentView.alpha = 0;
+
+                    [_scrollView addSubview:_rightTabContentView];
+                }
+                _centerTabContentView = _rightTabContentView;
+
+                if (newIndex+1 < numberOfViews) {
+                    // add additional view to the right
+                    UIView *contentView = [_dataSource tabView:self
+                                                  viewForIndex:newIndex+1];
+                    CGRect nextFrame = _centerTabContentView.frame;
+                    nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
+                    _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
+                    _rightTabContentView.deletable = YES;
+                    _rightTabContentView.delegate = self;
+                    [_rightTabContentView addContentView:contentView];
+                    [_rightTabContentView deselectAnimated:NO];
+
+                    if (_hideFinalTabContentView && newIndex+1 == numberOfViews-1) {
+                        _rightTabContentView.alpha = 0;
+                    }
+
+                    [_scrollView addSubview:_rightTabContentView];
+                } else {
+                    _rightTabContentView = nil;
                 }
 
-                [_scrollView addSubview:_rightTabContentView];
             } else {
-                _rightTabContentView = nil;
-            }
 
+                // scroll one view to the left
+                [_rightTabContentView removeFromSuperview];
+
+                _rightTabContentView = _centerTabContentView;
+                _centerTabContentView = _leftTabContentView;
+
+                //
+                if (newIndex-1 >= 0) {
+                    // add additional view to the right
+                    UIView *contentView = [_dataSource tabView:self
+                                                  viewForIndex:newIndex-1];
+                    CGRect previousFrame = _centerTabContentView.frame;
+                    previousFrame.origin.x -= kWidthFactor * self.bounds.size.width;
+                    _leftTabContentView = [[MOTabContentView alloc] initWithFrame:previousFrame];
+                    _leftTabContentView.deletable = YES;
+                    _leftTabContentView.delegate = self;
+
+                    [_leftTabContentView addContentView:contentView];
+                    [_leftTabContentView deselectAnimated:NO];
+                    [_scrollView addSubview:_leftTabContentView];
+                } else {
+                    _leftTabContentView = nil;
+                }
+            }
+            
+            _currentIndex = newIndex;
         } else {
-
-            // scroll one view to the left
-            [_rightTabContentView removeFromSuperview];
-
-            _rightTabContentView = _centerTabContentView;
-            _centerTabContentView = _leftTabContentView;
-
-            //
-            if (newIndex-1 >= 0) {
-                // add additional view to the right
-                UIView *contentView = [_dataSource tabView:self
-                                              viewForIndex:newIndex-1];
-                CGRect previousFrame = _centerTabContentView.frame;
-                previousFrame.origin.x -= kWidthFactor * self.bounds.size.width;
-                _leftTabContentView = [[MOTabContentView alloc] initWithFrame:previousFrame];
-                _leftTabContentView.deletable = YES;
-                _leftTabContentView.delegate = self;
-
-                [_leftTabContentView addContentView:contentView];
-                [_leftTabContentView deselectAnimated:NO];
-                [_scrollView addSubview:_leftTabContentView];
-            } else {
-                _leftTabContentView = nil;
-            }
+            [self updatePageControl];
         }
-
-        _currentIndex = newIndex;
-    } else {
-        [self updatePageControl];
     }
 
     _leftTabContentView.visibility = distance;
@@ -371,52 +374,46 @@ static const float kWidthFactor = 0.73;
         float page = round(ratio);
 
         [self scrollToViewAtIndex:page animated:YES];
-//        CGPoint contentOffset = CGPointMake(page * kWidthFactor * self.bounds.size.width, 0);
-//        [_scrollView setContentOffset:contentOffset
-//                   withTimingFunction:_timingFunction];
+        CGPoint contentOffset = CGPointMake(page * kWidthFactor * self.bounds.size.width, 0);
+        [_scrollView setContentOffset:contentOffset
+                   withTimingFunction:_timingFunction];
+//                             duration:0.5];
 //        [_scrollView setContentOffset:contentOffset animated:YES];
     }
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
 
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    
-    CGFloat pageWidth = _scrollView.frame.size.width;
-    float ratio = _scrollView.contentOffset.x / pageWidth / kWidthFactor;
-    float page = round(ratio);
+    // adjust page control
+    CGFloat pageWidth = scrollView.frame.size.width;
+    float fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
+    int index = round(fractionalIndex);
 
-    int nextPage;
-    if (ratio > page) {
-        nextPage = page + 1;
+    int nextIndex;
+    if (fractionalIndex - _currentIndex > 0) {
+        nextIndex = index + 1;
     } else {
-        nextPage = page - 1;
+        nextIndex = index - 1;
     }
 
     NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
-    if (nextPage >= 0 && nextPage < numberOfViews) {
-        [self scrollToViewAtIndex:nextPage animated:YES];
+    if (nextIndex >= 0 && nextIndex < numberOfViews) {
+        // stop deceleration
+        [scrollView setContentOffset:scrollView.contentOffset animated:YES];
+
+        [self scrollToViewAtIndex:nextIndex animated:YES];
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
 
     if (_editingStyle == MOTabViewEditingStyleInsert) {
-
-//        [self.delegate tabView:self
-//            commitEditingStyle:MOTabViewEditingStyleInsert
-//                forViewAtIndex:_currentIndex];
-
-//        [self addNewCenterViewAnimated:YES];
-        
         _editingStyle = MOTabViewEditingStyleNone;
     }
 
     self.userInteractionEnabled = YES;
     [self updatePageControl];
-
-//    NSLog(@"%f", _centerTabContentView.alpha);
 
     if (_hideFinalTabContentView) {
         [UIView animateWithDuration:0.5
@@ -445,7 +442,7 @@ static const float kWidthFactor = 0.73;
     if (abs(_currentIndex - newIndex) > 3) {
         duration = 1;
     } else {
-        duration = 0.5;
+        duration = 0.3;
     }
     [_scrollView setContentOffset:contentOffset
                withTimingFunction:_timingFunction
