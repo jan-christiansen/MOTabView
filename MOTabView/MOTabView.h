@@ -37,6 +37,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import "MOTabContentView.h"
 
 
@@ -85,7 +86,9 @@ commitEditingStyle:(MOTabViewEditingStyle)editingStyle
 @property(assign, nonatomic) IBOutlet id<MOTabViewDelegate> delegate;
 
 
-- (void)scrollToViewAtIndex:(int)newIndex animated:(BOOL)animated;
+- (void)scrollToViewAtIndex:(int)newIndex
+         withTimingFunction:(CAMediaTimingFunction *)timingFunction
+                   duration:(CFTimeInterval)duration;
 
 - (void)selectCurrentView;
 

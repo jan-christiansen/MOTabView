@@ -78,9 +78,10 @@ static const float kWidthFactor = 0.73;
 
     MOTabViewEditingStyle _editingStyle;
 
-    // timing function used for scrolling
-    CAMediaTimingFunction *_timingFunction;
-    
+    // timing functions used for scrolling
+    CAMediaTimingFunction *_easeInEaseOutTimingFunction;
+    CAMediaTimingFunction *_easeOutTimingFunction;
+
     BOOL _hideFinalTabContentView;
 }
 
@@ -120,8 +121,12 @@ static const float kWidthFactor = 0.73;
 //                       functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 //    _timingFunction = [CAMediaTimingFunction
 //                       functionWithName:kCAMediaTimingFunctionEaseOut];
-    _timingFunction = [CAMediaTimingFunction
-                       functionWithName:kCAMediaTimingFunctionLinear];
+//    _timingFunction = [CAMediaTimingFunction
+//                       functionWithName:kCAMediaTimingFunctionLinear];
+    _easeInEaseOutTimingFunction = [CAMediaTimingFunction
+                                    functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    _easeOutTimingFunction = [CAMediaTimingFunction
+                              functionWithName:kCAMediaTimingFunctionEaseOut];
 
     // background view
     _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
@@ -241,7 +246,9 @@ static const float kWidthFactor = 0.73;
 
 - (IBAction)changePage:(UIPageControl *)pageControl {
 
-    [self scrollToViewAtIndex:pageControl.currentPage animated:YES];
+    [self scrollToViewAtIndex:pageControl.currentPage
+           withTimingFunction:_easeInEaseOutTimingFunction
+                     duration:0.5];
 }
 
 
@@ -257,13 +264,17 @@ static const float kWidthFactor = 0.73;
 - (void)selectTabContentView:(MOTabContentView *)tabContentView {
 
     if (tabContentView == _leftTabContentView) {
-        [self scrollToViewAtIndex:_currentIndex-1 animated:YES];
+        [self scrollToViewAtIndex:_currentIndex-1
+               withTimingFunction:_easeInEaseOutTimingFunction
+                         duration:0.5];
 
     } else if (tabContentView == _centerTabContentView) {
         [self selectCurrentView];
 
     } else if (tabContentView == _rightTabContentView) {
-        [self scrollToViewAtIndex:_currentIndex+1 animated:YES];
+        [self scrollToViewAtIndex:_currentIndex+1
+               withTimingFunction:_easeInEaseOutTimingFunction
+                         duration:0.5];
     }
 }
 
@@ -305,8 +316,7 @@ static const float kWidthFactor = 0.73;
                     _rightTabContentView.delegate = self;
                     [_rightTabContentView addContentView:contentView];
                     [_rightTabContentView deselectAnimated:NO];
-                    _hideFinalTabContentView = YES;
-                    _rightTabContentView.alpha = 0;
+                    _rightTabContentView.hidden = YES;
 
                     [_scrollView addSubview:_rightTabContentView];
                 }
@@ -325,7 +335,8 @@ static const float kWidthFactor = 0.73;
                     [_rightTabContentView deselectAnimated:NO];
 
                     if (_hideFinalTabContentView && newIndex+1 == numberOfViews-1) {
-                        _rightTabContentView.alpha = 0;
+                        _rightTabContentView.hidden = YES;
+                        _hideFinalTabContentView = NO;
                     }
 
                     [_scrollView addSubview:_rightTabContentView];
@@ -380,13 +391,12 @@ static const float kWidthFactor = 0.73;
 
         CGFloat pageWidth = _scrollView.frame.size.width;
         float ratio = _scrollView.contentOffset.x / pageWidth / kWidthFactor;
-        float page = round(ratio);
+        int page = round(ratio);
 
-        [self scrollToViewAtIndex:page animated:YES];
-        CGPoint contentOffset = CGPointMake(page * kWidthFactor * self.bounds.size.width, 0);
-        [_scrollView setContentOffset:contentOffset
-                   withTimingFunction:_timingFunction];
-//                             duration:0.5];
+        [self scrollToViewAtIndex:page
+               withTimingFunction:_easeOutTimingFunction
+                         duration:0.3];
+//        CGPoint contentOffset = CGPointMake(page * kWidthFactor * self.bounds.size.width, 0);
 //        [_scrollView setContentOffset:contentOffset animated:YES];
     }
 }
@@ -411,7 +421,10 @@ static const float kWidthFactor = 0.73;
         // stop deceleration
         [scrollView setContentOffset:scrollView.contentOffset animated:YES];
 
-        [self scrollToViewAtIndex:nextIndex animated:YES];
+        // scroll view to next index
+        [self scrollToViewAtIndex:nextIndex
+               withTimingFunction:_easeOutTimingFunction
+                         duration:0.2];
     }
 }
 
@@ -424,14 +437,14 @@ static const float kWidthFactor = 0.73;
     self.userInteractionEnabled = YES;
     [self updatePageControl];
 
-    if (_hideFinalTabContentView) {
+    if (_centerTabContentView.hidden) {
+        _centerTabContentView.alpha = 0;
+        _centerTabContentView.hidden = NO;
         [UIView animateWithDuration:0.5
                          animations:^{
                              _centerTabContentView.alpha = 1;
                          }
                          completion:^(BOOL finished){
-//                             NSLog(@"%d", finished);
-                             _hideFinalTabContentView = NO;
                              [self selectCurrentView];
                          }];
     }
@@ -441,20 +454,15 @@ static const float kWidthFactor = 0.73;
 #pragma mark - 
 
 - (void)scrollToViewAtIndex:(int)newIndex
-                   animated:(BOOL)animated {
+         withTimingFunction:(CAMediaTimingFunction *)timingFunction
+                   duration:(CFTimeInterval)duration {
 
     self.userInteractionEnabled = NO;
 
     CGPoint contentOffset = CGPointMake(newIndex * kWidthFactor * self.bounds.size.width, 0);
 
-    float duration;
-    if (abs(_currentIndex - newIndex) > 3) {
-        duration = 1;
-    } else {
-        duration = 0.3;
-    }
     [_scrollView setContentOffset:contentOffset
-               withTimingFunction:_timingFunction
+               withTimingFunction:timingFunction
                          duration:duration];
 //    [_scrollView setContentOffset:contentOffset animated:YES];
 }
@@ -462,18 +470,32 @@ static const float kWidthFactor = 0.73;
 - (void)insertNewView {
 
     _editingStyle = MOTabViewEditingStyleInsert;
-    
+
     int numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
     [self.delegate tabView:self
         commitEditingStyle:MOTabViewEditingStyleInsert
             forViewAtIndex:numberOfViews];
+    
+    CGSize newContentSize;
+    newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
+    newContentSize.height = _scrollView.contentSize.height;
+    _scrollView.contentSize = newContentSize;
 
     _hideFinalTabContentView = YES;
 
     [self updatePageControl];
 
-    [self scrollToViewAtIndex:numberOfViews animated:YES];
+    CFTimeInterval duration;
+    if (abs(numberOfViews - _currentIndex) > 3) {
+        duration = 1;
+    } else {
+        duration = 0.5;
+    }
+
+    [self scrollToViewAtIndex:numberOfViews
+           withTimingFunction:_easeInEaseOutTimingFunction
+                     duration:duration];
 }
 
 - (void)addNewLeftView {
@@ -565,7 +587,9 @@ static const float kWidthFactor = 0.73;
                                  forViewAtIndex:_currentIndex];
 
                          if (_currentIndex == numberOfViews-1) {
-                             [self scrollToViewAtIndex:_currentIndex-1 animated:YES];
+                             [self scrollToViewAtIndex:_currentIndex-1
+                                    withTimingFunction:_easeInEaseOutTimingFunction
+                                              duration:0.5];
                          } else {
 
                              // add new right view

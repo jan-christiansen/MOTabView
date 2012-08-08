@@ -128,7 +128,6 @@ static const float kDeselectedTranslation = 20;
     _deletable = deleteable;
 }
 
-
 //- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
 //
 //    if (animated) {
@@ -140,7 +139,6 @@ static const float kDeselectedTranslation = 20;
 //    }
 //    _closeButton
 //}
-
 
 - (void)setAlpha:(CGFloat)alpha {
 
