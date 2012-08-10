@@ -45,9 +45,13 @@
 @protocol MOTabContentViewDelegate <NSObject>
 
 
-- (void)deleteTabContentView:(MOTabContentView *)tabContentView;
+- (void)tabContentViewWillSelect:(MOTabContentView *)tabContentView;
 
-- (void)selectTabContentView:(MOTabContentView *)tabContentView;
+- (void)tabContentViewDidSelect:(MOTabContentView *)tabContentView;
+
+- (void)tabContentViewDidDeselect:(MOTabContentView *)tabContentView;
+
+- (void)tabContentViewWillDelete:(MOTabContentView *)tabContentView;
 
 
 @end

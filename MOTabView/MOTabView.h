@@ -66,6 +66,13 @@ typedef enum {
 } MOTabViewEditingStyle;
 
 
+@optional
+
+- (void)tabView:(MOTabView *)tabView
+willSelectViewAtIndex:(NSInteger)index;
+
+- (void)tabViewWillDeselectView:(MOTabView *)tabView;
+
 - (void)tabView:(MOTabView *)tabView
 didSelectViewAtIndex:(NSInteger)index;
 
@@ -81,9 +88,25 @@ commitEditingStyle:(MOTabViewEditingStyle)editingStyle
 
 @interface MOTabView : UIView<UIScrollViewDelegate,MOTabContentViewDelegate>
 
+/**
+ * While `MOTabViewAddNewTabAtLastIndex` corresponds to the behaviour  of the
+ * tab view in safari prior to iOS6, `MOTabViewAddNewTabAtNextIndex`
+ * resembles iOS6.
+ */
+typedef enum {
+    MOTabViewAddingAtLastIndex,
+    MOTabViewAddingAtNextIndex
+} MOTabViewAddinngStyle;
+
 
 @property(assign, nonatomic) IBOutlet id<MOTabViewDataSource> dataSource;
 @property(assign, nonatomic) IBOutlet id<MOTabViewDelegate> delegate;
+
+
+/// @name Configuring a TabView
+
+/// Style used when a new tab is added to the view.
+@property(assign, nonatomic) MOTabViewAddinngStyle addingStyle;
 
 
 - (void)scrollToViewAtIndex:(int)newIndex

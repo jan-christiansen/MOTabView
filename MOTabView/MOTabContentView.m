@@ -147,12 +147,12 @@ static const float kDeselectedTranslation = 20;
 
 - (void)handleTap {
 
-    [self.delegate selectTabContentView:self];
+    [_delegate tabContentViewWillSelect:self];
 }
 
 - (void)handleClose {
 
-    [self.delegate deleteTabContentView:self];
+    [self.delegate tabContentViewWillDelete:self];
 }
 
 - (void)addContentView:(UIView *)contentView {
@@ -161,9 +161,6 @@ static const float kDeselectedTranslation = 20;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
-
-    //    return !CGRectContainsPoint(_closeButton.frame, point)
-    //            && CGRectContainsPoint(_contentView.frame, point);
 
     return (!_isSelected
             && (CGRectContainsPoint(_deleteButton.frame, point)
@@ -190,9 +187,12 @@ static const float kDeselectedTranslation = 20;
                          animations:^{
                              [self selectNonAnimated];
                          }
-         ];
+                         completion:^(BOOL finished) {
+                             [_delegate tabContentViewDidSelect:self];
+                         }];
     } else {
         [self selectNonAnimated];
+        [_delegate tabContentViewDidSelect:self];
     }
 
     _isSelected = YES;
@@ -215,9 +215,12 @@ static const float kDeselectedTranslation = 20;
                          animations:^{
                              [self deselectNonAnimated];
                          }
-         ];
+                         completion:^(BOOL finished){
+                             [_delegate tabContentViewDidDeselect:self];
+                         }];
     } else {
         [self deselectNonAnimated];
+        [_delegate tabContentViewDidDeselect:self];
     }
 
     _isSelected = NO;

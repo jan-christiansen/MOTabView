@@ -120,8 +120,7 @@
 
 #pragma mark - MOTabViewDelegate
 
-- (void)tabView:(MOTabView *)tabView
-didSelectViewAtIndex:(NSInteger)index {
+- (void)tabView:(MOTabView *)tabView willSelectViewAtIndex:(NSInteger)index {
 
     UIBarButtonItem *space = [[UIBarButtonItem alloc]
                               initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
@@ -135,11 +134,17 @@ didSelectViewAtIndex:(NSInteger)index {
                                target:tabView
                                action:@selector(deselectCurrentView)];
 
+    _toolbar.userInteractionEnabled = NO;
     [_toolbar setItems:[NSArray arrayWithObjects:space, button, nil]
               animated:YES];
 }
 
-- (void)tabViewDidDeselectView:(MOTabView *)tabView {
+- (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSInteger)index {
+
+    _toolbar.userInteractionEnabled = YES;
+}
+
+- (void)tabViewWillDeselectView:(MOTabView *)tabView {
 
     // update toolbar when a page view is deselected
     UIBarButtonItem *addViewButton = [[UIBarButtonItem alloc]
@@ -158,7 +163,13 @@ didSelectViewAtIndex:(NSInteger)index {
                                action:@selector(selectCurrentView)];
     NSArray *items = [NSArray arrayWithObjects:addViewButton, space, button, nil];
 
+    _toolbar.userInteractionEnabled = NO;
     [_toolbar setItems:items animated:YES];
+}
+
+- (void)tabViewDidDeselectView:(MOTabView *)tabView {
+    
+    _toolbar.userInteractionEnabled = YES;
 }
 
 // dummy method, overwritten by subclass
