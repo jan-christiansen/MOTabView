@@ -46,8 +46,8 @@
 		01193FCC15CABDF90042D7D6 /* MOTabView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MOTabView.xcodeproj; sourceTree = "<group>"; };
 		01193FDD15CAC7330042D7D6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0180B7A515CD18AB00A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = ../MOTabView/MOTabViewController.h; sourceTree = "<group>"; };
-		01B1D7FA15D02DF300DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = file; path = closeButton.png; sourceTree = "<group>"; };
-		01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = file; path = "closeButton@2x.png"; sourceTree = "<group>"; };
+		01B1D7FA15D02DF300DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
+		01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeButton@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -303,6 +303,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Example Application/Example Application-Prefix.pch";
 				INFOPLIST_FILE = "Example Application/Example Application-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "956C90F6-15BF-4F1D-B593-DC7734F108E9";
 				WRAPPER_EXTENSION = app;
@@ -316,6 +317,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Example Application/Example Application-Prefix.pch";
 				INFOPLIST_FILE = "Example Application/Example Application-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "956C90F6-15BF-4F1D-B593-DC7734F108E9";
 				WRAPPER_EXTENSION = app;
