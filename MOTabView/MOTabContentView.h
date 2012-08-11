@@ -45,13 +45,13 @@
 @protocol MOTabContentViewDelegate <NSObject>
 
 
-- (void)tabContentViewWillSelect:(MOTabContentView *)tabContentView;
-
 - (void)tabContentViewDidSelect:(MOTabContentView *)tabContentView;
 
 - (void)tabContentViewDidDeselect:(MOTabContentView *)tabContentView;
 
-- (void)tabContentViewWillDelete:(MOTabContentView *)tabContentView;
+- (void)tabContentViewDidTapView:(MOTabContentView *)tabContentView;
+
+- (void)tabContentViewDidTapDelete:(MOTabContentView *)tabContentView;
 
 
 @end
@@ -66,11 +66,11 @@
 
 @property(assign, nonatomic) float visibility;
 
-@property(assign, nonatomic) BOOL deletable;
-
 
 - (void)selectAnimated:(BOOL)animated;
+
 - (void)deselectAnimated:(BOOL)animated;
+
 - (void)addContentView:(UIView *)contentView;
 
 

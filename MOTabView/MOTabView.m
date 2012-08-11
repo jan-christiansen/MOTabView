@@ -311,13 +311,13 @@ static const float kWidthFactor = 0.73;
 #pragma mark - TabContentViewDelegate Methods
 
 // invoked when delete button is pressed
-- (void)tabContentViewWillDelete:(MOTabContentView *)tabContentView {
+- (void)tabContentViewDidTapDelete:(MOTabContentView *)tabContentView {
 
     [self deleteCurrentView];
 }
 
 // user tap on one of the three content views
-- (void)tabContentViewWillSelect:(MOTabContentView *)tabContentView {
+- (void)tabContentViewDidTapView:(MOTabContentView *)tabContentView {
 
     if (tabContentView == _leftTabContentView) {
         [self scrollToViewAtIndex:_currentIndex-1

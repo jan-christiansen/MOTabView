@@ -52,8 +52,6 @@ static const float kDeselectedTranslation = 20;
     UIButton *_deleteButton;
 
     BOOL _selected;
-
-    BOOL _deletable;
 }
 
 
@@ -62,7 +60,7 @@ static const float kDeselectedTranslation = 20;
 @synthesize visibility = _visibility;
 
 
-#pragma mark - add designated initializer
+#pragma mark - Intialization
 
 - (id)initWithFrame:(CGRect)frame {
 
@@ -83,30 +81,6 @@ static const float kDeselectedTranslation = 20;
                                                  action:@selector(handleTap)];
         [_contentView addGestureRecognizer:tapRecognizer];
 
-// TODO: refactor deletable property
-        [self setDeletable:YES];
-
-        [self deselectNonAnimated];
-    }
-    return self;
-}
-
-
-- (BOOL)deletable {
-
-    return _deletable;
-}
-
-- (void)setDeletable:(BOOL)deleteable {
-
-    [self setDeletable:deleteable animated:NO];
-}
-
-- (void)setDeletable:(BOOL)deleteable animated:(BOOL)animated {
-
-    // if view was not deletable and has become deletable
-    if (!_deletable && deleteable) {
-
         _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _deleteButton.frame = CGRectMake(0, 0, 30, 30);
         [_deleteButton setImage:[UIImage imageNamed:@"closeButton"]
@@ -115,65 +89,16 @@ static const float kDeselectedTranslation = 20;
                           action:@selector(handleClose)
                 forControlEvents:UIControlEventTouchUpInside];
         _deleteButton.center = self.frame.origin;
-
-        if (animated) {
-            [UIView animateWithDuration:1 animations:^{
-                _deleteButton.alpha = !_isSelected;
-            }];
-        } else {
-            _deleteButton.alpha = _isSelected;
-        }
-
+        _deleteButton.alpha = 0;
         [self insertSubview:_deleteButton aboveSubview:_contentView];
+
+        [self deselectNonAnimated];
     }
-
-    if (_deletable && !deleteable) {
-        [_deleteButton removeFromSuperview];
-        _deleteButton = nil;
-    }
-
-    _deletable = deleteable;
+    return self;
 }
 
-//- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-//
-//    if (animated) {
-//
-//        [UIView animateWithDuration:1
-//                         animations:^{
-//                             _closeButton.alpha = 1;
-//                         }];
-//    }
-//    _closeButton
-//}
 
-- (void)setAlpha:(CGFloat)alpha {
-
-    super.alpha = alpha;
-}
-
-- (void)handleTap {
-
-    [_delegate tabContentViewWillSelect:self];
-}
-
-- (void)handleClose {
-
-    [self.delegate tabContentViewWillDelete:self];
-}
-
-- (void)addContentView:(UIView *)contentView {
-
-    [_contentView addSubview:contentView];
-}
-
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
-
-    return (!_isSelected
-            && (CGRectContainsPoint(_deleteButton.frame, point)
-                || CGRectContainsPoint(_contentView.frame, point)));
-}
-
+#pragma mark - Getting and Setting Properties
 
 - (float)visibility {
 
@@ -186,6 +111,37 @@ static const float kDeselectedTranslation = 20;
     _deleteButton.alpha = visibility;
     self.alpha = MAX(visibility, 0.5);
 }
+
+
+#pragma mark - Handling Actions
+
+- (void)handleTap {
+
+    [_delegate tabContentViewDidTapView:self];
+}
+
+- (void)handleClose {
+
+    [self.delegate tabContentViewDidTapDelete:self];
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    
+    return (!_isSelected
+            && (CGRectContainsPoint(_deleteButton.frame, point)
+                || CGRectContainsPoint(_contentView.frame, point)));
+}
+
+
+#pragma mark - Adding Content
+
+- (void)addContentView:(UIView *)contentView {
+
+    [_contentView addSubview:contentView];
+}
+
+
+#pragma mark - Selecting and Deselecting
 
 - (void)selectAnimated:(BOOL)animated {
 
