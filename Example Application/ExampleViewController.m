@@ -54,6 +54,8 @@
     self = [super init];
     if (self) {
         _model = [NSMutableArray arrayWithObjects:@"1", @"2", @"3", @"4", nil];
+        
+        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
     }
     return self;
 }
@@ -92,11 +94,13 @@
 }
 
 
-#pragma mark - SelectionViewDelegate
+#pragma mark - TabViewDelegate
 
 - (void)tabView:(MOTabView *)tabView
-commitEditingStyle:(MOTabViewEditingStyle)editingStyle
- forViewAtIndex:(NSInteger)index {
+   willEditView:(MOTabViewEditingStyle)editingStyle
+        atIndex:(int)index {
+
+    [super tabView:tabView willEditView:editingStyle atIndex:index];
 
     if (editingStyle == MOTabViewEditingStyleDelete) {
 
@@ -111,5 +115,6 @@ commitEditingStyle:(MOTabViewEditingStyle)editingStyle
                     atIndex:index];
     }
 }
+
 
 @end

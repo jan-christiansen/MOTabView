@@ -78,9 +78,13 @@ didSelectViewAtIndex:(NSInteger)index;
 
 - (void)tabViewDidDeselectView:(MOTabView *)tabView;
 
+- (void)tabView:(MOTabView* )tabView
+   willEditView:(MOTabViewEditingStyle)editingStyle
+        atIndex:(int)index;
+
 - (void)tabView:(MOTabView *)tabView
-commitEditingStyle:(MOTabViewEditingStyle)editingStyle
-    forViewAtIndex:(NSInteger)index;
+    didEditView:(MOTabViewEditingStyle)editingStyle
+        atIndex:(int)index;
 
 
 @end

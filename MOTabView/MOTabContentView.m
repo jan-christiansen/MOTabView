@@ -51,6 +51,8 @@ static const float kDeselectedTranslation = 20;
 
     UIButton *_deleteButton;
 
+    BOOL _selected;
+
     BOOL _deletable;
 }
 
@@ -80,6 +82,11 @@ static const float kDeselectedTranslation = 20;
                                                  initWithTarget:self
                                                  action:@selector(handleTap)];
         [_contentView addGestureRecognizer:tapRecognizer];
+
+// TODO: refactor deletable property
+        [self setDeletable:YES];
+
+        [self deselectNonAnimated];
     }
     return self;
 }

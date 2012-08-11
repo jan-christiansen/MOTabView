@@ -141,6 +141,8 @@
 
 - (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSInteger)index {
 
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+
     _toolbar.userInteractionEnabled = YES;
 }
 
@@ -174,8 +176,23 @@
 
 // dummy method, overwritten by subclass
 - (void)tabView:(MOTabView *)tabView
-commitEditingStyle:(MOTabViewEditingStyle)editingStyle
-    forViewAtIndex:(NSInteger)index {}
+   willEditView:(MOTabViewEditingStyle)editingStyle
+        atIndex:(int)index {
+
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+
+    _toolbar.userInteractionEnabled = NO;
+}
+
+// dummy method, overwritten by subclass
+- (void)tabView:(MOTabView *)tabView
+    didEditView:(MOTabViewEditingStyle)editingStyle
+        atIndex:(int)index {
+
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+
+    _toolbar.userInteractionEnabled = YES;
+}
 
 
 @end
