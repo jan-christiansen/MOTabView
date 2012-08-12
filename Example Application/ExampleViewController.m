@@ -54,8 +54,9 @@
     self = [super init];
     if (self) {
         _model = [NSMutableArray arrayWithObjects:@"1", @"2", @"3", @"4", nil];
-        
-        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
+
+//        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
+        self.tabView.addingStyle = MOTabViewAddingAtLastIndex;
     }
     return self;
 }
@@ -108,7 +109,7 @@
     }
 
     if (editingStyle == MOTabViewEditingStyleInsert) {
-        
+
 //        NSLog(@"%s insert %d", __PRETTY_FUNCTION__, index);
 
         [_model insertObject:[NSString stringWithFormat:@"%d", index+1]

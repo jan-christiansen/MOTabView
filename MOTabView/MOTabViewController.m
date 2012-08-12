@@ -170,7 +170,7 @@
 }
 
 - (void)tabViewDidDeselectView:(MOTabView *)tabView {
-    
+
     _toolbar.userInteractionEnabled = YES;
 }
 

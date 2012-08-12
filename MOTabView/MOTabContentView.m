@@ -126,7 +126,7 @@ static const float kDeselectedTranslation = 20;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
-    
+
     return (!_isSelected
             && (CGRectContainsPoint(_deleteButton.frame, point)
                 || CGRectContainsPoint(_contentView.frame, point)));

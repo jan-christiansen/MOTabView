@@ -66,9 +66,6 @@ static const float kWidthFactor = 0.73;
 
     id<MOTabViewDataSource> _dataSource;
 
-    // states whether the current center view is selected
-    BOOL _currentViewIsSelected;
-
     // index of the current center view
     int _currentIndex;
 
@@ -86,8 +83,9 @@ static const float kWidthFactor = 0.73;
     CAMediaTimingFunction *_easeInEaseOutTimingFunction;
     CAMediaTimingFunction *_easeOutTimingFunction;
     CAMediaTimingFunction *_easeInTimingFunction;
-    
-    BOOL _hideFinalTabContentView;
+
+    // if true the last view is hidden when scrolling
+    BOOL _hideLastTabContentView;
 }
 
 
@@ -118,17 +116,6 @@ static const float kWidthFactor = 0.73;
 - (void)initialize {
 
     // timing function used to scroll the MOScrollView
-    // testing all timing functions of MOScrollView
-//    _timingFunction = [CAMediaTimingFunction
-//                       functionWithName:kCAMediaTimingFunctionDefault];
-//    _timingFunction = [CAMediaTimingFunction
-//                       functionWithName:kCAMediaTimingFunctionEaseIn];
-//    _timingFunction = [CAMediaTimingFunction
-//                       functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//    _timingFunction = [CAMediaTimingFunction
-//                       functionWithName:kCAMediaTimingFunctionEaseOut];
-//    _timingFunction = [CAMediaTimingFunction
-//                       functionWithName:kCAMediaTimingFunctionLinear];
     _easeInEaseOutTimingFunction = [CAMediaTimingFunction
                                     functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     _easeOutTimingFunction = [CAMediaTimingFunction
@@ -174,15 +161,18 @@ static const float kWidthFactor = 0.73;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.delegate = self;
     _scrollView.contentSize = self.bounds.size;
+    _scrollView.scrollEnabled = NO;
 
 // TODO: Remove this hack
     _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
     // paging of the scrollview is implemented by using the delegate methods
 
     [self insertSubview:_scrollView aboveSubview:_pageControl];
-    
+
+    // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
 }
+
 
 #pragma Getting and Setting Properties
 
@@ -193,7 +183,7 @@ static const float kWidthFactor = 0.73;
 
 - (void)setDataSource:(id<MOTabViewDataSource>)dataSource {
 
-    // when the data source is set, views are initializes
+    // when the data source is set, views are initialized
     _dataSource = dataSource;
 
     [self updatePageControl];
@@ -207,22 +197,15 @@ static const float kWidthFactor = 0.73;
     // initialize center view
     if (numberOfViews > 0) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:0];
-
         _centerTabContentView = [[MOTabContentView alloc] initWithFrame:self.bounds];
         _centerTabContentView.delegate = self;
         [_centerTabContentView addContentView:contentView];
         [_centerTabContentView selectAnimated:NO];
-        _scrollView.scrollEnabled = NO;
         [_scrollView addSubview:_centerTabContentView];
 
         // initialize right view
-        if (numberOfViews > 1) {
-
-            [self addNewRightView];
-        }
+        _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
     }
-
-    _currentViewIsSelected = YES;
 }
 
 - (id<MOTabViewDelegate>)delegate {
@@ -234,6 +217,7 @@ static const float kWidthFactor = 0.73;
 
     _delegate = delegate;
 
+    // save whether the delegate responds to the delegate methods
     _delegateRespondsToWillSelect = [_delegate respondsToSelector:@selector(tabView:willSelectViewAtIndex:)];
     _delegateRespondsToWillDeselect = [_delegate respondsToSelector:@selector(tabViewWillDeselectView:)];
     _delegateRespondsToDidSelect = [_delegate respondsToSelector:@selector(tabView:didSelectViewAtIndex:)];
@@ -263,35 +247,35 @@ static const float kWidthFactor = 0.73;
 }
 
 - (void)tabViewWillDeselectView {
-    
+
     if (_delegateRespondsToWillDeselect) {
         [_delegate tabViewWillDeselectView:self];
     }
 }
 
 - (void)tabViewDidDeselectView {
-    
+
     if (_delegateRespondsToDidSelect) {
         [_delegate tabViewDidDeselectView:self];
     }
 }
 
-- (void)tabViewWillEditViewAtIndex:(int)index {
+- (void)tabViewWillEditView {
 
     if (_delegateRespondsToWillEdit) {
-        [_delegate tabView:self willEditView:_editingStyle atIndex:index];
+        [_delegate tabView:self willEditView:_editingStyle atIndex:_currentIndex];
     }
 }
 
-- (void)tabViewDidEditViewAtIndex:(int)index {
+- (void)tabViewDidEditView {
 
     if (_delegateRespondsToDidEdit) {
-        [_delegate tabView:self didEditView:_editingStyle atIndex:index];
+        [_delegate tabView:self didEditView:_editingStyle atIndex:_currentIndex];
     }
 }
 
 
-#pragma mark - PageControl
+#pragma mark - UIPageControl Methods
 
 - (void)updatePageControl {
 
@@ -319,6 +303,8 @@ static const float kWidthFactor = 0.73;
 // user tap on one of the three content views
 - (void)tabContentViewDidTapView:(MOTabContentView *)tabContentView {
 
+//    NSLog(@"%s", __PRETTY_FUNCTION__);
+
     if (tabContentView == _leftTabContentView) {
         [self scrollToViewAtIndex:_currentIndex-1
                withTimingFunction:_easeInEaseOutTimingFunction
@@ -340,12 +326,12 @@ static const float kWidthFactor = 0.73;
 
     // selecting the view may be the last step in inserting a new tab
     if (_editingStyle == MOTabViewEditingStyleInsert) {
-        [self tabViewDidEditViewAtIndex:_currentIndex];
+        [self tabViewDidEditView];
     }
 }
 
 - (void)tabContentViewDidDeselect:(MOTabContentView *)tabContentView {
-    
+
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
     [self tabViewDidDeselectView];
@@ -358,94 +344,52 @@ static const float kWidthFactor = 0.73;
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    // adjust page control
     CGFloat pageWidth = _scrollView.frame.size.width;
-
     float fractionalIndex = _scrollView.contentOffset.x / pageWidth / kWidthFactor;
     int newIndex = round(fractionalIndex);
-    float distance = fabs(round(fractionalIndex) - fractionalIndex);
 
     //
     int numberOfViews = [_dataSource numberOfViewsInTabView:self];
 
     if (newIndex >= 0 && newIndex < numberOfViews) {
 
-        if (newIndex != _currentIndex) {
+        if (newIndex > _currentIndex) {
 
-            if (newIndex > _currentIndex) {
-
-                // scroll one view to the right
-                [_leftTabContentView removeFromSuperview];
-
-                _leftTabContentView = _centerTabContentView;
-
-                if (newIndex < numberOfViews && !_rightTabContentView) {
-
-                    // add additional view to the right
-                    UIView *contentView = [_dataSource tabView:self
-                                                  viewForIndex:newIndex];
-                    CGRect nextFrame = _centerTabContentView.frame;
-                    nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
-                    _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
-                    _rightTabContentView.delegate = self;
-                    [_rightTabContentView addContentView:contentView];
-                    _rightTabContentView.hidden = YES;
-
-                    [_scrollView addSubview:_rightTabContentView];
-                }
-                _centerTabContentView = _rightTabContentView;
-
-                if (newIndex+1 < numberOfViews) {
-                    // add additional view to the right
-                    UIView *contentView = [_dataSource tabView:self
-                                                  viewForIndex:newIndex+1];
-                    CGRect nextFrame = _centerTabContentView.frame;
-                    nextFrame.origin.x += kWidthFactor * self.bounds.size.width;
-                    _rightTabContentView = [[MOTabContentView alloc] initWithFrame:nextFrame];
-                    _rightTabContentView.delegate = self;
-                    [_rightTabContentView addContentView:contentView];
-
-                    if (_hideFinalTabContentView && newIndex+1 == numberOfViews-1) {
-                        _rightTabContentView.hidden = YES;
-                        _hideFinalTabContentView = NO;
-                    }
-
-                    [_scrollView addSubview:_rightTabContentView];
-                } else {
-                    _rightTabContentView = nil;
-                }
-
-            } else {
-
-                // scroll one view to the left
-                [_rightTabContentView removeFromSuperview];
-
-                _rightTabContentView = _centerTabContentView;
-                _centerTabContentView = _leftTabContentView;
-
-                //
-                if (newIndex-1 >= 0) {
-                    // add additional view to the right
-                    UIView *contentView = [_dataSource tabView:self
-                                                  viewForIndex:newIndex-1];
-                    CGRect previousFrame = _centerTabContentView.frame;
-                    previousFrame.origin.x -= kWidthFactor * self.bounds.size.width;
-                    _leftTabContentView = [[MOTabContentView alloc] initWithFrame:previousFrame];
-                    _leftTabContentView.delegate = self;
-
-                    [_leftTabContentView addContentView:contentView];
-                    [_scrollView addSubview:_leftTabContentView];
-                } else {
-                    _leftTabContentView = nil;
-                }
-            }
-            
             _currentIndex = newIndex;
+
+            // scroll one view to the right
+            [_leftTabContentView removeFromSuperview];
+
+            _leftTabContentView = _centerTabContentView;
+            _centerTabContentView = _rightTabContentView;
+
+            // add additional view to the right
+            _rightTabContentView = [self tabContentViewAtIndex:newIndex+1];
+
+            // if right view was just added by insert, hide it
+            if (_hideLastTabContentView && newIndex+1 == numberOfViews-1) {
+                _rightTabContentView.hidden = YES;
+                _hideLastTabContentView = NO;
+            }
+
+        } else if (newIndex < _currentIndex) {
+
+            _currentIndex = newIndex;
+
+            // scroll one view to the left
+            [_rightTabContentView removeFromSuperview];
+
+            _rightTabContentView = _centerTabContentView;
+            _centerTabContentView = _leftTabContentView;
+
+            //
+            _leftTabContentView = [self tabContentViewAtIndex:newIndex-1];
         } else {
             [self updatePageControl];
         }
     }
 
+    float distance = fabs(round(fractionalIndex) - fractionalIndex);
     _leftTabContentView.visibility = distance;
     _centerTabContentView.visibility = 1-distance;
     _rightTabContentView.visibility = distance;
@@ -505,6 +449,7 @@ static const float kWidthFactor = 0.73;
     [self updatePageControl];
 
     if (_centerTabContentView.hidden) {
+
         _centerTabContentView.alpha = 0;
         _centerTabContentView.hidden = NO;
         [UIView animateWithDuration:0.3
@@ -514,10 +459,6 @@ static const float kWidthFactor = 0.73;
                          completion:^(BOOL finished){
                              [self selectCurrentView];
                          }];
-    } else {
-        // FIXME: don't inform the delegate here. If we are adding a view, this
-        // is the wrong time
-//        [self tabViewDidEditViewAtIndex:_currentIndex];
     }
 
     if (_editingStyle == MOTabViewEditingStyleInsert) {
@@ -545,37 +486,48 @@ static const float kWidthFactor = 0.73;
 - (void)insertNewView {
 
     _editingStyle = MOTabViewEditingStyleInsert;
-    _currentIndex = _currentIndex + 1;
 
-    [_delegate tabView:self
-          willEditView:_editingStyle
-               atIndex:_currentIndex];
-    
     CGSize newContentSize;
     newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
     newContentSize.height = _scrollView.contentSize.height;
     _scrollView.contentSize = newContentSize;
-    
-    [self updatePageControl];
+
+    // index where new tab is added
+    int newIndex;
+    if (_addingStyle == MOTabViewAddingAtLastIndex) {
+        int numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+        newIndex = numberOfViews;
+    } else if (_addingStyle == MOTabViewAddingAtNextIndex) {
+        newIndex = _currentIndex + 1;
+    }
+
+    // inform delegate to update model
+    [_delegate tabView:self
+          willEditView:_editingStyle
+               atIndex:newIndex];
 
     if (_addingStyle == MOTabViewAddingAtLastIndex) {
 
-        _hideFinalTabContentView = YES;
+        _hideLastTabContentView = YES;
 
-        int numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+        if (_currentIndex + 1 == newIndex) {
+            _rightTabContentView = [self tabContentViewAtIndex:newIndex];
+            _rightTabContentView.hidden = YES;
+        }
+
         CFTimeInterval duration;
-        if (abs(numberOfViews - _currentIndex) > 3) {
+        if (abs(newIndex - _currentIndex) > 3) {
             duration = 1;
         } else {
             duration = 0.5;
         }
 
-        [self scrollToViewAtIndex:numberOfViews
+        [self scrollToViewAtIndex:newIndex
                withTimingFunction:_easeInTimingFunction
                          duration:duration];
 
     } else if (_addingStyle == MOTabViewAddingAtNextIndex) {
-        
+
         // move all three views to the right
         CGRect newLeftFrame = _leftTabContentView.frame;
         newLeftFrame.origin.x += kWidthFactor * self.bounds.size.width;
@@ -588,12 +540,17 @@ static const float kWidthFactor = 0.73;
         _rightTabContentView.frame = newRightFrame;
 
         // and increase the offset by the same factor
-        CGPoint newContentOffset = _scrollView.contentOffset;
-        newContentOffset.x = _scrollView.contentOffset.x + kWidthFactor * _scrollView.bounds.size.width;
-        _scrollView.contentOffset = newContentOffset;
+        // we set the bounds of the scrollview and not the contentOffset to
+        // not inform the delegate
+        CGRect newBounds = _scrollView.bounds;
+        newBounds.origin.x = _scrollView.bounds.origin.x + kWidthFactor * _scrollView.bounds.size.width;
+        _scrollView.bounds = newBounds;
 
         // this way we can later move the left and the center view to the left
         // and make room for a new tab
+
+        _currentIndex = _currentIndex + 1;
+        [self updatePageControl];
 
         [UIView animateWithDuration:0.3
                          animations:^{
@@ -625,45 +582,30 @@ static const float kWidthFactor = 0.73;
     }
 }
 
-- (void)addNewLeftView {
+- (CGRect)newFrame:(CGRect)frame forIndex:(int)index {
 
-    if (_currentIndex-1 > 0) {
-        // left view
-        UIView *contentView = [_dataSource tabView:self
-                                      viewForIndex:_currentIndex-1];
-        CGRect leftFrame = _centerTabContentView.frame;
-        leftFrame.origin.x -= kWidthFactor * self.bounds.size.width;
-        _leftTabContentView = [[MOTabContentView alloc] initWithFrame:leftFrame];
-        [_leftTabContentView addContentView:contentView];
-        _leftTabContentView.delegate = self;
-        _leftTabContentView.visibility = 0;
-        [_scrollView addSubview:_leftTabContentView];
-
-    } else {
-        _leftTabContentView = nil;
-    }
+    int factor = index - _currentIndex;
+    CGRect newFrame = frame;
+    newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
+    return newFrame;
 }
 
+- (MOTabContentView *)tabContentViewAtIndex:(int)index {
 
-- (void)addNewRightView {
+    NSInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
+    MOTabContentView *tabContentView = nil;
 
-    NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
-
-    if (_currentIndex+1 < numberOfViews) {
-        // right view
-        UIView *contentView = [_dataSource tabView:self
-                                      viewForIndex:_currentIndex+1];
-        CGRect rightFrame = _centerTabContentView.frame;
-        rightFrame.origin.x += kWidthFactor * self.bounds.size.width;
-        _rightTabContentView = [[MOTabContentView alloc] initWithFrame:rightFrame];
-        [_rightTabContentView addContentView:contentView];
-        _rightTabContentView.delegate = self;
-        _rightTabContentView.visibility = 0;
-        [_scrollView insertSubview:_rightTabContentView belowSubview:_centerTabContentView];
-
-    } else {
-        _rightTabContentView = nil;
+    if (index >= 0 && index < numberOfViews) {
+        UIView *contentView = [_dataSource tabView:self viewForIndex:index];
+        CGRect newFrame = [self newFrame:_centerTabContentView.frame forIndex:index];
+        tabContentView = [[MOTabContentView alloc] initWithFrame:newFrame];
+        [tabContentView addContentView:contentView];
+        tabContentView.delegate = self;
+        tabContentView.visibility = 0;
+        [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
     }
+
+    return tabContentView;
 }
 
 // TODO: actually use this method
@@ -692,11 +634,11 @@ static const float kWidthFactor = 0.73;
 - (void)deleteCurrentView {
 
     _editingStyle = MOTabViewEditingStyleDelete;
-    
+
     NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
-    
+
     // inform delegate that view will be deleted
-    [self tabViewWillEditViewAtIndex:_currentIndex];
+    [self tabViewWillEditView];
 
     [UIView animateWithDuration:0.5
                      animations:^{
@@ -704,7 +646,7 @@ static const float kWidthFactor = 0.73;
                      }
                      completion:^(BOOL finished) {
                          [_centerTabContentView removeFromSuperview];
-                         
+
                          // the previous right view will be the new center view
                          // if we delete the rightmost view _rightTabContentView is nil
                          _centerTabContentView = _rightTabContentView;
@@ -716,7 +658,7 @@ static const float kWidthFactor = 0.73;
                          } else {
 
                              // add new right view
-                             [self addNewRightView];
+                             _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
 
                              [UIView animateWithDuration:0.5
                                               animations:^{
@@ -729,7 +671,8 @@ static const float kWidthFactor = 0.73;
                                                   _rightTabContentView.frame = newRightFrame;
                                               }
                                               completion:^(BOOL finished){
-                                                  [self scrollViewDidEndScrollingAnimation:_scrollView];
+                                                  [self updatePageControl];
+                                                  [self tabViewDidEditView];
                                               }];
                          }
                      }];
