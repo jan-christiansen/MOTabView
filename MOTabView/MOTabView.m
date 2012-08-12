@@ -72,6 +72,8 @@ static const float kWidthFactor = 0.73;
     UIView *_backgroundView;
     MOScrollView *_scrollView;
     UIPageControl *_pageControl;
+    UILabel *_titleLabel;
+    UILabel *_subtitleLabel;
 
     MOTabContentView *_leftTabContentView;
     MOTabContentView *_centerTabContentView;
@@ -140,8 +142,39 @@ static const float kWidthFactor = 0.73;
 
     gradientLayer.colors = [NSArray arrayWithObjects:(id) lightGray.CGColor, (id) darkGray.CGColor, nil];
     [_backgroundView.layer addSublayer:gradientLayer];
-
     [self addSubview:_backgroundView];
+
+    // title label
+    CGRect titleFrame = CGRectMake(10, 19, self.bounds.size.width-20, 40);
+    _titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
+    _titleLabel.textColor = [UIColor whiteColor];
+    _titleLabel.backgroundColor = [UIColor clearColor];
+    UIColor *shadowColor = [UIColor colorWithRed:0.4
+                                           green:0.47
+                                            blue:0.51
+                                           alpha:1];
+    _titleLabel.shadowColor = [UIColor darkGrayColor];
+    _titleLabel.shadowOffset = CGSizeMake(0, -1);
+    _titleLabel.textAlignment = UITextAlignmentCenter;
+    _titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    _titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+    [self insertSubview:_titleLabel aboveSubview:_backgroundView];
+
+    // subtitle label
+    CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
+    _subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
+    UIColor *subtitleColor = [UIColor colorWithRed:0.76
+                                             green:0.8
+                                              blue:0.83
+                                             alpha:1];
+    _subtitleLabel.textColor = subtitleColor;
+    _subtitleLabel.backgroundColor = [UIColor clearColor];
+    _subtitleLabel.shadowColor = shadowColor;
+    _subtitleLabel.shadowOffset = CGSizeMake(0, -1);
+    _subtitleLabel.textAlignment = UITextAlignmentCenter;
+    _subtitleLabel.font = [UIFont systemFontOfSize:14];
+    _subtitleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+    [self insertSubview:_subtitleLabel aboveSubview:_backgroundView];
 
     // page control
     CGRect pageControlFrame = CGRectMake(0, 350, 320, 36);
@@ -152,7 +185,6 @@ static const float kWidthFactor = 0.73;
     [_pageControl addTarget:self
                      action:@selector(changePage:)
            forControlEvents:UIControlEventValueChanged];
-
     [self insertSubview:_pageControl aboveSubview:_backgroundView];
 
     // scrollview
@@ -166,8 +198,7 @@ static const float kWidthFactor = 0.73;
 // TODO: Remove this hack
     _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
     // paging of the scrollview is implemented by using the delegate methods
-
-    [self insertSubview:_scrollView aboveSubview:_pageControl];
+    [self insertSubview:_scrollView aboveSubview:_titleLabel];
 
     // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
@@ -202,6 +233,7 @@ static const float kWidthFactor = 0.73;
         [_centerTabContentView addContentView:contentView];
         [_centerTabContentView selectAnimated:NO];
         [_scrollView addSubview:_centerTabContentView];
+        [self updateTitles];
 
         // initialize right view
         _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
@@ -272,6 +304,15 @@ static const float kWidthFactor = 0.73;
     if (_delegateRespondsToDidEdit) {
         [_delegate tabView:self didEditView:_editingStyle atIndex:_currentIndex];
     }
+}
+
+
+#pragma mark - Updating Titles
+
+- (void)updateTitles {
+
+    _titleLabel.text = [_dataSource titleForIndex:_currentIndex];
+    _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
 }
 
 
@@ -357,6 +398,8 @@ static const float kWidthFactor = 0.73;
 
             _currentIndex = newIndex;
 
+            [self updateTitles];
+
             // scroll one view to the right
             [_leftTabContentView removeFromSuperview];
 
@@ -375,6 +418,8 @@ static const float kWidthFactor = 0.73;
         } else if (newIndex < _currentIndex) {
 
             _currentIndex = newIndex;
+
+            [self updateTitles];
 
             // scroll one view to the left
             [_rightTabContentView removeFromSuperview];

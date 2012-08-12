@@ -94,6 +94,16 @@
     return _model.count;
 }
 
+- (NSString *)titleForIndex:(NSInteger)index {
+    
+    return [NSString stringWithFormat:@"Title for tab %d", index+1];
+}
+
+- (NSString *)subtitleForIndex:(NSInteger)index {
+    
+    return [NSString stringWithFormat:@"This is the subtitle for tab %d", index+1];
+}
+
 
 #pragma mark - TabViewDelegate
 

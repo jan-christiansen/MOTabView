@@ -13,6 +13,21 @@ part of the library.
 Features
 --------
 
+###Titles###
+
+By implementing the methods
+
+    - (NSString *)titleForIndex:(NSInteger)index;
+
+and
+
+    - (NSString *)subtitleForIndex:(NSInteger)index;
+
+in the data source delegate of a `MOTabView`, the title and subtitle,
+that are displayed above a tab can be set.
+
+###Adding a New Tab###
+
 The property `addingStyle` of a tab view can be used to set how a new
 tab is added. If the property is set to `MOTabViewAddingAtLastIndex` a
 new tab is added at the right end of the tabs, which resembles the

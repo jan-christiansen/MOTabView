@@ -52,6 +52,11 @@
 
 - (NSInteger)numberOfViewsInTabView:(MOTabView *)tabView;
 
+@optional
+- (NSString *)titleForIndex:(NSInteger)index;
+
+- (NSString *)subtitleForIndex:(NSInteger)index;
+
 
 @end
 

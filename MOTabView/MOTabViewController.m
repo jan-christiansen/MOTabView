@@ -117,6 +117,16 @@
     return 0;
 }
 
+- (NSString *)titleForIndex:(NSInteger)index {
+    
+    return @"";
+}
+
+- (NSString *)subtitleForIndex:(NSInteger)index {
+
+    return @"";
+}
+
 
 #pragma mark - MOTabViewDelegate
 
