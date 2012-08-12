@@ -6,7 +6,6 @@ iOS. The following screenshots show an example application that is
 part of the library.
 
 ![](https://github.com/plancalculus/MOTabView/raw/master/Screenshots/MOTabViewExample1.png)
- 
 ![](https://github.com/plancalculus/MOTabView/raw/master/Screenshots/MOTabViewExample2.png)
 
 
