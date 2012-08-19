@@ -46,6 +46,7 @@ static const float kDeselectedTranslation = 20;
 
 @implementation MOTabContentView {
 
+    UIView *_containerView;
     UIView *_contentView;
     UIView *_overlayView;
 
@@ -67,19 +68,22 @@ static const float kDeselectedTranslation = 20;
     self = [super initWithFrame:frame];
     if (self) {
         // a container which is scaled
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        [self addSubview:_contentView];
+        _containerView = [[UIView alloc] initWithFrame:self.bounds];
+        [self addSubview:_containerView];
 
-        _contentView.layer.shadowOffset = CGSizeMake(1, 8);
-        _contentView.layer.shadowRadius = 5;
-        _contentView.layer.shadowOpacity = 0.3;
-        CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:_contentView.layer.bounds].CGPath;
-        _contentView.layer.shadowPath = shadowPath;
+        _containerView.layer.shadowOffset = CGSizeMake(1, 8);
+        _containerView.layer.shadowRadius = 5;
+        _containerView.layer.shadowOpacity = 0.3;
+        CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:_containerView.layer.bounds].CGPath;
+        _containerView.layer.shadowPath = shadowPath;
 
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
                                                  initWithTarget:self
                                                  action:@selector(handleTap)];
-        [_contentView addGestureRecognizer:tapRecognizer];
+        [_containerView addGestureRecognizer:tapRecognizer];
+
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        [_containerView addSubview:_contentView];
 
         _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _deleteButton.frame = CGRectMake(0, 0, 30, 30);
@@ -128,7 +132,7 @@ static const float kDeselectedTranslation = 20;
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
 
     return ((CGRectContainsPoint(_deleteButton.frame, point)
-             || CGRectContainsPoint(_contentView.frame, point)));
+             || CGRectContainsPoint(_containerView.frame, point)));
 }
 
 
@@ -162,12 +166,14 @@ static const float kDeselectedTranslation = 20;
 
 - (void)selectNonAnimated {
 
-    _contentView.transform = CGAffineTransformIdentity;
+    _containerView.transform = CGAffineTransformIdentity;
 
-    CGPoint newCenter = CGPointMake(_contentView.frame.origin.x,
-                                    _contentView.frame.origin.y);
+    CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,
+                                    _containerView.frame.origin.y);
     _deleteButton.center = newCenter;
     _deleteButton.alpha = 0;
+    
+    _contentView.userInteractionEnabled = YES;
 }
 
 - (void)deselectAnimated:(BOOL)animated {
@@ -192,12 +198,14 @@ static const float kDeselectedTranslation = 20;
 
     CGAffineTransform scale = CGAffineTransformMakeScale(kDeselectedScale, kDeselectedScale);
     CGAffineTransform transform = CGAffineTransformTranslate(scale, 0, kDeselectedTranslation);
-    _contentView.transform = transform;
+    _containerView.transform = transform;
 
-    CGPoint newCenter = CGPointMake(_contentView.frame.origin.x,
-                                    _contentView.frame.origin.y);
+    CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,
+                                    _containerView.frame.origin.y);
     _deleteButton.center = newCenter;
     _deleteButton.alpha = 1;
+
+    _contentView.userInteractionEnabled = NO;
 }
 
 
