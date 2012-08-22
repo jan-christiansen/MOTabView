@@ -230,7 +230,7 @@ static const float kWidthFactor = 0.73;
         UIView *contentView = [_dataSource tabView:self viewForIndex:0];
         _centerTabContentView = [[MOTabContentView alloc] initWithFrame:self.bounds];
         _centerTabContentView.delegate = self;
-        [_centerTabContentView addContentView:contentView];
+        _centerTabContentView.contentView = contentView;
         [_centerTabContentView selectAnimated:NO];
         [_scrollView addSubview:_centerTabContentView];
         [self updateTitles];
@@ -644,7 +644,7 @@ static const float kWidthFactor = 0.73;
         UIView *contentView = [_dataSource tabView:self viewForIndex:index];
         CGRect newFrame = [self newFrame:_centerTabContentView.frame forIndex:index];
         tabContentView = [[MOTabContentView alloc] initWithFrame:newFrame];
-        [tabContentView addContentView:contentView];
+        tabContentView.contentView = contentView;
         tabContentView.delegate = self;
         tabContentView.visibility = 0;
         [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
@@ -663,7 +663,7 @@ static const float kWidthFactor = 0.73;
     centerFrame.origin.x += kWidthFactor * self.bounds.size.width;
     _centerTabContentView = [[MOTabContentView alloc] initWithFrame:centerFrame];
     _centerTabContentView.delegate = self;
-    [_centerTabContentView addContentView:contentView];
+    _centerTabContentView.contentView = contentView;
     _centerTabContentView.visibility = 1;
     _centerTabContentView.alpha = 0;
     [_scrollView addSubview:_centerTabContentView];
@@ -746,5 +746,28 @@ static const float kWidthFactor = 0.73;
     [self bringSubviewToFront:_pageControl];
     _scrollView.scrollEnabled = YES;
 }
+
+- (UIView *)viewForIndex:(NSInteger)index {
+
+    if (index == _currentIndex) {
+        return _centerTabContentView.contentView;
+    } else if (index-1 == _currentIndex) {
+        return _rightTabContentView.contentView;
+    } else if (index+1 == _currentIndex) {
+        return _leftTabContentView.contentView;
+    } else {
+        return nil;
+    }
+}
+
+- (UIView *)selectedView {
+    
+    if (_centerTabContentView.isSelected) {
+        return _centerTabContentView.contentView;
+    } else {
+        return nil;
+    }
+}
+
 
 @end

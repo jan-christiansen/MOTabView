@@ -82,8 +82,8 @@ static const float kDeselectedTranslation = 20;
                                                  action:@selector(handleTap)];
         [_containerView addGestureRecognizer:tapRecognizer];
 
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        [_containerView addSubview:_contentView];
+//        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+//        [_containerView addSubview:_contentView];
 
         _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _deleteButton.frame = CGRectMake(0, 0, 30, 30);
@@ -116,6 +116,17 @@ static const float kDeselectedTranslation = 20;
     self.alpha = MAX(visibility, 0.5);
 }
 
+- (UIView *)contentView {
+
+    return _contentView;
+}
+
+- (void)setContentView:(UIView *)contentView {
+
+    _contentView = contentView;
+    [_containerView addSubview:_contentView];
+}
+
 
 #pragma mark - Handling Actions
 
@@ -133,14 +144,6 @@ static const float kDeselectedTranslation = 20;
 
     return ((CGRectContainsPoint(_deleteButton.frame, point)
              || CGRectContainsPoint(_containerView.frame, point)));
-}
-
-
-#pragma mark - Adding Content
-
-- (void)addContentView:(UIView *)contentView {
-
-    [_contentView addSubview:contentView];
 }
 
 
@@ -172,7 +175,7 @@ static const float kDeselectedTranslation = 20;
                                     _containerView.frame.origin.y);
     _deleteButton.center = newCenter;
     _deleteButton.alpha = 0;
-    
+
     _contentView.userInteractionEnabled = YES;
 }
 

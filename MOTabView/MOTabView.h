@@ -131,4 +131,16 @@ typedef enum {
 - (void)deleteCurrentView;
 
 
+/**
+ * Yields the view for a specific index if the view is currently visible. If it
+ * is not visible, the result is `nil`.
+ */
+- (UIView *)viewForIndex:(NSInteger)index;
+
+/**
+ * Yields the currently selected view if one is selected and `nil` otherwise.
+ */
+- (UIView *)selectedView;
+
+
 @end
