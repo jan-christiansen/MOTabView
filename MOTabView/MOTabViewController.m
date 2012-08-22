@@ -61,7 +61,7 @@
 
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self initialize];
+        [self initializeMOTabViewController];
     }
     return self;
 }
@@ -71,12 +71,12 @@
 
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [self initialize];
+        [self initializeMOTabViewController];
     }
     return self;
 }
 
-- (void)initialize {
+- (void)initializeMOTabViewController {
 
     CGRect tabViewFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44);
     _tabView = [[MOTabView alloc] initWithFrame:tabViewFrame];
