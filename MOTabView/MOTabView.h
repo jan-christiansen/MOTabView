@@ -64,11 +64,11 @@
 @protocol MOTabViewDelegate<NSObject>
 
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, MOTabViewEditingStyle) {
     MOTabViewEditingStyleNone,
     MOTabViewEditingStyleDelete,
     MOTabViewEditingStyleInsert
-} MOTabViewEditingStyle;
+};
 
 
 @optional
@@ -102,10 +102,10 @@ didSelectViewAtIndex:(NSInteger)index;
  * tab view in safari prior to iOS6, `MOTabViewAddNewTabAtNextIndex`
  * resembles iOS6.
  */
-typedef enum {
+typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
     MOTabViewAddingAtLastIndex,
     MOTabViewAddingAtNextIndex
-} MOTabViewAddinngStyle;
+};
 
 
 @property(assign, nonatomic) IBOutlet id<MOTabViewDataSource> dataSource;
