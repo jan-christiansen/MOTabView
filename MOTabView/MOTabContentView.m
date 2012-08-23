@@ -82,9 +82,6 @@ static const float kDeselectedTranslation = 20;
                                                  action:@selector(handleTap)];
         [_containerView addGestureRecognizer:tapRecognizer];
 
-//        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-//        [_containerView addSubview:_contentView];
-
         _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _deleteButton.frame = CGRectMake(0, 0, 30, 30);
         [_deleteButton setImage:[UIImage imageNamed:@"closeButton"]
@@ -94,7 +91,7 @@ static const float kDeselectedTranslation = 20;
                 forControlEvents:UIControlEventTouchUpInside];
         _deleteButton.center = self.frame.origin;
         _deleteButton.alpha = 0;
-        [self insertSubview:_deleteButton aboveSubview:_contentView];
+        [self insertSubview:_deleteButton aboveSubview:_containerView];
 
         [self deselectNonAnimated];
     }
