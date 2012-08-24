@@ -16,7 +16,6 @@
 		01193FCA15CABD680042D7D6 /* ExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01193FC915CABD680042D7D6 /* ExampleViewController.m */; };
 		01193FDE15CAC7330042D7D6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01193FDD15CAC7330042D7D6 /* QuartzCore.framework */; };
 		01395D3515CBDFF2003797E9 /* libMOTabView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01395D3315CBDEB1003797E9 /* libMOTabView.a */; };
-		01558ED715E7B60300F7C9B2 /* Warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 01558ED615E7B60300F7C9B2 /* Warnings.xcconfig */; };
 		01B1D7FD15D02DF300DFE12B /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FA15D02DF300DFE12B /* closeButton.png */; };
 		01B1D7FE15D02DF300DFE12B /* closeButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */; };
 /* End PBXBuildFile section */
@@ -175,7 +174,7 @@
 		01193F9115CABC790042D7D6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Jan Christiansen";
 			};
 			buildConfigurationList = 01193F9415CABC790042D7D6 /* Build configuration list for PBXProject "Example Application" */;
@@ -219,7 +218,6 @@
 				01193FA915CABC790042D7D6 /* InfoPlist.strings in Resources */,
 				01B1D7FD15D02DF300DFE12B /* closeButton.png in Resources */,
 				01B1D7FE15D02DF300DFE12B /* closeButton@2x.png in Resources */,
-				01558ED715E7B60300F7C9B2 /* Warnings.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

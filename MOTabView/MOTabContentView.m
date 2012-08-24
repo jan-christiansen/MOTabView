@@ -40,8 +40,8 @@
 #import "MOTabContentView.h"
 
 
-static const float kDeselectedScale = 0.6;
-static const float kDeselectedTranslation = 20;
+static const CGFloat kDeselectedScale = 0.6f;
+static const CGFloat kDeselectedTranslation = 20;
 
 
 @implementation MOTabContentView {

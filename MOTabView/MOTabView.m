@@ -43,15 +43,15 @@
 
 
 // colors used for the gradient in the background
-static const float kLightGrayRed = 0.57;
-static const float kLightGrayGreen = 0.63;
-static const float kLightGrayBlue = 0.68;
+static const CGFloat kLightGrayRed = 0.57f;
+static const CGFloat kLightGrayGreen = 0.63f;
+static const CGFloat kLightGrayBlue = 0.68f;
 
-static const float kDarkGrayRed = 0.31;
-static const float kDarkGrayGreen = 0.41;
-static const float kDarkGrayBlue = 0.48;
+static const CGFloat kDarkGrayRed = 0.31f;
+static const CGFloat kDarkGrayGreen = 0.41f;
+static const CGFloat kDarkGrayBlue = 0.48f;
 
-static const float kWidthFactor = 0.73;
+static const CGFloat kWidthFactor = 0.73f;
 
 
 @implementation MOTabView {
@@ -149,9 +149,9 @@ static const float kWidthFactor = 0.73;
     _titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
     _titleLabel.textColor = [UIColor whiteColor];
     _titleLabel.backgroundColor = [UIColor clearColor];
-    UIColor *shadowColor = [UIColor colorWithRed:0.4
-                                           green:0.47
-                                            blue:0.51
+    UIColor *shadowColor = [UIColor colorWithRed:0.4f
+                                           green:0.47f
+                                            blue:0.51f
                                            alpha:1];
     _titleLabel.shadowColor = [UIColor darkGrayColor];
     _titleLabel.shadowOffset = CGSizeMake(0, -1);
@@ -163,9 +163,9 @@ static const float kWidthFactor = 0.73;
     // subtitle label
     CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
     _subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
-    UIColor *subtitleColor = [UIColor colorWithRed:0.76
-                                             green:0.8
-                                              blue:0.83
+    UIColor *subtitleColor = [UIColor colorWithRed:0.76f
+                                             green:0.8f
+                                              blue:0.83f
                                              alpha:1];
     _subtitleLabel.textColor = subtitleColor;
     _subtitleLabel.backgroundColor = [UIColor clearColor];
@@ -386,8 +386,8 @@ static const float kWidthFactor = 0.73;
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
     CGFloat pageWidth = scrollView.frame.size.width;
-    float fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-    int newIndex = round(fractionalIndex);
+    CGFloat fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
+    int newIndex = (int) roundf(fractionalIndex);
 
     //
     int numberOfViews = [_dataSource numberOfViewsInTabView:self];
@@ -434,7 +434,7 @@ static const float kWidthFactor = 0.73;
         }
     }
 
-    float distance = fabs(round(fractionalIndex) - fractionalIndex);
+    CGFloat distance = fabsf(roundf(fractionalIndex) - fractionalIndex);
     _leftTabContentView.visibility = distance;
     _centerTabContentView.visibility = 1-distance;
     _rightTabContentView.visibility = distance;
@@ -448,8 +448,8 @@ static const float kWidthFactor = 0.73;
     if (!decelerate) {
 
         CGFloat pageWidth = scrollView.frame.size.width;
-        float ratio = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-        int page = round(ratio);
+        CGFloat ratio = scrollView.contentOffset.x / pageWidth / kWidthFactor;
+        int page = (int) roundf(ratio);
 
         [self scrollToViewAtIndex:page
                withTimingFunction:_easeOutTimingFunction
@@ -464,7 +464,7 @@ static const float kWidthFactor = 0.73;
     // adjust page control
     CGFloat pageWidth = scrollView.frame.size.width;
     float fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-    int index = round(fractionalIndex);
+    int index = (int) roundf(fractionalIndex);
 
     int nextIndex;
     if (fractionalIndex - _currentIndex > 0) {
