@@ -106,23 +106,23 @@
 #pragma mark - MOTabDataSource
 
 // dummy implementations that are overwritten when subclassing
-- (UIView *)tabView:(MOTabView *)tabView
-       viewForIndex:(NSInteger)index {
+- (UIView *)tabView:(MOTabView *)__unused tabView
+       viewForIndex:(NSInteger)__unused index {
 
     return nil;
 }
 
-- (NSInteger)numberOfViewsInTabView:(MOTabView *)tabView {
+- (NSInteger)numberOfViewsInTabView:(MOTabView *)__unused tabView {
 
     return 0;
 }
 
-- (NSString *)titleForIndex:(NSInteger)index {
+- (NSString *)titleForIndex:(NSInteger)__unused index {
     
     return @"";
 }
 
-- (NSString *)subtitleForIndex:(NSInteger)index {
+- (NSString *)subtitleForIndex:(NSInteger)__unused index {
 
     return @"";
 }
@@ -130,7 +130,8 @@
 
 #pragma mark - MOTabViewDelegate
 
-- (void)tabView:(MOTabView *)tabView willSelectViewAtIndex:(NSInteger)index {
+- (void)tabView:(MOTabView *)tabView
+willSelectViewAtIndex:(NSInteger)__unused index {
 
     UIBarButtonItem *space = [[UIBarButtonItem alloc]
                               initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
@@ -149,7 +150,8 @@
               animated:YES];
 }
 
-- (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSInteger)index {
+- (void)tabView:(MOTabView *)__unused tabView
+didSelectViewAtIndex:(NSInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -179,15 +181,15 @@
     [_toolbar setItems:items animated:YES];
 }
 
-- (void)tabViewDidDeselectView:(MOTabView *)tabView {
+- (void)tabViewDidDeselectView:(MOTabView *)__unused tabView {
 
     _toolbar.userInteractionEnabled = YES;
 }
 
 // dummy method, overwritten by subclass
-- (void)tabView:(MOTabView *)tabView
-   willEditView:(MOTabViewEditingStyle)editingStyle
-        atIndex:(int)index {
+- (void)tabView:(MOTabView *)__unused tabView
+   willEditView:(MOTabViewEditingStyle)__unused editingStyle
+        atIndex:(int)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -195,9 +197,9 @@
 }
 
 // dummy method, overwritten by subclass
-- (void)tabView:(MOTabView *)tabView
-    didEditView:(MOTabViewEditingStyle)editingStyle
-        atIndex:(int)index {
+- (void)tabView:(MOTabView *)__unused tabView
+    didEditView:(MOTabViewEditingStyle)__unused editingStyle
+        atIndex:(int)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 

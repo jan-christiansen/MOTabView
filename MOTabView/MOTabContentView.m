@@ -137,7 +137,7 @@ static const float kDeselectedTranslation = 20;
     [self.delegate tabContentViewDidTapDelete:self];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)__unused event {
 
     return ((CGRectContainsPoint(_deleteButton.frame, point)
              || CGRectContainsPoint(_containerView.frame, point)));
@@ -153,7 +153,7 @@ static const float kDeselectedTranslation = 20;
                          animations:^{
                              [self selectNonAnimated];
                          }
-                         completion:^(BOOL finished) {
+                         completion:^(BOOL __unused finished) {
                              [_delegate tabContentViewDidSelect:self];
                          }];
     } else {
@@ -183,7 +183,7 @@ static const float kDeselectedTranslation = 20;
                          animations:^{
                              [self deselectNonAnimated];
                          }
-                         completion:^(BOOL finished){
+                         completion:^(BOOL __unused finished){
                              [_delegate tabContentViewDidDeselect:self];
                          }];
     } else {

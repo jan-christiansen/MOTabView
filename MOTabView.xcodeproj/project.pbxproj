@@ -31,6 +31,7 @@
 		0180B79315CD17E200A06867 /* MOTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabView.m; path = MOTabView/MOTabView.m; sourceTree = SOURCE_ROOT; };
 		0180B79415CD17E200A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = MOTabView/MOTabViewController.h; sourceTree = SOURCE_ROOT; };
 		0180B79515CD17E200A06867 /* MOTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabViewController.m; path = MOTabView/MOTabViewController.m; sourceTree = SOURCE_ROOT; };
+		018D9C8015E682B60031FE94 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		01B1D7F815D02DEB00DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
 		01B1D7F915D02DEB00DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeButton@2x.png"; sourceTree = "<group>"; };
 		01DC9F381591F50300DBEE83 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -57,6 +58,7 @@
 				0160A7D51591CFC40095F791 /* MOScrollView */,
 				0160A7B21591CA540095F791 /* Frameworks */,
 				0160A7B11591CA540095F791 /* Products */,
+				018D9C8015E682B60031FE94 /* Warnings.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -200,6 +202,7 @@
 /* Begin XCBuildConfiguration section */
 		0160A7BB1591CA540095F791 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 018D9C8015E682B60031FE94 /* Warnings.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";

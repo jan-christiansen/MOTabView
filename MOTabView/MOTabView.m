@@ -205,7 +205,7 @@ static const float kWidthFactor = 0.73;
 }
 
 
-#pragma Getting and Setting Properties
+#pragma mark - Getting and Setting Properties
 
 - (id<MOTabViewDataSource>)dataSource {
 
@@ -336,7 +336,7 @@ static const float kWidthFactor = 0.73;
 #pragma mark - TabContentViewDelegate Methods
 
 // invoked when delete button is pressed
-- (void)tabContentViewDidTapDelete:(MOTabContentView *)tabContentView {
+- (void)tabContentViewDidTapDelete:(MOTabContentView *)__unused tabContentView {
 
     [self deleteCurrentView];
 }
@@ -359,7 +359,7 @@ static const float kWidthFactor = 0.73;
     }
 }
 
-- (void)tabContentViewDidSelect:(MOTabContentView *)tabContentView {
+- (void)tabContentViewDidSelect:(MOTabContentView *)__unused tabContentView {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -371,7 +371,7 @@ static const float kWidthFactor = 0.73;
     }
 }
 
-- (void)tabContentViewDidDeselect:(MOTabContentView *)tabContentView {
+- (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -381,12 +381,12 @@ static const float kWidthFactor = 0.73;
 
 #pragma mark - UIScrollViewDelegate
 
-- (void)scrollViewDidScroll:(UIScrollView *)sender {
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    CGFloat pageWidth = _scrollView.frame.size.width;
-    float fractionalIndex = _scrollView.contentOffset.x / pageWidth / kWidthFactor;
+    CGFloat pageWidth = scrollView.frame.size.width;
+    float fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
     int newIndex = round(fractionalIndex);
 
     //
@@ -447,8 +447,8 @@ static const float kWidthFactor = 0.73;
     // case that view decelerates is handled in scrollViewWillBeginDecelerating
     if (!decelerate) {
 
-        CGFloat pageWidth = _scrollView.frame.size.width;
-        float ratio = _scrollView.contentOffset.x / pageWidth / kWidthFactor;
+        CGFloat pageWidth = scrollView.frame.size.width;
+        float ratio = scrollView.contentOffset.x / pageWidth / kWidthFactor;
         int page = round(ratio);
 
         [self scrollToViewAtIndex:page
@@ -486,7 +486,7 @@ static const float kWidthFactor = 0.73;
     }
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)__unused scrollView {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -501,7 +501,7 @@ static const float kWidthFactor = 0.73;
                          animations:^{
                              _centerTabContentView.alpha = 1;
                          }
-                         completion:^(BOOL finished){
+                         completion:^(BOOL __unused finished){
                              [self selectCurrentView];
                          }];
     }
@@ -538,7 +538,7 @@ static const float kWidthFactor = 0.73;
     _scrollView.contentSize = newContentSize;
 
     // index where new tab is added
-    int newIndex;
+    int newIndex = 0;
     if (_addingStyle == MOTabViewAddingAtLastIndex) {
         int numberOfViews = [self.dataSource numberOfViewsInTabView:self];
         newIndex = numberOfViews;
@@ -608,7 +608,7 @@ static const float kWidthFactor = 0.73;
                              _centerTabContentView.frame = newCenterFrame;
                              _centerTabContentView.visibility = 0;
                          }
-                         completion:^(BOOL finished){
+                         completion:^(BOOL __unused finished){
 
                              // after changing frames the center view becomes
                              // the left view
@@ -619,7 +619,7 @@ static const float kWidthFactor = 0.73;
 // TODO: revise this code
                              MOTabView *temp = self;
                              [self addNewCenterViewAnimated:YES
-                                                 completion:^(BOOL finished) {
+                                                 completion:^(BOOL __unused finished) {
                                                      [temp selectCurrentView];
                                                  }];
                          }];
@@ -654,7 +654,7 @@ static const float kWidthFactor = 0.73;
 }
 
 // TODO: actually use this method
-- (void)addNewCenterViewAnimated:(BOOL)animated
+- (void)addNewCenterViewAnimated:(BOOL)__unused animated
                       completion:(void (^)(BOOL finished))completion {
 
     UIView *contentView = [_dataSource tabView:self
@@ -689,7 +689,7 @@ static const float kWidthFactor = 0.73;
                      animations:^{
                          _centerTabContentView.alpha = 0;
                      }
-                     completion:^(BOOL finished) {
+                     completion:^(BOOL __unused finished) {
                          [_centerTabContentView removeFromSuperview];
 
                          // the previous right view will be the new center view
@@ -715,7 +715,7 @@ static const float kWidthFactor = 0.73;
                                                   newRightFrame.origin.x -= kWidthFactor * self.bounds.size.width;
                                                   _rightTabContentView.frame = newRightFrame;
                                               }
-                                              completion:^(BOOL finished){
+                                              completion:^(BOOL __unused finished){
                                                   [self updatePageControl];
                                                   [self tabViewDidEditView];
                                               }];
