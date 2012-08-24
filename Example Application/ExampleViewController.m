@@ -82,7 +82,7 @@
                                    100);
     UILabel *label = [[UILabel alloc] initWithFrame:labelFrame];
     label.backgroundColor = [UIColor clearColor];
-    label.text = [_model objectAtIndex:index];
+    label.text = _model[index];
     label.font = [UIFont systemFontOfSize:50];
     label.textAlignment = UITextAlignmentCenter;
     [contentView addSubview:label];

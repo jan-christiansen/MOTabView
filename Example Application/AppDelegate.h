@@ -50,8 +50,8 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 
-@property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) ExampleViewController *exampleViewController;
+@property(strong, nonatomic) UIWindow *window;
+@property(strong, nonatomic) ExampleViewController *exampleViewController;
 
 
 @end

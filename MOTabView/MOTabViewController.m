@@ -47,9 +47,6 @@
 }
 
 
-@synthesize tabView = _tabView;
-
-
 #pragma mark - Initializing
 
 - (id)init {
@@ -146,8 +143,7 @@ willSelectViewAtIndex:(NSInteger)__unused index {
                                action:@selector(deselectCurrentView)];
 
     _toolbar.userInteractionEnabled = NO;
-    [_toolbar setItems:[NSArray arrayWithObjects:space, button, nil]
-              animated:YES];
+    [_toolbar setItems:@[space, button] animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
@@ -175,7 +171,7 @@ didSelectViewAtIndex:(NSInteger)__unused index {
                                style:UIBarButtonItemStyleDone
                                target:tabView
                                action:@selector(selectCurrentView)];
-    NSArray *items = [NSArray arrayWithObjects:addViewButton, space, button, nil];
+    NSArray *items = @[addViewButton, space, button];
 
     _toolbar.userInteractionEnabled = NO;
     [_toolbar setItems:items animated:YES];

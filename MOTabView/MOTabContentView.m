@@ -53,12 +53,9 @@ static const CGFloat kDeselectedTranslation = 20;
     UIButton *_deleteButton;
 
     BOOL _selected;
+
+    float _visibility;
 }
-
-
-@synthesize delegate = _delegate;
-@synthesize isSelected = _isSelected;
-@synthesize visibility = _visibility;
 
 
 #pragma mark - Intialization

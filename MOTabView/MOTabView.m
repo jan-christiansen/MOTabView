@@ -56,6 +56,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
 @implementation MOTabView {
 
+    id _delegate;
+
     // cache whehter delegate responds to methods
     BOOL _delegateRespondsToWillSelect;
     BOOL _delegateRespondsToWillDeselect;
@@ -89,10 +91,6 @@ static const CGFloat kWidthFactor = 0.73f;
     // if true the last view is hidden when scrolling
     BOOL _hideLastTabContentView;
 }
-
-
-@synthesize delegate = _delegate;
-@synthesize addingStyle = _addingStyle;
 
 
 #pragma mark - Initialization
@@ -140,7 +138,7 @@ static const CGFloat kWidthFactor = 0.73f;
                                          blue:kDarkGrayBlue
                                         alpha:1.0];
 
-    gradientLayer.colors = [NSArray arrayWithObjects:(id) lightGray.CGColor, (id) darkGray.CGColor, nil];
+    gradientLayer.colors = @[(id) lightGray.CGColor, (id) darkGray.CGColor];
     [_backgroundView.layer addSublayer:gradientLayer];
     [self addSubview:_backgroundView];
 

@@ -43,10 +43,6 @@
 @implementation AppDelegate
 
 
-@synthesize window = _window;
-@synthesize exampleViewController = _exampleViewController;
-
-
 - (BOOL)application:(UIApplication *)application 
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
