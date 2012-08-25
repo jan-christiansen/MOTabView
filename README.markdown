@@ -41,6 +41,15 @@ Usage
 Import the static library as a sub-project into your main project.
 
 
+Requirements
+------------
+
+You need iOS 4 or later as the library uses automatic reference
+counting lite. Furthermore, as the library uses the new enum
+declaration style you need XCode 4.5, which is currently only
+available as developer preview.
+
+
 License
 -------
 
