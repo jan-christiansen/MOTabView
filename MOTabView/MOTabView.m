@@ -551,11 +551,11 @@ static const CGFloat kWidthFactor = 0.73f;
 
     if (_addingStyle == MOTabViewAddingAtLastIndex) {
 
-        _hideLastTabContentView = YES;
-
         if (_currentIndex + 1 == newIndex) {
             _rightTabContentView = [self tabContentViewAtIndex:newIndex];
             _rightTabContentView.hidden = YES;
+        } else {
+            _hideLastTabContentView = YES;
         }
 
         CFTimeInterval duration;
