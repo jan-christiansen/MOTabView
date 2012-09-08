@@ -117,6 +117,7 @@ static const CGFloat kDeselectedTranslation = 20;
 
 - (void)setContentView:(UIView *)contentView {
 
+    contentView.userInteractionEnabled = _contentView.userInteractionEnabled;
     _contentView = contentView;
     [_containerView addSubview:_contentView];
 }
