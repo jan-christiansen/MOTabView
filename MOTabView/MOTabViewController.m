@@ -90,8 +90,8 @@
 
     [super viewWillAppear:animated];
 
-    _tabView.dataSource = self;
     _tabView.delegate = self;
+    _tabView.dataSource = self;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

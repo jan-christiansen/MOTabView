@@ -41,14 +41,13 @@
 
 
 static const CGFloat kDeselectedScale = 0.6f;
-static const CGFloat kDeselectedTranslation = 20;
+static const CGFloat kDeselectedOriginY = 20;
 
 
 @implementation MOTabContentView {
 
     UIView *_containerView;
     UIView *_contentView;
-    UIView *_overlayView;
 
     UIButton *_deleteButton;
 
@@ -194,8 +193,9 @@ static const CGFloat kDeselectedTranslation = 20;
 
 - (void)deselectNonAnimated {
 
-    CGAffineTransform scale = CGAffineTransformMakeScale(kDeselectedScale, kDeselectedScale);
-    CGAffineTransform transform = CGAffineTransformTranslate(scale, 0, kDeselectedTranslation);
+    float deselectedTranslation = kDeselectedOriginY - self.frame.origin.y;
+    CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
+    CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
     _containerView.transform = transform;
 
     CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,

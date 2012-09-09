@@ -90,6 +90,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // if true the last view is hidden when scrolling
     BOOL _hideLastTabContentView;
+
+    BOOL _navigationBarHidden;
 }
 
 
@@ -200,10 +202,39 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
+
+    _navigationBarHidden = NO;
+}
+
+- (MOTabContentView *)tabContentView {
+
+    CGRect contentViewFrame = self.bounds;
+    if (!_navigationBarHidden) {
+        contentViewFrame.origin.y = contentViewFrame.origin.y + 44;
+    }
+    return [[MOTabContentView alloc] initWithFrame:contentViewFrame];
 }
 
 
 #pragma mark - Getting and Setting Properties
+
+- (BOOL)navigationBarHidden {
+
+    return _navigationBarHidden;
+}
+
+- (void)setNavigationBarHidden:(BOOL)navigationBarHidden {
+
+    _navigationBarHidden = navigationBarHidden;
+
+    if (!_navigationBarHidden) {
+        CGRect navigationBarFrame = CGRectMake(0, 0, self.bounds.size.width, 44);
+        _navigationBar = [[UINavigationBar alloc] initWithFrame:navigationBarFrame];
+        UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:@""];
+        [_navigationBar pushNavigationItem:item animated:NO];
+        [self addSubview:_navigationBar];
+    }
+}
 
 - (id<MOTabViewDataSource>)dataSource {
 
@@ -226,7 +257,7 @@ static const CGFloat kWidthFactor = 0.73f;
     // initialize center view
     if (numberOfViews > 0) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:0];
-        _centerTabContentView = [[MOTabContentView alloc] initWithFrame:self.bounds];
+        _centerTabContentView = [self tabContentView];
         _centerTabContentView.delegate = self;
         _centerTabContentView.contentView = contentView;
         [_centerTabContentView selectAnimated:NO];
@@ -235,6 +266,10 @@ static const CGFloat kWidthFactor = 0.73f;
 
         // initialize right view
         _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
+    }
+
+    if (!_navigationBarHidden) {
+        _navigationBar.topItem.title = [self.dataSource titleForIndex:_currentIndex];
     }
 }
 
@@ -734,6 +769,16 @@ static const CGFloat kWidthFactor = 0.73f;
     [_scrollView bringSubviewToFront:_centerTabContentView];
     [_centerTabContentView selectAnimated:YES];
     _scrollView.scrollEnabled = NO;
+
+    NSString *title = [self.dataSource titleForIndex:_currentIndex];
+    _navigationBar.topItem.title = title;
+
+    if (!_navigationBarHidden) {
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             _navigationBar.alpha = 1;
+                         }];
+    }
 }
 
 - (void)deselectCurrentView {
@@ -743,6 +788,13 @@ static const CGFloat kWidthFactor = 0.73f;
     [_centerTabContentView deselectAnimated:YES];
     [self bringSubviewToFront:_pageControl];
     _scrollView.scrollEnabled = YES;
+
+    if (!_navigationBarHidden) {
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             _navigationBar.alpha = 0;
+                         }];
+    }
 }
 
 - (UIView *)viewForIndex:(NSInteger)index {

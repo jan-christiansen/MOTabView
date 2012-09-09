@@ -111,6 +111,9 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 @property(assign, nonatomic) IBOutlet id<MOTabViewDataSource> dataSource;
 @property(assign, nonatomic) IBOutlet id<MOTabViewDelegate> delegate;
 
+@property(assign, nonatomic) BOOL navigationBarHidden;
+@property(strong, nonatomic) UINavigationBar *navigationBar;
+
 
 /// @name Configuring a TabView
 
