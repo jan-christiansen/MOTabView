@@ -76,12 +76,11 @@ typedef NS_ENUM(NSUInteger, MOTabViewEditingStyle) {
 - (void)tabView:(MOTabView *)tabView
 willSelectViewAtIndex:(NSInteger)index;
 
-- (void)tabViewWillDeselectView:(MOTabView *)tabView;
+- (void)tabView:(MOTabView *)tabView willDeselectViewAtIndex:(NSInteger)index;
 
-- (void)tabView:(MOTabView *)tabView
-didSelectViewAtIndex:(NSInteger)index;
+- (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSInteger)index;
 
-- (void)tabViewDidDeselectView:(MOTabView *)tabView;
+- (void)tabView:(MOTabView *)tabView didDeselectViewAtIndex:(NSInteger)index;
 
 - (void)tabView:(MOTabView* )tabView
    willEditView:(MOTabViewEditingStyle)editingStyle

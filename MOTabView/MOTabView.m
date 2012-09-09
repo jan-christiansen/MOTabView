@@ -284,9 +284,9 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // save whether the delegate responds to the delegate methods
     _delegateRespondsToWillSelect = [_delegate respondsToSelector:@selector(tabView:willSelectViewAtIndex:)];
-    _delegateRespondsToWillDeselect = [_delegate respondsToSelector:@selector(tabViewWillDeselectView:)];
+    _delegateRespondsToWillDeselect = [_delegate respondsToSelector:@selector(tabView:willDeselectViewAtIndex:)];
     _delegateRespondsToDidSelect = [_delegate respondsToSelector:@selector(tabView:didSelectViewAtIndex:)];
-    _delegateRespondsToDidDeselect = [_delegate respondsToSelector:@selector(tabViewDidDeselectView:)];
+    _delegateRespondsToDidDeselect = [_delegate respondsToSelector:@selector(tabView:didDeselectViewAtIndex:)];
     _delegateRespondsToWillEdit = [_delegate respondsToSelector:@selector(tabView:willEditView:atIndex:)];
     _delegateRespondsToDidEdit = [_delegate respondsToSelector:@selector(tabView:didEditView:atIndex:)];
 
@@ -314,14 +314,14 @@ static const CGFloat kWidthFactor = 0.73f;
 - (void)tabViewWillDeselectView {
 
     if (_delegateRespondsToWillDeselect) {
-        [_delegate tabViewWillDeselectView:self];
+        [_delegate tabView:self willDeselectViewAtIndex:_currentIndex];
     }
 }
 
 - (void)tabViewDidDeselectView {
 
-    if (_delegateRespondsToDidSelect) {
-        [_delegate tabViewDidDeselectView:self];
+    if (_delegateRespondsToDidDeselect) {
+        [_delegate tabView:self didDeselectViewAtIndex:_currentIndex];
     }
 }
 

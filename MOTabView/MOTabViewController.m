@@ -154,7 +154,8 @@ didSelectViewAtIndex:(NSInteger)__unused index {
     _toolbar.userInteractionEnabled = YES;
 }
 
-- (void)tabViewWillDeselectView:(MOTabView *)tabView {
+- (void)tabView:(MOTabView *)tabView
+willDeselectViewAtIndex:(NSInteger)__unused index {
 
     // update toolbar when a page view is deselected
     UIBarButtonItem *addViewButton = [[UIBarButtonItem alloc]
@@ -177,7 +178,8 @@ didSelectViewAtIndex:(NSInteger)__unused index {
     [_toolbar setItems:items animated:YES];
 }
 
-- (void)tabViewDidDeselectView:(MOTabView *)__unused tabView {
+- (void)tabView:(MOTabView *)__unused tabView
+didDeselectViewAtIndex:(NSInteger)__unused index {
 
     _toolbar.userInteractionEnabled = YES;
 }
