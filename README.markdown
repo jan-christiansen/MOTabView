@@ -34,6 +34,14 @@ behavior of safari prior to iOS6. If the property is set
 `MOTabViewAddingAtNextIndex` a new tab is added to the right of the
 current tab. This behaviour resembles safari in iOS6.
 
+###NavigationBar###
+
+The class `MOTabView` provides a property `navigationBarHidden` that
+determines whether the view shows a navigation bar when a view is
+selected. The bar displays the text that is provided by
+`titleForIndex:`. Similar to the safari ios view the navigation bar
+disappears when another tab is selected.
+
 
 Usage
 -----
