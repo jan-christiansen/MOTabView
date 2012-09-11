@@ -41,7 +41,7 @@
 
 
 static const CGFloat kDeselectedScale = 0.6f;
-static const CGFloat kDeselectedOriginY = -30;
+static const CGFloat kDeselectedOriginY = 20;
 
 
 @implementation MOTabContentView {
@@ -205,7 +205,7 @@ static const CGFloat kDeselectedOriginY = -30;
 
 - (void)deselectNonAnimated {
 
-    float deselectedTranslation = kDeselectedOriginY - _containerView.frame.origin.y;
+    float deselectedTranslation = kDeselectedOriginY - self.frame.origin.y;
     CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
     CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
     _containerView.transform = transform;
