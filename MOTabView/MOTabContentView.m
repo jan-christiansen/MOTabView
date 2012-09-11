@@ -41,7 +41,7 @@
 
 
 static const CGFloat kDeselectedScale = 0.6f;
-static const CGFloat kDeselectedOriginY = 20;
+static const CGFloat kDeselectedOriginY = -30;
 
 
 @implementation MOTabContentView {
@@ -141,9 +141,21 @@ static const CGFloat kDeselectedOriginY = 20;
 }
 
 
+#pragma mark - Utility Methods
+
+- (void)recenterDeleteButton {
+
+    CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,
+                                    _containerView.frame.origin.y);
+    _deleteButton.center = newCenter;
+}
+
+
 #pragma mark - Selecting and Deselecting
 
 - (void)selectAnimated:(BOOL)animated {
+
+    [self recenterDeleteButton];
 
     if (animated) {
         [UIView animateWithDuration:0.25
@@ -165,15 +177,15 @@ static const CGFloat kDeselectedOriginY = 20;
 
     _containerView.transform = CGAffineTransformIdentity;
 
-    CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,
-                                    _containerView.frame.origin.y);
-    _deleteButton.center = newCenter;
+    [self recenterDeleteButton];
     _deleteButton.alpha = 0;
 
     _contentView.userInteractionEnabled = YES;
 }
 
 - (void)deselectAnimated:(BOOL)animated {
+
+    [self recenterDeleteButton];
 
     if (animated) {
         [UIView animateWithDuration:0.25
@@ -193,14 +205,12 @@ static const CGFloat kDeselectedOriginY = 20;
 
 - (void)deselectNonAnimated {
 
-    float deselectedTranslation = kDeselectedOriginY - self.frame.origin.y;
+    float deselectedTranslation = kDeselectedOriginY - _containerView.frame.origin.y;
     CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
     CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
     _containerView.transform = transform;
 
-    CGPoint newCenter = CGPointMake(_containerView.frame.origin.x,
-                                    _containerView.frame.origin.y);
-    _deleteButton.center = newCenter;
+    [self recenterDeleteButton];
     _deleteButton.alpha = 1;
 
     _contentView.userInteractionEnabled = NO;

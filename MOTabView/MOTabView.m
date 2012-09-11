@@ -210,6 +210,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     CGRect contentViewFrame = self.bounds;
     if (!_navigationBarHidden) {
+#warning should not use static size
         contentViewFrame.origin.y = contentViewFrame.origin.y + 44;
     }
     return [[MOTabContentView alloc] initWithFrame:contentViewFrame];
