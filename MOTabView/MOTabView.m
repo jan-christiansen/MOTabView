@@ -403,6 +403,8 @@ static const CGFloat kWidthFactor = 0.73f;
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         [self tabViewDidEditView];
     }
+
+    [self sendSubviewToBack:_pageControl];
 }
 
 - (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
