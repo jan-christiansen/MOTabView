@@ -403,13 +403,13 @@ static const CGFloat kWidthFactor = 0.73f;
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         [self tabViewDidEditView];
     }
-
-    [self sendSubviewToBack:_pageControl];
 }
 
 - (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
+
+    [self bringSubviewToFront:_pageControl];
 
     [self tabViewDidDeselectView];
 }
@@ -777,6 +777,7 @@ static const CGFloat kWidthFactor = 0.73f;
     [self tabViewWillSelectView];
 
     [_scrollView bringSubviewToFront:_centerTabContentView];
+    [self bringSubviewToFront:_scrollView];
     [_centerTabContentView selectAnimated:YES];
     _scrollView.scrollEnabled = NO;
 
@@ -796,7 +797,6 @@ static const CGFloat kWidthFactor = 0.73f;
     [self tabViewWillDeselectView];
 
     [_centerTabContentView deselectAnimated:YES];
-    [self bringSubviewToFront:_pageControl];
     _scrollView.scrollEnabled = YES;
 
     if (!_navigationBarHidden) {
