@@ -547,6 +547,11 @@ static const CGFloat kWidthFactor = 0.73f;
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         _editingStyle = MOTabViewEditingStyleNone;
     }
+    
+    if (_editingStyle == MOTabViewEditingStyleDelete) {
+        [self tabViewDidEditView];
+        _editingStyle = MOTabViewEditingStyleNone;
+    }
 }
 
 
