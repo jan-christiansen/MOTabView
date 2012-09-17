@@ -69,7 +69,7 @@ static const CGFloat kWidthFactor = 0.73f;
     id<MOTabViewDataSource> _dataSource;
 
     // index of the current center view
-    int _currentIndex;
+    NSUInteger _currentIndex;
 
     UIView *_backgroundView;
     MOScrollView *_scrollView;
@@ -251,7 +251,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     _currentIndex = 0;
 
-    NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
     _scrollView.contentSize = CGSizeMake((1 + kWidthFactor * (numberOfViews-1)) * self.bounds.size.width,
                                          self.bounds.size.height);
 
@@ -354,14 +354,14 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)updatePageControl {
 
-    NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
     _pageControl.numberOfPages = numberOfViews;
     _pageControl.currentPage = _currentIndex;
 }
 
 - (IBAction)changePage:(UIPageControl *)pageControl {
 
-    [self scrollToViewAtIndex:pageControl.currentPage
+    [self scrollToViewAtIndex:(NSUInteger) pageControl.currentPage
            withTimingFunction:_easeInEaseOutTimingFunction
                      duration:0.5];
 }
@@ -423,13 +423,14 @@ static const CGFloat kWidthFactor = 0.73f;
 
     CGFloat pageWidth = scrollView.frame.size.width;
     CGFloat fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-    int newIndex = (int) roundf(fractionalIndex);
+    NSInteger potentialIndex = (NSInteger) roundf(fractionalIndex);
 
     //
-    int numberOfViews = [_dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
 
-    if (newIndex >= 0 && newIndex < numberOfViews) {
+    if (potentialIndex >= 0 && potentialIndex < (NSInteger) numberOfViews) {
 
+        NSUInteger newIndex = (NSUInteger) potentialIndex;
         if (newIndex > _currentIndex) {
 
             _currentIndex = newIndex;
@@ -485,9 +486,9 @@ static const CGFloat kWidthFactor = 0.73f;
 
         CGFloat pageWidth = scrollView.frame.size.width;
         CGFloat ratio = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-        int page = (int) roundf(ratio);
+        NSUInteger newIndex = (NSUInteger) roundf(ratio);
 
-        [self scrollToViewAtIndex:page
+        [self scrollToViewAtIndex:newIndex
                withTimingFunction:_easeOutTimingFunction
                          duration:0.3];
 //        CGPoint contentOffset = CGPointMake(page * kWidthFactor * self.bounds.size.width, 0);
@@ -500,18 +501,19 @@ static const CGFloat kWidthFactor = 0.73f;
     // adjust page control
     CGFloat pageWidth = scrollView.frame.size.width;
     float fractionalIndex = scrollView.contentOffset.x / pageWidth / kWidthFactor;
-    int index = (int) roundf(fractionalIndex);
+    NSInteger index = (NSInteger) roundf(fractionalIndex);
 
-    int nextIndex;
+    NSInteger potentialIndex;
     if (fractionalIndex - _currentIndex > 0) {
-        nextIndex = index + 1;
+        potentialIndex = index + 1;
     } else {
-        nextIndex = index - 1;
+        potentialIndex = index - 1;
     }
 
-    NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
-    if (nextIndex >= 0 && nextIndex < numberOfViews) {
+    if (potentialIndex >= 0 && potentialIndex < (NSInteger) numberOfViews) {
+        NSUInteger nextIndex = (NSUInteger) potentialIndex;
         // stop deceleration
         [scrollView setContentOffset:scrollView.contentOffset animated:YES];
 
@@ -550,7 +552,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
 #pragma mark - 
 
-- (void)scrollToViewAtIndex:(int)newIndex
+- (void)scrollToViewAtIndex:(NSUInteger)newIndex
          withTimingFunction:(CAMediaTimingFunction *)timingFunction
                    duration:(CFTimeInterval)duration {
 
@@ -574,9 +576,9 @@ static const CGFloat kWidthFactor = 0.73f;
     _scrollView.contentSize = newContentSize;
 
     // index where new tab is added
-    int newIndex = 0;
+    NSUInteger newIndex = 0;
     if (_addingStyle == MOTabViewAddingAtLastIndex) {
-        int numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+        NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
         newIndex = numberOfViews;
     } else if (_addingStyle == MOTabViewAddingAtNextIndex) {
         newIndex = _currentIndex + 1;
@@ -597,7 +599,7 @@ static const CGFloat kWidthFactor = 0.73f;
         }
 
         CFTimeInterval duration;
-        if (abs(newIndex - _currentIndex) > 3) {
+        if (abs((NSInteger) (newIndex - _currentIndex)) > 3) {
             duration = 1;
         } else {
             duration = 0.5;
@@ -663,20 +665,20 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
-- (CGRect)newFrame:(CGRect)frame forIndex:(int)index {
+- (CGRect)newFrame:(CGRect)frame forIndex:(NSUInteger)index {
 
-    int factor = index - _currentIndex;
+    NSUInteger factor = index - _currentIndex;
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
     return newFrame;
 }
 
-- (MOTabContentView *)tabContentViewAtIndex:(int)index {
+- (MOTabContentView *)tabContentViewAtIndex:(NSUInteger)index {
 
-    NSInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
     MOTabContentView *tabContentView = nil;
 
-    if (index >= 0 && index < numberOfViews) {
+    if (index < numberOfViews) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:index];
         CGRect newFrame = [self newFrame:_centerTabContentView.frame forIndex:index];
         tabContentView = [[MOTabContentView alloc] initWithFrame:newFrame];
@@ -716,7 +718,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     _editingStyle = MOTabViewEditingStyleDelete;
 
-    NSInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
     // inform delegate that view will be deleted
     [self tabViewWillEditView];
@@ -800,7 +802,7 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
-- (UIView *)viewForIndex:(NSInteger)index {
+- (UIView *)viewForIndex:(NSUInteger)index {
 
     if (index == _currentIndex) {
         return _centerTabContentView.contentView;

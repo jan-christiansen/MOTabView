@@ -48,14 +48,14 @@
 
 
 - (UIView *)tabView:(MOTabView *)tabView
-       viewForIndex:(NSInteger)index;
+       viewForIndex:(NSUInteger)index;
 
-- (NSInteger)numberOfViewsInTabView:(MOTabView *)tabView;
+- (NSUInteger)numberOfViewsInTabView:(MOTabView *)tabView;
 
 @optional
-- (NSString *)titleForIndex:(NSInteger)index;
+- (NSString *)titleForIndex:(NSUInteger)index;
 
-- (NSString *)subtitleForIndex:(NSInteger)index;
+- (NSString *)subtitleForIndex:(NSUInteger)index;
 
 
 @end
@@ -74,21 +74,21 @@ typedef NS_ENUM(NSUInteger, MOTabViewEditingStyle) {
 @optional
 
 - (void)tabView:(MOTabView *)tabView
-willSelectViewAtIndex:(NSInteger)index;
+willSelectViewAtIndex:(NSUInteger)index;
 
-- (void)tabView:(MOTabView *)tabView willDeselectViewAtIndex:(NSInteger)index;
+- (void)tabView:(MOTabView *)tabView willDeselectViewAtIndex:(NSUInteger)index;
 
-- (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSInteger)index;
+- (void)tabView:(MOTabView *)tabView didSelectViewAtIndex:(NSUInteger)index;
 
-- (void)tabView:(MOTabView *)tabView didDeselectViewAtIndex:(NSInteger)index;
+- (void)tabView:(MOTabView *)tabView didDeselectViewAtIndex:(NSUInteger)index;
 
 - (void)tabView:(MOTabView* )tabView
    willEditView:(MOTabViewEditingStyle)editingStyle
-        atIndex:(int)index;
+        atIndex:(NSUInteger)index;
 
 - (void)tabView:(MOTabView *)tabView
     didEditView:(MOTabViewEditingStyle)editingStyle
-        atIndex:(int)index;
+        atIndex:(NSUInteger)index;
 
 
 @end
@@ -120,7 +120,7 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 @property(assign, nonatomic) MOTabViewAddinngStyle addingStyle;
 
 
-- (void)scrollToViewAtIndex:(int)newIndex
+- (void)scrollToViewAtIndex:(NSUInteger)newIndex
          withTimingFunction:(CAMediaTimingFunction *)timingFunction
                    duration:(CFTimeInterval)duration;
 
@@ -137,7 +137,7 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
  * Yields the view for a specific index if the view is currently visible. If it
  * is not visible, the result is `nil`.
  */
-- (UIView *)viewForIndex:(NSInteger)index;
+- (UIView *)viewForIndex:(NSUInteger)index;
 
 /**
  * Yields the currently selected view if one is selected and `nil` otherwise.

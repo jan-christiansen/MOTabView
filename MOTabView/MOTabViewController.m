@@ -104,22 +104,22 @@
 
 // dummy implementations that are overwritten when subclassing
 - (UIView *)tabView:(MOTabView *)__unused tabView
-       viewForIndex:(NSInteger)__unused index {
+       viewForIndex:(NSUInteger)__unused index {
 
     return nil;
 }
 
-- (NSInteger)numberOfViewsInTabView:(MOTabView *)__unused tabView {
+- (NSUInteger)numberOfViewsInTabView:(MOTabView *)__unused tabView {
 
     return 0;
 }
 
-- (NSString *)titleForIndex:(NSInteger)__unused index {
+- (NSString *)titleForIndex:(NSUInteger)__unused index {
     
     return @"";
 }
 
-- (NSString *)subtitleForIndex:(NSInteger)__unused index {
+- (NSString *)subtitleForIndex:(NSUInteger)__unused index {
 
     return @"";
 }
@@ -128,13 +128,13 @@
 #pragma mark - MOTabViewDelegate
 
 - (void)tabView:(MOTabView *)tabView
-willSelectViewAtIndex:(NSInteger)__unused index {
+willSelectViewAtIndex:(NSUInteger)__unused index {
 
     UIBarButtonItem *space = [[UIBarButtonItem alloc]
                               initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                               target:nil
                               action:nil];
-    int numberOfViews = [self numberOfViewsInTabView:tabView];
+    NSUInteger numberOfViews = [self numberOfViewsInTabView:tabView];
     NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
     UIBarButtonItem *button = [[UIBarButtonItem alloc]
                                initWithTitle:buttonTitle
@@ -147,7 +147,7 @@ willSelectViewAtIndex:(NSInteger)__unused index {
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
-didSelectViewAtIndex:(NSInteger)__unused index {
+didSelectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -155,7 +155,7 @@ didSelectViewAtIndex:(NSInteger)__unused index {
 }
 
 - (void)tabView:(MOTabView *)tabView
-willDeselectViewAtIndex:(NSInteger)__unused index {
+willDeselectViewAtIndex:(NSUInteger)__unused index {
 
     // update toolbar when a page view is deselected
     UIBarButtonItem *addViewButton = [[UIBarButtonItem alloc]
@@ -179,7 +179,7 @@ willDeselectViewAtIndex:(NSInteger)__unused index {
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
-didDeselectViewAtIndex:(NSInteger)__unused index {
+didDeselectViewAtIndex:(NSUInteger)__unused index {
 
     _toolbar.userInteractionEnabled = YES;
 }
@@ -187,7 +187,7 @@ didDeselectViewAtIndex:(NSInteger)__unused index {
 // dummy method, overwritten by subclass
 - (void)tabView:(MOTabView *)__unused tabView
    willEditView:(MOTabViewEditingStyle)__unused editingStyle
-        atIndex:(int)__unused index {
+        atIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -197,7 +197,7 @@ didDeselectViewAtIndex:(NSInteger)__unused index {
 // dummy method, overwritten by subclass
 - (void)tabView:(MOTabView *)__unused tabView
     didEditView:(MOTabViewEditingStyle)__unused editingStyle
-        atIndex:(int)__unused index {
+        atIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
