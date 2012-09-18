@@ -72,7 +72,7 @@
 
 #pragma mark - TabViewDataSource
 
-- (UIView *)tabView:(MOTabView *)tabView viewForIndex:(NSInteger)index {
+- (UIView *)tabView:(MOTabView *)tabView viewForIndex:(NSUInteger)index {
 
     UIView *contentView = [[UIView alloc] initWithFrame:tabView.bounds];
     contentView.backgroundColor = [UIColor whiteColor];
@@ -89,17 +89,17 @@
     return contentView;
 }
 
-- (NSInteger)numberOfViewsInTabView:(MOTabView *)tabView {
+- (NSUInteger)numberOfViewsInTabView:(MOTabView *)tabView {
 
     return _model.count;
 }
 
-- (NSString *)titleForIndex:(NSInteger)index {
+- (NSString *)titleForIndex:(NSUInteger)index {
     
     return [NSString stringWithFormat:@"Title for tab %d", index+1];
 }
 
-- (NSString *)subtitleForIndex:(NSInteger)index {
+- (NSString *)subtitleForIndex:(NSUInteger)index {
     
     return [NSString stringWithFormat:@"This is the subtitle for tab %d", index+1];
 }
@@ -109,7 +109,7 @@
 
 - (void)tabView:(MOTabView *)tabView
    willEditView:(MOTabViewEditingStyle)editingStyle
-        atIndex:(int)index {
+        atIndex:(NSUInteger)index {
 
     [super tabView:tabView willEditView:editingStyle atIndex:index];
 
