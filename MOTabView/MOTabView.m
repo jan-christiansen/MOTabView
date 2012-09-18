@@ -672,7 +672,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (CGRect)newFrame:(CGRect)frame forIndex:(NSUInteger)index {
 
-    NSUInteger factor = index - _currentIndex;
+    NSInteger factor = (NSInteger) index - (NSInteger) _currentIndex;
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
     return newFrame;
