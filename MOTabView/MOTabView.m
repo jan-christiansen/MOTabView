@@ -203,7 +203,7 @@ static const CGFloat kWidthFactor = 0.73f;
     // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
 
-    _navigationBarHidden = NO;
+    _navigationBarHidden = YES;
 }
 
 - (MOTabContentView *)tabContentView {
