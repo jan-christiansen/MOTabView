@@ -54,6 +54,8 @@ static const CGFloat kDeselectedOriginY = 20;
     BOOL _selected;
 
     float _visibility;
+
+    UITapGestureRecognizer *_tapRecognizer;
 }
 
 
@@ -73,10 +75,10 @@ static const CGFloat kDeselectedOriginY = 20;
         CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:_containerView.layer.bounds].CGPath;
         _containerView.layer.shadowPath = shadowPath;
 
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
-                                                 initWithTarget:self
-                                                 action:@selector(handleTap)];
-        [_containerView addGestureRecognizer:tapRecognizer];
+        _tapRecognizer = [[UITapGestureRecognizer alloc]
+                          initWithTarget:self
+                          action:@selector(handleTap)];
+        [_containerView addGestureRecognizer:_tapRecognizer];
 
         _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _deleteButton.frame = CGRectMake(0, 0, 30, 30);
@@ -163,10 +165,12 @@ static const CGFloat kDeselectedOriginY = 20;
                              [self selectNonAnimated];
                          }
                          completion:^(BOOL __unused finished) {
+                             _tapRecognizer.enabled = NO;
                              [_delegate tabContentViewDidSelect:self];
                          }];
     } else {
         [self selectNonAnimated];
+        _tapRecognizer.enabled = NO;
         [_delegate tabContentViewDidSelect:self];
     }
 
@@ -193,10 +197,12 @@ static const CGFloat kDeselectedOriginY = 20;
                              [self deselectNonAnimated];
                          }
                          completion:^(BOOL __unused finished){
+                             _tapRecognizer.enabled = YES;
                              [_delegate tabContentViewDidDeselect:self];
                          }];
     } else {
         [self deselectNonAnimated];
+        _tapRecognizer.enabled = YES;
         [_delegate tabContentViewDidDeselect:self];
     }
 
