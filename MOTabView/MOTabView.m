@@ -92,6 +92,9 @@ static const CGFloat kWidthFactor = 0.73f;
     BOOL _hideLastTabContentView;
 
     BOOL _navigationBarHidden;
+
+    // y component of contentOffset, saved if content views are table views
+    NSMutableArray *_offsets;
 }
 
 
@@ -204,6 +207,8 @@ static const CGFloat kWidthFactor = 0.73f;
     _addingStyle = MOTabViewAddingAtLastIndex;
 
     _navigationBarHidden = YES;
+
+    _offsets = @[].mutableCopy;
 }
 
 - (MOTabContentView *)tabContentView {
@@ -211,7 +216,7 @@ static const CGFloat kWidthFactor = 0.73f;
     CGRect contentViewFrame = self.frame;
     if (!_navigationBarHidden) {
         // if the navigation bar is shown the content is offset
-        contentViewFrame.origin.y = contentViewFrame.origin.y + _navigationBar.bounds.size.height;
+        contentViewFrame.origin.y += _navigationBar.bounds.size.height;
     }
     return [[MOTabContentView alloc] initWithFrame:contentViewFrame];
 }
@@ -235,7 +240,7 @@ static const CGFloat kWidthFactor = 0.73f;
         [_navigationBar pushNavigationItem:item animated:NO];
         [self addSubview:_navigationBar];
 
-//        only necessary if dataSource is not already set
+//        probably necessary if dataSource is not already set
 //        
 //        CGRect newLeftFrame = _leftTabContentView.frame;
 //        newLeftFrame.origin.y = newLeftFrame.origin.y + 44;
@@ -270,6 +275,11 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 
     NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+
+    for (int i = 0; i < (NSInteger)numberOfViews; i++) {
+        [_offsets addObject:[NSNumber numberWithFloat:0]];
+    }
+
     _scrollView.contentSize = CGSizeMake((1 + kWidthFactor * (numberOfViews-1)) * self.bounds.size.width,
                                          self.bounds.size.height);
 
@@ -279,8 +289,8 @@ static const CGFloat kWidthFactor = 0.73f;
         _centerTabContentView = [self tabContentView];
         _centerTabContentView.delegate = self;
         _centerTabContentView.contentView = contentView;
-        [self selectCurrentViewAnimated:NO];
         [_scrollView addSubview:_centerTabContentView];
+        [self selectCurrentViewAnimated:NO];
         [self updateTitles];
 
         // initialize right view
@@ -321,15 +331,34 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidSelectView {
 
-    // if content view is a table view, the navigation bar becomes table header
-    if ([_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
-        UITableView *tableView = (UITableView *) _centerTabContentView.contentView;
-        tableView.contentOffset = CGPointMake(0, -_navigationBar.frame.origin.y + tableView.contentOffset.y);
+//    // if content view is a table view, the navigation bar becomes table header
+//    if ([_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+//        UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
+//        tableView.contentOffset = CGPointMake(0, -_navigationBar.frame.origin.y + tableView.contentOffset.y);
+//        [_navigationBar removeFromSuperview];
+//        CGRect newFrame = _centerTabContentView.frame;
+//        newFrame.origin.y -= _navigationBar.frame.origin.y + _navigationBar.bounds.size.height;
+//        _centerTabContentView.frame = newFrame;
+//        tableView.tableHeaderView = _navigationBar;
+//    }
+
+    if (!_navigationBarHidden && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+        UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
+
+        CGRect navigationBarFrame = _navigationBar.frame;
+        navigationBarFrame.origin.y = 0;
+        _navigationBar.frame = navigationBarFrame;
+
+        CGRect centerFrame = _centerTabContentView.frame;
+        centerFrame.origin.y = 0;
+        _centerTabContentView.frame = centerFrame;
+
         [_navigationBar removeFromSuperview];
-        CGRect newFrame = _centerTabContentView.frame;
-        newFrame.origin.y = newFrame.origin.y - _navigationBar.frame.origin.y - _navigationBar.bounds.size.height;
-        _centerTabContentView.frame = newFrame;
         tableView.tableHeaderView = _navigationBar;
+
+        NSNumber *offsetNumber = [_offsets objectAtIndex:_currentIndex];
+        float offset = offsetNumber.floatValue;
+        tableView.contentOffset = CGPointMake(0, offset);
     }
 
     if (_delegateRespondsToDidSelect) {
@@ -621,6 +650,8 @@ static const CGFloat kWidthFactor = 0.73f;
         newIndex = _currentIndex + 1;
     }
 
+    [_offsets insertObject:[NSNumber numberWithFloat:0] atIndex:newIndex];
+
     // inform delegate to update model
     [_delegate tabView:self
           willEditView:_editingStyle
@@ -707,9 +738,6 @@ static const CGFloat kWidthFactor = 0.73f;
     NSInteger factor = (NSInteger) index - (NSInteger) _currentIndex;
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
-    if (!_navigationBarHidden) {
-        newFrame.origin.y = newFrame.origin.y + _navigationBar.bounds.size.height;
-    }
     return newFrame;
 }
 
@@ -721,11 +749,31 @@ static const CGFloat kWidthFactor = 0.73f;
     if (index < numberOfViews) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:index];
         CGRect newFrame = [self newFrame:_centerTabContentView.frame forIndex:index];
+
+        if (!_navigationBarHidden && [contentView.class isSubclassOfClass:[UITableView class]]) {
+
+            UITableView *tableView = (UITableView *) contentView;
+
+            NSNumber *offsetNumber = [_offsets objectAtIndex:index];
+            float offset = offsetNumber.floatValue;
+
+            CGRect navigationFrame = _navigationBar.frame;
+            navigationFrame.origin.y -= offset;
+            _navigationBar.frame = navigationFrame;
+
+            if (offset > _navigationBar.bounds.size.height) {
+                newFrame.origin.y = 0;
+                tableView.contentOffset = CGPointMake(0, offset - _navigationBar.bounds.size.height);
+            } else {
+                newFrame.origin.y = _navigationBar.bounds.size.height - offset;
+                tableView.contentOffset = CGPointMake(0, 0);
+            }
+        }
+
         tabContentView = [[MOTabContentView alloc] initWithFrame:newFrame];
         tabContentView.contentView = contentView;
         tabContentView.delegate = self;
         tabContentView.visibility = 0;
-//        [self temp:tabContentView];
         [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
     }
 
@@ -758,6 +806,8 @@ static const CGFloat kWidthFactor = 0.73f;
 - (void)deleteCurrentView {
 
     _editingStyle = MOTabViewEditingStyleDelete;
+
+    [_offsets removeObjectAtIndex:_currentIndex];
 
     NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
@@ -852,29 +902,28 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)deselectCurrentView {
 
-    // if content view is a table view the navigation bar is removed from the
-    // table header
-    if ([_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+    if (!_navigationBarHidden && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+
         UITableView *tableView = (UITableView *) _centerTabContentView.contentView;
+        
+        [_offsets replaceObjectAtIndex:_currentIndex
+                            withObject:[NSNumber numberWithFloat:tableView.contentOffset.y]];
+    
+        float contentOffsetY = tableView.contentOffset.y;
 
-        // adjust frame of navigation bar to the position of fade out
-        // this position might be outside of the visible area
-        CGRect navigationBarFrame = _navigationBar.frame;
-        navigationBarFrame.origin.y = navigationBarFrame.origin.y - tableView.contentOffset.y;
-        _navigationBar.frame = navigationBarFrame;
-
-        // adjust the position of the content accordingly
-        // the maximum guarantees that the position is inside the visible area
-        CGRect newFrame = _centerTabContentView.frame;
-        newFrame.origin.y = MAX(_navigationBar.frame.origin.y + _navigationBar.bounds.size.height, 0);
-        _centerTabContentView.frame = newFrame;
-
-        // contentOffset is decreased because navigation bar is no longer
-        // part of the table view
-        tableView.contentOffset = CGPointMake(0, MAX(tableView.contentOffset.y - _navigationBar.bounds.size.height, 0));
-
+        // careful, removing tableHeaderView changes contentOffset
         tableView.tableHeaderView = nil;
+
+        CGRect navigationFrame = _navigationBar.frame;
+        navigationFrame.origin.y = -contentOffsetY;
+        _navigationBar.frame = navigationFrame;
         [self addSubview:_navigationBar];
+
+        CGRect contentFrame = _centerTabContentView.frame;
+        contentFrame.origin.y = MAX(_navigationBar.bounds.size.height - contentOffsetY, 0);
+        _centerTabContentView.frame = contentFrame;
+
+        tableView.contentOffset = CGPointMake(0, MAX(contentOffsetY - _navigationBar.bounds.size.height, 0));
     }
 
     [self tabViewWillDeselectView];
@@ -890,10 +939,6 @@ static const CGFloat kWidthFactor = 0.73f;
                              [self tabViewDidDeselectView];
                          }];
     }
-}
-
-- (void)temp2 {
-
 }
 
 - (UIView *)viewForIndex:(NSUInteger)index {
