@@ -51,8 +51,6 @@ static const CGFloat kDeselectedOriginY = 20;
 
     UIButton *_deleteButton;
 
-    BOOL _selected;
-
     float _visibility;
 
     UITapGestureRecognizer *_tapRecognizer;
@@ -98,6 +96,23 @@ static const CGFloat kDeselectedOriginY = 20;
 
 
 #pragma mark - Getting and Setting Properties
+
+- (CGRect)frame {
+
+    return super.frame;
+}
+
+- (void)setFrame:(CGRect)frame {
+
+    super.frame = frame;
+
+//    if (!_isSelected) {
+//        float deselectedTranslation = kDeselectedOriginY - frame.origin.y;
+//        CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
+//        CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
+//        _containerView.transform = transform;
+//    }
+}
 
 - (float)visibility {
 
@@ -166,12 +181,12 @@ static const CGFloat kDeselectedOriginY = 20;
                          }
                          completion:^(BOOL __unused finished) {
                              _tapRecognizer.enabled = NO;
-                             [_delegate tabContentViewDidSelect:self];
+//                             [_delegate tabContentViewDidSelect:self];
                          }];
     } else {
         [self selectNonAnimated];
         _tapRecognizer.enabled = NO;
-        [_delegate tabContentViewDidSelect:self];
+//        [_delegate tabContentViewDidSelect:self];
     }
 
     _isSelected = YES;
@@ -198,12 +213,12 @@ static const CGFloat kDeselectedOriginY = 20;
                          }
                          completion:^(BOOL __unused finished){
                              _tapRecognizer.enabled = YES;
-                             [_delegate tabContentViewDidDeselect:self];
+//                             [_delegate tabContentViewDidDeselect:self];
                          }];
     } else {
         [self deselectNonAnimated];
         _tapRecognizer.enabled = YES;
-        [_delegate tabContentViewDidDeselect:self];
+//        [_delegate tabContentViewDidDeselect:self];
     }
 
     _isSelected = NO;

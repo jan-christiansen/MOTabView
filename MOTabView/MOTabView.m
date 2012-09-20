@@ -208,10 +208,10 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (MOTabContentView *)tabContentView {
 
-    CGRect contentViewFrame = self.bounds;
+    CGRect contentViewFrame = self.frame;
     if (!_navigationBarHidden) {
-#warning should not use static size
-        contentViewFrame.origin.y = contentViewFrame.origin.y + 44;
+        // if the navigation bar is shown the content is offset
+        contentViewFrame.origin.y = contentViewFrame.origin.y + _navigationBar.bounds.size.height;
     }
     return [[MOTabContentView alloc] initWithFrame:contentViewFrame];
 }
@@ -234,6 +234,20 @@ static const CGFloat kWidthFactor = 0.73f;
         UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:@""];
         [_navigationBar pushNavigationItem:item animated:NO];
         [self addSubview:_navigationBar];
+
+//        only necessary if dataSource is not already set
+//        
+//        CGRect newLeftFrame = _leftTabContentView.frame;
+//        newLeftFrame.origin.y = newLeftFrame.origin.y + 44;
+//        _leftTabContentView.frame = newLeftFrame;
+//
+//        CGRect newCenterFrame = _centerTabContentView.frame;
+//        newCenterFrame.origin.y = newCenterFrame.origin.y + 44;
+//        _centerTabContentView.frame = newCenterFrame;
+//
+//        CGRect newRightFrame = _rightTabContentView.frame;
+//        newRightFrame.origin.y = newRightFrame.origin.y + 44;
+//        _rightTabContentView.frame = newRightFrame;
     }
 }
 
@@ -251,6 +265,10 @@ static const CGFloat kWidthFactor = 0.73f;
 
     _currentIndex = 0;
 
+    if (!_navigationBarHidden) {
+        _navigationBar.topItem.title = [self.dataSource titleForIndex:_currentIndex];
+    }
+
     NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
     _scrollView.contentSize = CGSizeMake((1 + kWidthFactor * (numberOfViews-1)) * self.bounds.size.width,
                                          self.bounds.size.height);
@@ -261,16 +279,12 @@ static const CGFloat kWidthFactor = 0.73f;
         _centerTabContentView = [self tabContentView];
         _centerTabContentView.delegate = self;
         _centerTabContentView.contentView = contentView;
-        [_centerTabContentView selectAnimated:NO];
+        [self selectCurrentViewAnimated:NO];
         [_scrollView addSubview:_centerTabContentView];
         [self updateTitles];
 
         // initialize right view
         _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
-    }
-
-    if (!_navigationBarHidden) {
-        _navigationBar.topItem.title = [self.dataSource titleForIndex:_currentIndex];
     }
 }
 
@@ -307,8 +321,24 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidSelectView {
 
+    // if content view is a table view, the navigation bar becomes table header
+    if ([_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+        UITableView *tableView = (UITableView *) _centerTabContentView.contentView;
+        tableView.contentOffset = CGPointMake(0, -_navigationBar.frame.origin.y + tableView.contentOffset.y);
+        [_navigationBar removeFromSuperview];
+        CGRect newFrame = _centerTabContentView.frame;
+        newFrame.origin.y = newFrame.origin.y - _navigationBar.frame.origin.y - _navigationBar.bounds.size.height;
+        _centerTabContentView.frame = newFrame;
+        tableView.tableHeaderView = _navigationBar;
+    }
+
     if (_delegateRespondsToDidSelect) {
         [_delegate tabView:self didSelectViewAtIndex:_currentIndex];
+    }
+
+    // selecting the view may be the last step in inserting a new tab
+    if (_editingStyle == MOTabViewEditingStyleInsert) {
+        [self tabViewDidEditView];
     }
 }
 
@@ -321,6 +351,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidDeselectView {
 
+    [self bringSubviewToFront:_pageControl];
+    
     if (_delegateRespondsToDidDeselect) {
         [_delegate tabView:self didDeselectViewAtIndex:_currentIndex];
     }
@@ -385,7 +417,7 @@ static const CGFloat kWidthFactor = 0.73f;
                withTimingFunction:_easeInEaseOutTimingFunction
                          duration:0.5];
     } else if (tabContentView == _centerTabContentView) {
-        [self selectCurrentView];
+        [self selectCurrentViewAnimated:YES];
     } else if (tabContentView == _rightTabContentView) {
         [self scrollToViewAtIndex:_currentIndex+1
                withTimingFunction:_easeInEaseOutTimingFunction
@@ -393,26 +425,26 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
-- (void)tabContentViewDidSelect:(MOTabContentView *)__unused tabContentView {
+//- (void)tabContentViewDidSelect:(MOTabContentView *)__unused tabContentView {
+//
+////    NSLog(@"%s", __PRETTY_FUNCTION__);
+//
+//    [self tabViewDidSelectView];
+//
+//    // selecting the view may be the last step in inserting a new tab
+//    if (_editingStyle == MOTabViewEditingStyleInsert) {
+//        [self tabViewDidEditView];
+//    }
+//}
 
-//    NSLog(@"%s", __PRETTY_FUNCTION__);
-
-    [self tabViewDidSelectView];
-
-    // selecting the view may be the last step in inserting a new tab
-    if (_editingStyle == MOTabViewEditingStyleInsert) {
-        [self tabViewDidEditView];
-    }
-}
-
-- (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
-
-//    NSLog(@"%s", __PRETTY_FUNCTION__);
-
-    [self bringSubviewToFront:_pageControl];
-
-    [self tabViewDidDeselectView];
-}
+//- (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
+//
+////    NSLog(@"%s", __PRETTY_FUNCTION__);
+//
+//    [self bringSubviewToFront:_pageControl];
+//
+//    [self tabViewDidDeselectView];
+//}
 
 
 #pragma mark - UIScrollViewDelegate
@@ -540,14 +572,14 @@ static const CGFloat kWidthFactor = 0.73f;
                              _centerTabContentView.alpha = 1;
                          }
                          completion:^(BOOL __unused finished){
-                             [self selectCurrentView];
+                             [self selectCurrentViewAnimated:YES];
                          }];
     }
 
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         _editingStyle = MOTabViewEditingStyleNone;
     }
-    
+
     if (_editingStyle == MOTabViewEditingStyleDelete) {
         [self tabViewDidEditView];
         _editingStyle = MOTabViewEditingStyleNone;
@@ -663,7 +695,7 @@ static const CGFloat kWidthFactor = 0.73f;
                              MOTabView *temp = self;
                              [self addNewCenterViewAnimated:YES
                                                  completion:^(BOOL __unused finished) {
-                                                     [temp selectCurrentView];
+                                                     [temp selectCurrentViewAnimated:YES];
                                                  }];
                          }];
 
@@ -675,6 +707,9 @@ static const CGFloat kWidthFactor = 0.73f;
     NSInteger factor = (NSInteger) index - (NSInteger) _currentIndex;
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
+    if (!_navigationBarHidden) {
+        newFrame.origin.y = newFrame.origin.y + _navigationBar.bounds.size.height;
+    }
     return newFrame;
 }
 
@@ -690,6 +725,7 @@ static const CGFloat kWidthFactor = 0.73f;
         tabContentView.contentView = contentView;
         tabContentView.delegate = self;
         tabContentView.visibility = 0;
+//        [self temp:tabContentView];
         [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
     }
 
@@ -774,25 +810,72 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)selectCurrentView {
 
+    [self selectCurrentViewAnimated:YES];
+}
+
+- (void)selectCurrentViewAnimated:(BOOL)animated {
+
+    if (!_navigationBarHidden) {
+        // set the navigation bar to the correct position
+        CGRect newNavigationFrame = _navigationBar.frame;
+        // because the view is transformed, we can simply check the frame to
+        // determine where the origin will be when the view is expanded
+        newNavigationFrame.origin.y = _centerTabContentView.frame.origin.y - _navigationBar.bounds.size.height;
+        _navigationBar.frame = newNavigationFrame;
+    }
+
     [self tabViewWillSelectView];
 
     [_scrollView bringSubviewToFront:_centerTabContentView];
     [self bringSubviewToFront:_scrollView];
-    [_centerTabContentView selectAnimated:YES];
+    [_centerTabContentView selectAnimated:animated];
     _scrollView.scrollEnabled = NO;
 
     NSString *title = [self.dataSource titleForIndex:_currentIndex];
     _navigationBar.topItem.title = title;
 
     if (!_navigationBarHidden) {
-        [UIView animateWithDuration:0.3
-                         animations:^{
-                             _navigationBar.alpha = 1;
-                         }];
+        if (animated) {
+            [UIView animateWithDuration:0.3
+                             animations:^{
+                                 _navigationBar.alpha = 1;
+                             }
+                             completion:^(BOOL __unused finished) {
+#warning this might not be the end of the animation because of deselectAnimated
+                                 [self tabViewDidSelectView];
+                             }];
+        } else {
+            [self tabViewDidSelectView];
+        }
     }
 }
 
 - (void)deselectCurrentView {
+
+    // if content view is a table view the navigation bar is removed from the
+    // table header
+    if ([_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+        UITableView *tableView = (UITableView *) _centerTabContentView.contentView;
+
+        // adjust frame of navigation bar to the position of fade out
+        // this position might be outside of the visible area
+        CGRect navigationBarFrame = _navigationBar.frame;
+        navigationBarFrame.origin.y = navigationBarFrame.origin.y - tableView.contentOffset.y;
+        _navigationBar.frame = navigationBarFrame;
+
+        // adjust the position of the content accordingly
+        // the maximum guarantees that the position is inside the visible area
+        CGRect newFrame = _centerTabContentView.frame;
+        newFrame.origin.y = MAX(_navigationBar.frame.origin.y + _navigationBar.bounds.size.height, 0);
+        _centerTabContentView.frame = newFrame;
+
+        // contentOffset is decreased because navigation bar is no longer
+        // part of the table view
+        tableView.contentOffset = CGPointMake(0, MAX(tableView.contentOffset.y - _navigationBar.bounds.size.height, 0));
+
+        tableView.tableHeaderView = nil;
+        [self addSubview:_navigationBar];
+    }
 
     [self tabViewWillDeselectView];
 
@@ -803,8 +886,14 @@ static const CGFloat kWidthFactor = 0.73f;
         [UIView animateWithDuration:0.3
                          animations:^{
                              _navigationBar.alpha = 0;
+#warning this might not be the end of the animation because of deselectAnimated
+                             [self tabViewDidDeselectView];
                          }];
     }
+}
+
+- (void)temp2 {
+
 }
 
 - (UIView *)viewForIndex:(NSUInteger)index {
