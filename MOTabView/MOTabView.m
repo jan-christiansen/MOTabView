@@ -40,6 +40,7 @@
 #import "MOScrollView.h"
 #import "MOTabView.h"
 #import "MOTabContentView.h"
+#import "MOGradientView.h"
 
 
 // colors used for the gradient in the background
@@ -129,11 +130,6 @@ static const CGFloat kWidthFactor = 0.73f;
                              functionWithName:kCAMediaTimingFunctionEaseIn];
 
     // background view
-    _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-
-    // gradient background
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.frame = _backgroundView.bounds;
     UIColor *lightGray = [UIColor colorWithRed:kLightGrayRed
                                          green:kLightGrayGreen
                                           blue:kLightGrayBlue
@@ -142,9 +138,10 @@ static const CGFloat kWidthFactor = 0.73f;
                                         green:kDarkGrayGreen
                                          blue:kDarkGrayBlue
                                         alpha:1.0];
-
-    gradientLayer.colors = @[(id) lightGray.CGColor, (id) darkGray.CGColor];
-    [_backgroundView.layer addSublayer:gradientLayer];
+    _backgroundView = [[MOGradientView alloc] initWithFrame:self.bounds
+                                                   topColor:lightGray
+                                                bottomColor:darkGray];
+    _backgroundView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     [self addSubview:_backgroundView];
 
     // title label
@@ -180,7 +177,8 @@ static const CGFloat kWidthFactor = 0.73f;
     [self insertSubview:_subtitleLabel aboveSubview:_backgroundView];
 
     // page control
-    CGRect pageControlFrame = CGRectMake(0, 350, 320, 36);
+    CGRect pageControlFrame = CGRectMake(0, 0, 320, 36);
+    pageControlFrame.origin.y = 0.85f * super.frame.size.height;
     _pageControl = [[UIPageControl alloc] initWithFrame:pageControlFrame];
     _pageControl.numberOfPages = 2;
     _pageControl.hidesForSinglePage = YES;
@@ -223,6 +221,16 @@ static const CGFloat kWidthFactor = 0.73f;
 
 
 #pragma mark - Getting and Setting Properties
+
+- (void)setFrame:(CGRect)frame {
+
+    super.frame = frame;
+
+    CGRect newPageControlFrame = _pageControl.frame;
+    newPageControlFrame.origin.y = 0.85f * frame.size.height;
+    _pageControl.frame = newPageControlFrame;
+}
+
 
 - (BOOL)navigationBarHidden {
 
