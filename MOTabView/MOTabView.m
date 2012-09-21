@@ -226,11 +226,26 @@ static const CGFloat kWidthFactor = 0.73f;
 
     super.frame = frame;
 
+    // reposition page control
     CGRect newPageControlFrame = _pageControl.frame;
     newPageControlFrame.origin.y = 0.85f * frame.size.height;
     _pageControl.frame = newPageControlFrame;
-}
 
+    // resize content views
+    _leftTabContentView.frame = CGRectMake(_leftTabContentView.frame.origin.x,
+                                           _leftTabContentView.frame.origin.y,
+                                           frame.size.width,
+                                           frame.size.height);
+    _centerTabContentView.frame = CGRectMake(_centerTabContentView.frame.origin.x,
+                                             _centerTabContentView.frame.origin.y,
+                                             frame.size.width,
+                                             frame.size.height);
+
+    _rightTabContentView.frame = CGRectMake(_rightTabContentView.frame.origin.x,
+                                            _rightTabContentView.frame.origin.y,
+                                            frame.size.width,
+                                            frame.size.height);
+}
 
 - (BOOL)navigationBarHidden {
 

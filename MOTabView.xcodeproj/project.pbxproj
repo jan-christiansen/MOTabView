@@ -17,8 +17,10 @@
 		0180B79A15CD17E200A06867 /* MOTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0180B79315CD17E200A06867 /* MOTabView.m */; };
 		0180B79B15CD17E200A06867 /* MOTabViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0180B79415CD17E200A06867 /* MOTabViewController.h */; };
 		0180B79C15CD17E200A06867 /* MOTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0180B79515CD17E200A06867 /* MOTabViewController.m */; };
-		01816CEF160C923A00170965 /* MOGradientView.h in Headers */ = {isa = PBXBuildFile; fileRef = 01816CED160C923A00170965 /* MOGradientView.h */; };
-		01816CF0160C923A00170965 /* MOGradientView.m in Sources */ = {isa = PBXBuildFile; fileRef = 01816CEE160C923A00170965 /* MOGradientView.m */; };
+		01816D4E160CA07200170965 /* MOShadowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 01816D4C160CA07200170965 /* MOShadowView.h */; };
+		01816D4F160CA07200170965 /* MOShadowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 01816D4D160CA07200170965 /* MOShadowView.m */; };
+		0184D47C160CB07F0077E1AA /* MOGradientView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0184D47A160CB07F0077E1AA /* MOGradientView.h */; };
+		0184D47D160CB07F0077E1AA /* MOGradientView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0184D47B160CB07F0077E1AA /* MOGradientView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +35,10 @@
 		0180B79315CD17E200A06867 /* MOTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabView.m; path = MOTabView/MOTabView.m; sourceTree = SOURCE_ROOT; };
 		0180B79415CD17E200A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = MOTabView/MOTabViewController.h; sourceTree = SOURCE_ROOT; };
 		0180B79515CD17E200A06867 /* MOTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTabViewController.m; path = MOTabView/MOTabViewController.m; sourceTree = SOURCE_ROOT; };
-		01816CED160C923A00170965 /* MOGradientView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOGradientView.h; sourceTree = SOURCE_ROOT; };
-		01816CEE160C923A00170965 /* MOGradientView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOGradientView.m; sourceTree = SOURCE_ROOT; };
+		01816D4C160CA07200170965 /* MOShadowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOShadowView.h; path = MOTabView/MOShadowView.h; sourceTree = SOURCE_ROOT; };
+		01816D4D160CA07200170965 /* MOShadowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOShadowView.m; path = MOTabView/MOShadowView.m; sourceTree = SOURCE_ROOT; };
+		0184D47A160CB07F0077E1AA /* MOGradientView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOGradientView.h; path = MOTabView/MOGradientView.h; sourceTree = SOURCE_ROOT; };
+		0184D47B160CB07F0077E1AA /* MOGradientView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOGradientView.m; path = MOTabView/MOGradientView.m; sourceTree = SOURCE_ROOT; };
 		018D9C8015E682B60031FE94 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		01B1D7F815D02DEB00DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
 		01B1D7F915D02DEB00DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeButton@2x.png"; sourceTree = "<group>"; };
@@ -94,8 +98,10 @@
 				0180B79315CD17E200A06867 /* MOTabView.m */,
 				0180B78F15CD17E200A06867 /* MOTabContentView.h */,
 				0180B79015CD17E200A06867 /* MOTabContentView.m */,
-				01816CED160C923A00170965 /* MOGradientView.h */,
-				01816CEE160C923A00170965 /* MOGradientView.m */,
+				01816D4C160CA07200170965 /* MOShadowView.h */,
+				01816D4D160CA07200170965 /* MOShadowView.m */,
+				0184D47A160CB07F0077E1AA /* MOGradientView.h */,
+				0184D47B160CB07F0077E1AA /* MOGradientView.m */,
 				01B1D7F715D02DEB00DFE12B /* Images */,
 				0160A7B61591CA540095F791 /* Supporting Files */,
 			);
@@ -142,7 +148,8 @@
 				0180B79815CD17E200A06867 /* MOTabView-Prefix.pch in Headers */,
 				0180B79915CD17E200A06867 /* MOTabView.h in Headers */,
 				0180B79B15CD17E200A06867 /* MOTabViewController.h in Headers */,
-				01816CEF160C923A00170965 /* MOGradientView.h in Headers */,
+				01816D4E160CA07200170965 /* MOShadowView.h in Headers */,
+				0184D47C160CB07F0077E1AA /* MOGradientView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,7 +208,8 @@
 				0180B79715CD17E200A06867 /* MOTabContentView.m in Sources */,
 				0180B79A15CD17E200A06867 /* MOTabView.m in Sources */,
 				0180B79C15CD17E200A06867 /* MOTabViewController.m in Sources */,
-				01816CF0160C923A00170965 /* MOGradientView.m in Sources */,
+				01816D4F160CA07200170965 /* MOShadowView.m in Sources */,
+				0184D47D160CB07F0077E1AA /* MOGradientView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

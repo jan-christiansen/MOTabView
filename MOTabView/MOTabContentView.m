@@ -38,6 +38,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "MOTabContentView.h"
+#import "MOShadowView.h"
 
 
 static const CGFloat kDeselectedScale = 0.6f;
@@ -64,14 +65,9 @@ static const CGFloat kDeselectedOriginY = 20;
     self = [super initWithFrame:frame];
     if (self) {
         // a container which is scaled
-        _containerView = [[UIView alloc] initWithFrame:self.bounds];
+        _containerView = [[MOShadowView alloc] initWithFrame:self.bounds];
+        _containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_containerView];
-
-        _containerView.layer.shadowOffset = CGSizeMake(1, 8);
-        _containerView.layer.shadowRadius = 5;
-        _containerView.layer.shadowOpacity = 0.3;
-        CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:_containerView.layer.bounds].CGPath;
-        _containerView.layer.shadowPath = shadowPath;
 
         _tapRecognizer = [[UITapGestureRecognizer alloc]
                           initWithTarget:self
@@ -104,14 +100,18 @@ static const CGFloat kDeselectedOriginY = 20;
 
 - (void)setFrame:(CGRect)frame {
 
+    _containerView.transform = CGAffineTransformIdentity;
+
     super.frame = frame;
 
-//    if (!_isSelected) {
-//        float deselectedTranslation = kDeselectedOriginY - frame.origin.y;
-//        CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
-//        CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
-//        _containerView.transform = transform;
-//    }
+    if (!_isSelected) {
+        float deselectedTranslation = kDeselectedOriginY - frame.origin.y;
+        CGAffineTransform translation = CGAffineTransformMakeTranslation(0, deselectedTranslation);
+        CGAffineTransform transform = CGAffineTransformScale(translation, kDeselectedScale, kDeselectedScale);
+        _containerView.transform = transform;
+    }
+
+    [self recenterDeleteButton];
 }
 
 - (float)visibility {

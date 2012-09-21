@@ -50,6 +50,7 @@
 - (id)initWithFrame:(CGRect)frame
            topColor:(UIColor *)topColor
         bottomColor:(UIColor *)bottomColor {
+
     self = [super initWithFrame:frame];
     if (self) {
         _gradientLayer = [CAGradientLayer layer];

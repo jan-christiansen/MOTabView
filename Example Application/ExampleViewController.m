@@ -57,6 +57,12 @@
 
 //        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
         self.tabView.addingStyle = MOTabViewAddingAtLastIndex;
+
+        self.tabView.navigationBarHidden = NO;
+
+        CGRect newFrame = self.tabView.frame;
+        newFrame.size.height -= 50;
+        self.tabView.frame = newFrame;
     }
     return self;
 }
