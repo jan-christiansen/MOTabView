@@ -240,7 +240,6 @@ static const CGFloat kWidthFactor = 0.73f;
                                              _centerTabContentView.frame.origin.y,
                                              frame.size.width,
                                              frame.size.height);
-
     _rightTabContentView.frame = CGRectMake(_rightTabContentView.frame.origin.x,
                                             _rightTabContentView.frame.origin.y,
                                             frame.size.width,
@@ -263,19 +262,18 @@ static const CGFloat kWidthFactor = 0.73f;
         [_navigationBar pushNavigationItem:item animated:NO];
         [self addSubview:_navigationBar];
 
-//        probably necessary if dataSource is not already set
-//        
-//        CGRect newLeftFrame = _leftTabContentView.frame;
-//        newLeftFrame.origin.y = newLeftFrame.origin.y + 44;
-//        _leftTabContentView.frame = newLeftFrame;
-//
-//        CGRect newCenterFrame = _centerTabContentView.frame;
-//        newCenterFrame.origin.y = newCenterFrame.origin.y + 44;
-//        _centerTabContentView.frame = newCenterFrame;
-//
-//        CGRect newRightFrame = _rightTabContentView.frame;
-//        newRightFrame.origin.y = newRightFrame.origin.y + 44;
-//        _rightTabContentView.frame = newRightFrame;
+        // necessary if dataSource is not already set
+        CGRect newLeftFrame = _leftTabContentView.frame;
+        newLeftFrame.origin.y = newLeftFrame.origin.y + _navigationBar.bounds.size.height;
+        _leftTabContentView.frame = newLeftFrame;
+
+        CGRect newCenterFrame = _centerTabContentView.frame;
+        newCenterFrame.origin.y = newCenterFrame.origin.y + _navigationBar.bounds.size.height;
+        _centerTabContentView.frame = newCenterFrame;
+
+        CGRect newRightFrame = _rightTabContentView.frame;
+        newRightFrame.origin.y = newRightFrame.origin.y + _navigationBar.bounds.size.height;
+        _rightTabContentView.frame = newRightFrame;
 
         if (_centerTabContentView.isSelected) {
             [self selectCurrentViewAnimated:NO];
