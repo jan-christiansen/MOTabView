@@ -843,13 +843,13 @@ static const CGFloat kWidthFactor = 0.73f;
 
                              [UIView animateWithDuration:0.5
                                               animations:^{
-                                                  CGRect newCenterFrame = _centerTabContentView.frame;
-                                                  newCenterFrame.origin.x -= kWidthFactor * self.bounds.size.width;
-                                                  _centerTabContentView.frame = newCenterFrame;
+                                                  CGPoint newCenterCenter = _centerTabContentView.center;
+                                                  newCenterCenter.x -= kWidthFactor * self.bounds.size.width;
+                                                  _centerTabContentView.center = newCenterCenter;
                                                   _centerTabContentView.visibility = 1;
-                                                  CGRect newRightFrame = _rightTabContentView.frame;
-                                                  newRightFrame.origin.x -= kWidthFactor * self.bounds.size.width;
-                                                  _rightTabContentView.frame = newRightFrame;
+                                                  CGPoint newRightCenter = _rightTabContentView.center;
+                                                  newRightCenter.x -= kWidthFactor * self.bounds.size.width;
+                                                  _rightTabContentView.center = newRightCenter;
                                               }
                                               completion:^(BOOL __unused finished){
                                                   [self updatePageControl];
