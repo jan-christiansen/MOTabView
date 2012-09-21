@@ -276,6 +276,10 @@ static const CGFloat kWidthFactor = 0.73f;
 //        CGRect newRightFrame = _rightTabContentView.frame;
 //        newRightFrame.origin.y = newRightFrame.origin.y + 44;
 //        _rightTabContentView.frame = newRightFrame;
+
+        if (_centerTabContentView.isSelected) {
+            [self selectCurrentViewAnimated:NO];
+        }
     }
 }
 
@@ -908,7 +912,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)deselectCurrentView {
 
-    if (!_navigationBarHidden && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+    if (!_navigationBarHidden
+        && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
 
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
 
