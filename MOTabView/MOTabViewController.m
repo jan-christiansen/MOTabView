@@ -75,24 +75,19 @@
 
 - (void)initializeMOTabViewController {
 
-    CGRect tabViewFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44);
-    _tabView = [[MOTabView alloc] initWithFrame:tabViewFrame];
-    [self.view addSubview:_tabView];
     _toolbar = [[UIToolbar alloc]
                 initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
     [self.view addSubview:_toolbar];
+
+    CGRect tabViewFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44);
+    _tabView = [[MOTabView alloc] initWithFrame:tabViewFrame];
+    _tabView.delegate = self;
+    _tabView.dataSource = self;
+    [self.view addSubview:_tabView];
 }
 
 
 #pragma mark - UIViewController Methods
-
-- (void)viewWillAppear:(BOOL)animated {
-
-    [super viewWillAppear:animated];
-
-    _tabView.delegate = self;
-    _tabView.dataSource = self;
-}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 

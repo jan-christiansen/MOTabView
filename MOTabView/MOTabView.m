@@ -105,7 +105,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     self = [super initWithFrame:frame];
     if (self) {
-        [self initialize];
+        [self initializeMOTabView];
     }
     return self;
 }
@@ -114,12 +114,12 @@ static const CGFloat kWidthFactor = 0.73f;
 
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self initialize];
+        [self initializeMOTabView];
     }
     return self;
 }
 
-- (void)initialize {
+- (void)initializeMOTabView {
 
     // timing function used to scroll the MOScrollView
     _easeInEaseOutTimingFunction = [CAMediaTimingFunction
