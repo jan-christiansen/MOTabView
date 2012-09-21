@@ -869,19 +869,17 @@ static const CGFloat kWidthFactor = 0.73f;
     NSString *title = [self.dataSource titleForIndex:_currentIndex];
     _navigationBar.topItem.title = title;
 
-    if (!_navigationBarHidden) {
-        if (animated) {
-            [UIView animateWithDuration:0.3
-                             animations:^{
-                                 _navigationBar.alpha = 1;
-                             }
-                             completion:^(BOOL __unused finished) {
+    if (animated && !_navigationBarHidden) {
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             _navigationBar.alpha = 1;
+                         }
+                         completion:^(BOOL __unused finished) {
 #warning this might not be the end of the animation because of deselectAnimated
-                                 [self tabViewDidSelectView];
-                             }];
-        } else {
-            [self tabViewDidSelectView];
-        }
+                             [self tabViewDidSelectView];
+                         }];
+    } else {
+        [self tabViewDidSelectView];
     }
 }
 
@@ -923,6 +921,8 @@ static const CGFloat kWidthFactor = 0.73f;
 #warning this might not be the end of the animation because of deselectAnimated
                              [self tabViewDidDeselectView];
                          }];
+    } else {
+        [self tabViewDidDeselectView];
     }
 }
 
