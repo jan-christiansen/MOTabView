@@ -90,11 +90,15 @@ willSelectViewAtIndex:(NSUInteger)index;
     didEditView:(MOTabViewEditingStyle)editingStyle
         atIndex:(NSUInteger)index;
 
+- (void)tabView:(MOTabView *)tabView
+   didEditTitle:(NSString *)title
+        atIndex:(NSUInteger)index;
+
 
 @end
 
 
-@interface MOTabView : UIView<UIScrollViewDelegate,MOTabContentViewDelegate>
+@interface MOTabView : UIView<UIScrollViewDelegate,MOTabContentViewDelegate,UITextFieldDelegate>
 
 /**
  * While `MOTabViewAddNewTabAtLastIndex` corresponds to the behaviour  of the
@@ -112,6 +116,10 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 
 @property(assign, nonatomic) BOOL navigationBarHidden;
 @property(strong, nonatomic) UINavigationBar *navigationBar;
+
+@property(assign, nonatomic) BOOL editableTitles;
+
+@property(strong, nonatomic) NSString *titlePlaceholder;
 
 
 /// @name Configuring a TabView

@@ -41,6 +41,7 @@
 #import "MOTabView.h"
 #import "MOTabContentView.h"
 #import "MOGradientView.h"
+#import "MOTitleTextField.h"
 
 
 // colors used for the gradient in the background
@@ -66,6 +67,7 @@ static const CGFloat kWidthFactor = 0.73f;
     BOOL _delegateRespondsToDidDeselect;
     BOOL _delegateRespondsToWillEdit;
     BOOL _delegateRespondsToDidEdit;
+    BOOL _delegateRespondsToDidEditTitle;
 
     id<MOTabViewDataSource> _dataSource;
 
@@ -75,7 +77,8 @@ static const CGFloat kWidthFactor = 0.73f;
     UIView *_backgroundView;
     MOScrollView *_scrollView;
     UIPageControl *_pageControl;
-    UILabel *_titleLabel;
+    MOTitleTextField *_titleField;
+    MOTitleTextField *_navigationBarField;
     UILabel *_subtitleLabel;
 
     MOTabContentView *_leftTabContentView;
@@ -146,19 +149,11 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // title label
     CGRect titleFrame = CGRectMake(10, 19, self.bounds.size.width-20, 40);
-    _titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
-    _titleLabel.textColor = [UIColor whiteColor];
-    _titleLabel.backgroundColor = [UIColor clearColor];
-    UIColor *shadowColor = [UIColor colorWithRed:0.4f
-                                           green:0.47f
-                                            blue:0.51f
-                                           alpha:1];
-    _titleLabel.shadowColor = [UIColor darkGrayColor];
-    _titleLabel.shadowOffset = CGSizeMake(0, -1);
-    _titleLabel.textAlignment = UITextAlignmentCenter;
-    _titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    _titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
-    [self insertSubview:_titleLabel aboveSubview:_backgroundView];
+    _titleField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
+    _titleField.delegate = self;
+    _titleField.returnKeyType = UIReturnKeyDone;
+//    _titleField.lineBreakMode = UILineBreakModeMiddleTruncation;v
+    [_backgroundView addSubview:_titleField];
 
     // subtitle label
     CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
@@ -169,7 +164,7 @@ static const CGFloat kWidthFactor = 0.73f;
                                              alpha:1];
     _subtitleLabel.textColor = subtitleColor;
     _subtitleLabel.backgroundColor = [UIColor clearColor];
-    _subtitleLabel.shadowColor = shadowColor;
+//    _subtitleLabel.shadowColor = shadowColor;
     _subtitleLabel.shadowOffset = CGSizeMake(0, -1);
     _subtitleLabel.textAlignment = UITextAlignmentCenter;
     _subtitleLabel.font = [UIFont systemFontOfSize:14];
@@ -199,7 +194,7 @@ static const CGFloat kWidthFactor = 0.73f;
 // TODO: Remove this hack
     _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
     // paging of the scrollview is implemented by using the delegate methods
-    [self insertSubview:_scrollView aboveSubview:_titleLabel];
+    [self insertSubview:_scrollView aboveSubview:_titleField];
 
     // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
@@ -258,7 +253,14 @@ static const CGFloat kWidthFactor = 0.73f;
     if (!_navigationBarHidden) {
         CGRect navigationBarFrame = CGRectMake(0, 0, self.bounds.size.width, 44);
         _navigationBar = [[UINavigationBar alloc] initWithFrame:navigationBarFrame];
-        UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:@""];
+        UINavigationItem* item = [[UINavigationItem alloc] init];
+        CGRect titleFrame = CGRectMake(0, 0, 200, 25);
+        _navigationBarField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
+        _navigationBarField.delegate = self;
+        _navigationBarField.returnKeyType = UIReturnKeyDone;
+        NSString *temp = [self.dataSource titleForIndex:_currentIndex];
+        _navigationBarField.text = temp;
+        item.titleView = _navigationBarField;
         [_navigationBar pushNavigationItem:item animated:NO];
         [self addSubview:_navigationBar];
 
@@ -294,10 +296,6 @@ static const CGFloat kWidthFactor = 0.73f;
     [self updatePageControl];
 
     _currentIndex = 0;
-
-    if (!_navigationBarHidden) {
-        _navigationBar.topItem.title = [self.dataSource titleForIndex:_currentIndex];
-    }
 
     NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
@@ -339,9 +337,31 @@ static const CGFloat kWidthFactor = 0.73f;
     _delegateRespondsToDidDeselect = [_delegate respondsToSelector:@selector(tabView:didDeselectViewAtIndex:)];
     _delegateRespondsToWillEdit = [_delegate respondsToSelector:@selector(tabView:willEditView:atIndex:)];
     _delegateRespondsToDidEdit = [_delegate respondsToSelector:@selector(tabView:didEditView:atIndex:)];
+    _delegateRespondsToDidEditTitle = [_delegate respondsToSelector:@selector(tabView:didEditTitle:atIndex:)];
 
     [self tabViewWillSelectView];
     [self tabViewDidDeselectView];
+}
+
+- (BOOL)editableTitles {
+
+    return _titleField.enabled;
+}
+
+- (void)setEditableTitles:(BOOL)editableTitles {
+
+    _titleField.enabled = editableTitles;
+}
+
+- (NSString *)titlePlaceholder {
+
+    return _titleField.placeholder;
+}
+
+- (void)setTitlePlaceholder:(NSString *)titlePlaceholder {
+
+    _titleField.placeholder = titlePlaceholder;
+    _navigationBarField.placeholder = titlePlaceholder;
 }
 
 
@@ -368,6 +388,8 @@ static const CGFloat kWidthFactor = 0.73f;
 #pragma mark - Informing the Delegate
 
 - (void)tabViewWillSelectView {
+
+    [self sendSubviewToBack:_titleField];
 
     if (_delegateRespondsToWillSelect) {
         [_delegate tabView:self willSelectViewAtIndex:_currentIndex];
@@ -415,8 +437,9 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidDeselectView {
 
+//    [self bringSubviewToFront:_titleField];
     [self bringSubviewToFront:_pageControl];
-    
+
     if (_delegateRespondsToDidDeselect) {
         [_delegate tabView:self didDeselectViewAtIndex:_currentIndex];
     }
@@ -436,13 +459,36 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
+- (void)tabViewDidEditTitle:(NSString *)title {
 
-#pragma mark - Updating Titles
+    if (_delegateRespondsToDidEditTitle) {
+        [_delegate tabView:self didEditTitle:title atIndex:_currentIndex];
+    }
+}
+
+
+#pragma mark - Titles
 
 - (void)updateTitles {
 
-    _titleLabel.text = [_dataSource titleForIndex:_currentIndex];
+    NSString *title = [self.dataSource titleForIndex:_currentIndex];
+    _titleField.text = title;
     _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
+    if (!_navigationBarHidden) {
+        _navigationBarField.text = title;
+    }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+
+    [textField resignFirstResponder];
+
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)__unused textField {
+
+    [self tabViewDidEditTitle:textField.text];
 }
 
 
@@ -937,6 +983,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     [self tabViewWillDeselectView];
 
+    [self updateTitles];
     [_centerTabContentView deselectAnimated:YES];
     _scrollView.scrollEnabled = YES;
 

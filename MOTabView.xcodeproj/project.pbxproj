@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011F0CFF160E332B00719494 /* MOTitleTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = 011F0CFD160E332B00719494 /* MOTitleTextField.h */; };
+		011F0D00160E332B00719494 /* MOTitleTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 011F0CFE160E332B00719494 /* MOTitleTextField.m */; };
 		0160A7B41591CA540095F791 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0160A7B31591CA540095F791 /* Foundation.framework */; };
 		0160A7D31591CFBA0095F791 /* MOScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0160A7D11591CFBA0095F791 /* MOScrollView.h */; };
 		0160A7D41591CFBA0095F791 /* MOScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160A7D21591CFBA0095F791 /* MOScrollView.m */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		011F0CFD160E332B00719494 /* MOTitleTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTitleTextField.h; path = MOTabView/MOTitleTextField.h; sourceTree = SOURCE_ROOT; };
+		011F0CFE160E332B00719494 /* MOTitleTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOTitleTextField.m; path = MOTabView/MOTitleTextField.m; sourceTree = SOURCE_ROOT; };
 		0160A7B01591CA540095F791 /* libMOTabView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMOTabView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0160A7B31591CA540095F791 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0160A7D11591CFBA0095F791 /* MOScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOScrollView.h; path = MOScrollView/MOScrollView/MOScrollView.h; sourceTree = "<group>"; };
@@ -102,6 +106,8 @@
 				01816D4D160CA07200170965 /* MOShadowView.m */,
 				0184D47A160CB07F0077E1AA /* MOGradientView.h */,
 				0184D47B160CB07F0077E1AA /* MOGradientView.m */,
+				011F0CFD160E332B00719494 /* MOTitleTextField.h */,
+				011F0CFE160E332B00719494 /* MOTitleTextField.m */,
 				01B1D7F715D02DEB00DFE12B /* Images */,
 				0160A7B61591CA540095F791 /* Supporting Files */,
 			);
@@ -150,6 +156,7 @@
 				0180B79B15CD17E200A06867 /* MOTabViewController.h in Headers */,
 				01816D4E160CA07200170965 /* MOShadowView.h in Headers */,
 				0184D47C160CB07F0077E1AA /* MOGradientView.h in Headers */,
+				011F0CFF160E332B00719494 /* MOTitleTextField.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,6 +217,7 @@
 				0180B79C15CD17E200A06867 /* MOTabViewController.m in Sources */,
 				01816D4F160CA07200170965 /* MOShadowView.m in Sources */,
 				0184D47D160CB07F0077E1AA /* MOGradientView.m in Sources */,
+				011F0D00160E332B00719494 /* MOTitleTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
