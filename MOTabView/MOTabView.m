@@ -18,7 +18,7 @@
 //  disclaimer in the documentation and/or other materials provided
 //  with the distribution.
 //
-//  * Neither the name of Monoid - Development and Consulting - 
+//  * Neither the name of Monoid - Development and Consulting -
 //  Jan Christiansen nor the names of other
 //  contributors may be used to endorse or promote products derived
 //  from this software without specific prior written permission.
@@ -153,7 +153,7 @@ static const CGFloat kWidthFactor = 0.73f;
     _titleField.delegate = self;
     _titleField.returnKeyType = UIReturnKeyDone;
 //    _titleField.lineBreakMode = UILineBreakModeMiddleTruncation;v
-    [_backgroundView addSubview:_titleField];
+    [self insertSubview:_titleField aboveSubview:_backgroundView];
 
     // subtitle label
     CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
@@ -194,7 +194,7 @@ static const CGFloat kWidthFactor = 0.73f;
 // TODO: Remove this hack
     _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
     // paging of the scrollview is implemented by using the delegate methods
-    [self insertSubview:_scrollView aboveSubview:_titleField];
+    [self addSubview:_scrollView];
 
     // standard adding style is the one used by safari prior to iOS6
     _addingStyle = MOTabViewAddingAtLastIndex;
@@ -389,7 +389,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewWillSelectView {
 
-    [self sendSubviewToBack:_titleField];
+    [self bringSubviewToFront:_navigationBar];
 
     if (_delegateRespondsToWillSelect) {
         [_delegate tabView:self willSelectViewAtIndex:_currentIndex];
@@ -437,7 +437,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidDeselectView {
 
-//    [self bringSubviewToFront:_titleField];
+    [self bringSubviewToFront:_titleField];
     [self bringSubviewToFront:_pageControl];
 
     if (_delegateRespondsToDidDeselect) {
@@ -489,6 +489,8 @@ static const CGFloat kWidthFactor = 0.73f;
 - (void)textFieldDidEndEditing:(UITextField *)__unused textField {
 
     [self tabViewDidEditTitle:textField.text];
+
+    [self updateTitles];
 }
 
 
@@ -991,6 +993,8 @@ static const CGFloat kWidthFactor = 0.73f;
         [UIView animateWithDuration:0.3
                          animations:^{
                              _navigationBar.alpha = 0;
+                         }
+                         completion:^(BOOL __unused finished){
 #warning this might not be the end of the animation because of deselectAnimated
                              [self tabViewDidDeselectView];
                          }];
