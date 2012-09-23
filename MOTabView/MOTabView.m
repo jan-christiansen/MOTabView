@@ -456,6 +456,9 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewDidEditView {
 
+    [self updatePageControl];
+    [self updateTitles];
+
     if (_delegateRespondsToDidEdit) {
         [_delegate tabView:self didEditView:_editingStyle atIndex:_currentIndex];
     }
@@ -910,7 +913,6 @@ static const CGFloat kWidthFactor = 0.73f;
                                                   _rightTabContentView.center = newRightCenter;
                                               }
                                               completion:^(BOOL __unused finished){
-                                                  [self updatePageControl];
                                                   [self tabViewDidEditView];
                                               }];
                          }
