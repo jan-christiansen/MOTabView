@@ -181,12 +181,12 @@ static const CGFloat kDeselectedOriginY = 20;
                          }
                          completion:^(BOOL __unused finished) {
                              _tapRecognizer.enabled = NO;
-//                             [_delegate tabContentViewDidSelect:self];
+                             [_delegate tabContentViewDidSelect:self];
                          }];
     } else {
         [self selectNonAnimated];
         _tapRecognizer.enabled = NO;
-//        [_delegate tabContentViewDidSelect:self];
+        [_delegate tabContentViewDidSelect:self];
     }
 
     _isSelected = YES;
@@ -213,12 +213,12 @@ static const CGFloat kDeselectedOriginY = 20;
                          }
                          completion:^(BOOL __unused finished){
                              _tapRecognizer.enabled = YES;
-//                             [_delegate tabContentViewDidDeselect:self];
+                             [_delegate tabContentViewDidDeselect:self];
                          }];
     } else {
         [self deselectNonAnimated];
         _tapRecognizer.enabled = YES;
-//        [_delegate tabContentViewDidDeselect:self];
+        [_delegate tabContentViewDidDeselect:self];
     }
 
     _isSelected = NO;

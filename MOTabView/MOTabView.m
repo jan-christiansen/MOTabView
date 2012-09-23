@@ -539,9 +539,15 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
-- (void)tabContentViewDidSelect:(MOTabContentView *)__unused tabContentView {}
+- (void)tabContentViewDidSelect:(MOTabContentView *)__unused tabContentView {
 
-- (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {}
+    [self tabViewDidSelectView];
+}
+
+- (void)tabContentViewDidDeselect:(MOTabContentView *)__unused tabContentView {
+
+    [self tabViewDidDeselectView];
+}
 
 
 #pragma mark - UIScrollViewDelegate
@@ -938,24 +944,19 @@ static const CGFloat kWidthFactor = 0.73f;
 
     [_scrollView bringSubviewToFront:_centerTabContentView];
     [self bringSubviewToFront:_scrollView];
-    [_centerTabContentView selectAnimated:animated];
     _scrollView.scrollEnabled = NO;
 
-    NSString *title = [self.dataSource titleForIndex:_currentIndex];
-    _navigationBar.topItem.title = title;
+    [self updateTitles];
 
     if (animated && !_navigationBarHidden) {
         [UIView animateWithDuration:0.3
                          animations:^{
                              _navigationBar.alpha = 1;
-                         }
-                         completion:^(BOOL __unused finished) {
-#warning this might not be the end of the animation because of deselectAnimated
-                             [self tabViewDidSelectView];
                          }];
-    } else {
-        [self tabViewDidSelectView];
     }
+
+#warning informs the delegate at the end of the animation, not guarenteed that navigationbar animation is finised
+    [_centerTabContentView selectAnimated:animated];
 }
 
 - (void)deselectCurrentView {
@@ -988,21 +989,17 @@ static const CGFloat kWidthFactor = 0.73f;
     [self tabViewWillDeselectView];
 
     [self updateTitles];
-    [_centerTabContentView deselectAnimated:YES];
     _scrollView.scrollEnabled = YES;
 
     if (!_navigationBarHidden) {
         [UIView animateWithDuration:0.3
                          animations:^{
                              _navigationBar.alpha = 0;
-                         }
-                         completion:^(BOOL __unused finished){
-#warning this might not be the end of the animation because of deselectAnimated
-                             [self tabViewDidDeselectView];
                          }];
-    } else {
-        [self tabViewDidDeselectView];
     }
+
+#warning informs the delegate at the end of the animation, not guarenteed that navigationbar animation is finised
+    [_centerTabContentView deselectAnimated:YES];
 }
 
 - (UIView *)viewForIndex:(NSUInteger)index {
