@@ -353,6 +353,7 @@ static const CGFloat kWidthFactor = 0.73f;
 - (void)setEditableTitles:(BOOL)editableTitles {
 
     _titleField.enabled = editableTitles;
+    _navigationBarField.enabled = editableTitles;
 }
 
 - (NSString *)titlePlaceholder {
