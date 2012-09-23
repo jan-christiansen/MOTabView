@@ -41,9 +41,11 @@
 
 @implementation ExampleViewController {
 
-    // array of strings that are presented in multiple views of the page scroll
-    // view
+    // array of strings that are presented in the views of the tab view
     NSMutableArray *_model;
+
+    // array of titles that are presented on top of the views
+    NSMutableArray *_titles;
 }
 
 
@@ -56,6 +58,8 @@
 //        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
         self.tabView.addingStyle = MOTabViewAddingAtLastIndex;
 
+        self.tabView.editableTitles = YES;
+
 //        self.tabView.navigationBarHidden = NO;
     }
     return self;
@@ -67,9 +71,17 @@
 - (NSMutableArray *)model {
 
     if (!_model) {
-        _model = [NSMutableArray arrayWithObjects:@"1", @"2", @"3", @"4", nil];
+        _model = @[@"1", @"2", @"3", @"4"].mutableCopy;
     }
     return _model;
+}
+
+- (NSMutableArray *)titles {
+
+    if (!_titles) {
+        _titles = @[@"", @"", @"", @""].mutableCopy;
+    }
+    return _titles;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -103,8 +115,13 @@
 }
 
 - (NSString *)titleForIndex:(NSUInteger)index {
-    
-    return [NSString stringWithFormat:@"Title for tab %d", index+1];
+
+    NSString *title = [self.titles objectAtIndex:index];
+    if ([title isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"This is the title for tab %d", index+1];
+    } else {
+        return title;
+    }
 }
 
 - (NSString *)subtitleForIndex:(NSUInteger)index {
@@ -116,6 +133,13 @@
 #pragma mark - TabViewDelegate
 
 - (void)tabView:(MOTabView *)tabView
+   didEditTitle:(NSString *)title
+        atIndex:(NSUInteger)index {
+
+    [self.titles replaceObjectAtIndex:index withObject:title];
+}
+
+- (void)tabView:(MOTabView *)tabView
    willEditView:(MOTabViewEditingStyle)editingStyle
         atIndex:(NSUInteger)index {
 
@@ -124,6 +148,7 @@
     if (editingStyle == MOTabViewEditingStyleDelete) {
 
         [self.model removeObjectAtIndex:index];
+        [self.titles removeObjectAtIndex:index];
     }
 
     if (editingStyle == MOTabViewEditingStyleInsert) {
@@ -132,6 +157,7 @@
 
         [self.model insertObject:[NSString stringWithFormat:@"%d", index+1]
                     atIndex:index];
+        [self.titles insertObject:@"" atIndex:index];
     }
 }
 
