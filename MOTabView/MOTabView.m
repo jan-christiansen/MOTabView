@@ -297,7 +297,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     _currentIndex = 0;
 
-    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
+    NSUInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
 
     for (int i = 0; i < (NSInteger)numberOfViews; i++) {
         [_offsets addObject:[NSNumber numberWithFloat:0]];

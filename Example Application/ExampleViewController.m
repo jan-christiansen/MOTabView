@@ -53,22 +53,24 @@
 
     self = [super init];
     if (self) {
-        _model = [NSMutableArray arrayWithObjects:@"1", @"2", @"3", @"4", nil];
-
 //        self.tabView.addingStyle = MOTabViewAddingAtNextIndex;
         self.tabView.addingStyle = MOTabViewAddingAtLastIndex;
 
-        self.tabView.navigationBarHidden = NO;
-
-        CGRect newFrame = self.tabView.frame;
-        newFrame.size.height -= 50;
-        self.tabView.frame = newFrame;
+//        self.tabView.navigationBarHidden = NO;
     }
     return self;
 }
 
 
 #pragma mark - UIViewController Methods
+
+- (NSMutableArray *)model {
+
+    if (!_model) {
+        _model = [NSMutableArray arrayWithObjects:@"1", @"2", @"3", @"4", nil];
+    }
+    return _model;
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 
@@ -97,7 +99,7 @@
 
 - (NSUInteger)numberOfViewsInTabView:(MOTabView *)tabView {
 
-    return _model.count;
+    return self.model.count;
 }
 
 - (NSString *)titleForIndex:(NSUInteger)index {
@@ -121,14 +123,14 @@
 
     if (editingStyle == MOTabViewEditingStyleDelete) {
 
-        [_model removeObjectAtIndex:index];
+        [self.model removeObjectAtIndex:index];
     }
 
     if (editingStyle == MOTabViewEditingStyleInsert) {
 
 //        NSLog(@"%s insert %d", __PRETTY_FUNCTION__, index);
 
-        [_model insertObject:[NSString stringWithFormat:@"%d", index+1]
+        [self.model insertObject:[NSString stringWithFormat:@"%d", index+1]
                     atIndex:index];
     }
 }
