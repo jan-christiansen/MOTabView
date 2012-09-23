@@ -44,7 +44,7 @@
 
     NSString *_placeholder;
 
-    BOOL hasPlaceholder;
+    BOOL _showsPlaceholder;
 
     UIColor *_textColor;
     UIColor *_placeholderColor;
@@ -59,6 +59,7 @@
     if (self) {
         _textColor = [UIColor whiteColor];
         _placeholderColor = [UIColor colorWithRed:0.8f green:0.8f blue:0.8f alpha:1];
+        _showsPlaceholder = NO;
 
         self.enabled = YES;
         self.font = [UIFont boldSystemFontOfSize:20];
@@ -98,17 +99,24 @@
 
 - (NSString *)text {
 
-    return hasPlaceholder ? @"" : super.text;
+    return _showsPlaceholder ? @"" : super.text;
 }
 
 - (void)setText:(NSString *)text {
 
     if ([text isEqualToString:@""]) {
-        super.text = _placeholder ? _placeholder : @"";
+        if (_placeholder) {
+            super.text = _placeholder;
+            _showsPlaceholder = YES;
+        } else {
+            super.text = @"";
+            _showsPlaceholder = NO;
+        }
         super.textColor = _placeholderColor;
         super.clearsOnBeginEditing = YES;
     } else {
         super.text = text;
+        _showsPlaceholder = NO;
         super.textColor = _textColor;
         super.clearsOnBeginEditing = NO;
     }
