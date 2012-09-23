@@ -151,6 +151,7 @@ static const CGFloat kWidthFactor = 0.73f;
     CGRect titleFrame = CGRectMake(10, 19, self.bounds.size.width-20, 40);
     _titleField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
     _titleField.delegate = self;
+    _titleField.enabled = NO;
     _titleField.returnKeyType = UIReturnKeyDone;
 //    _titleField.lineBreakMode = UILineBreakModeMiddleTruncation;v
     [self insertSubview:_titleField aboveSubview:_backgroundView];
@@ -256,6 +257,7 @@ static const CGFloat kWidthFactor = 0.73f;
         UINavigationItem* item = [[UINavigationItem alloc] init];
         CGRect titleFrame = CGRectMake(0, 0, 200, 25);
         _navigationBarField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
+        _navigationBarField.enabled = NO;
         _navigationBarField.delegate = self;
         _navigationBarField.returnKeyType = UIReturnKeyDone;
         NSString *temp = [self.dataSource titleForIndex:_currentIndex];
