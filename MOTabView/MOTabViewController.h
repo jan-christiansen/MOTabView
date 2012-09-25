@@ -47,5 +47,9 @@
 
 @property(strong, nonatomic) UIToolbar *toolBar;
 
+@property(strong, nonatomic) NSString *doneButtonTitle;
+
+@property(strong, nonatomic) NSString *addPageButtonTitle;
+
 
 @end

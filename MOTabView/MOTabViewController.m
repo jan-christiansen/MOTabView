@@ -72,6 +72,10 @@
 
 - (void)initializeMOTabViewController {
 
+    // default titles for buttons on toolbar
+    _doneButtonTitle = @"Done";
+    _addPageButtonTitle = @"New Page";
+
     _toolBar = [[UIToolbar alloc]
                 initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
     [self.view addSubview:_toolBar];
@@ -151,7 +155,7 @@ willDeselectViewAtIndex:(NSUInteger)__unused index {
 
     // update toolbar when a page view is deselected
     UIBarButtonItem *addViewButton = [[UIBarButtonItem alloc]
-                                      initWithTitle:@"New Page"
+                                      initWithTitle:self.addPageButtonTitle
                                       style:UIBarButtonItemStyleBordered
                                       target:tabView
                                       action:@selector(insertNewView)];
@@ -160,7 +164,7 @@ willDeselectViewAtIndex:(NSUInteger)__unused index {
                               target:nil
                               action:nil];
     UIBarButtonItem *button = [[UIBarButtonItem alloc]
-                               initWithTitle:@"Done"
+                               initWithTitle:self.doneButtonTitle
                                style:UIBarButtonItemStyleDone
                                target:tabView
                                action:@selector(selectCurrentView)];
