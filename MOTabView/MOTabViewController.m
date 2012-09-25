@@ -41,10 +41,7 @@
 #import "MOTabView.h"
 
 
-@implementation MOTabViewController {
-
-    UIToolbar *_toolbar;
-}
+@implementation MOTabViewController
 
 
 #pragma mark - Initializing
@@ -75,9 +72,9 @@
 
 - (void)initializeMOTabViewController {
 
-    _toolbar = [[UIToolbar alloc]
+    _toolBar = [[UIToolbar alloc]
                 initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
-    [self.view addSubview:_toolbar];
+    [self.view addSubview:_toolBar];
 
     CGRect tabViewFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44);
     _tabView = [[MOTabView alloc] initWithFrame:tabViewFrame];
@@ -137,8 +134,8 @@ willSelectViewAtIndex:(NSUInteger)__unused index {
                                target:tabView
                                action:@selector(deselectCurrentView)];
 
-    _toolbar.userInteractionEnabled = NO;
-    [_toolbar setItems:@[space, button] animated:YES];
+    _toolBar.userInteractionEnabled = NO;
+    [_toolBar setItems:@[space, button] animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
@@ -146,7 +143,7 @@ didSelectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    _toolbar.userInteractionEnabled = YES;
+    _toolBar.userInteractionEnabled = YES;
 }
 
 - (void)tabView:(MOTabView *)tabView
@@ -169,14 +166,14 @@ willDeselectViewAtIndex:(NSUInteger)__unused index {
                                action:@selector(selectCurrentView)];
     NSArray *items = @[addViewButton, space, button];
 
-    _toolbar.userInteractionEnabled = NO;
-    [_toolbar setItems:items animated:YES];
+    _toolBar.userInteractionEnabled = NO;
+    [_toolBar setItems:items animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
 didDeselectViewAtIndex:(NSUInteger)__unused index {
 
-    _toolbar.userInteractionEnabled = YES;
+    _toolBar.userInteractionEnabled = YES;
 }
 
 // dummy method, overwritten by subclass
@@ -186,7 +183,7 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    _toolbar.userInteractionEnabled = NO;
+    _toolBar.userInteractionEnabled = NO;
 }
 
 // dummy method, overwritten by subclass
@@ -196,7 +193,7 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    _toolbar.userInteractionEnabled = YES;
+    _toolBar.userInteractionEnabled = YES;
 }
 
 

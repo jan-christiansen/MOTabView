@@ -45,5 +45,7 @@
 
 @property(strong, nonatomic) MOTabView *tabView;
 
+@property(strong, nonatomic) UIToolbar *toolBar;
+
 
 @end
