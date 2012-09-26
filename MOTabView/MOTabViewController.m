@@ -41,7 +41,10 @@
 #import "MOTabView.h"
 
 
-@implementation MOTabViewController
+@implementation MOTabViewController {
+
+    UIBarButtonItem *_addViewButton;
+}
 
 
 #pragma mark - Initializing
@@ -85,6 +88,12 @@
     _tabView.delegate = self;
     _tabView.dataSource = self;
     [self.view addSubview:_tabView];
+
+    _addViewButton = [[UIBarButtonItem alloc]
+                      initWithTitle:self.addPageButtonTitle
+                      style:UIBarButtonItemStyleBordered
+                      target:_tabView
+                      action:@selector(insertNewView)];
 }
 
 
@@ -93,6 +102,17 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - Getting and Setting Properties
+
+- (void)setMaxNumberOfViews:(NSUInteger)maxNumberOfViews {
+
+    _maxNumberOfViews = maxNumberOfViews;
+
+    NSUInteger numberOfViews = [self numberOfViewsInTabView:self.tabView];
+    _addViewButton.enabled = maxNumberOfViews > numberOfViews;
 }
 
 
@@ -111,7 +131,7 @@
 }
 
 - (NSString *)titleForIndex:(NSUInteger)__unused index {
-    
+
     return @"";
 }
 
@@ -154,11 +174,7 @@ didSelectViewAtIndex:(NSUInteger)__unused index {
 willDeselectViewAtIndex:(NSUInteger)__unused index {
 
     // update toolbar when a page view is deselected
-    UIBarButtonItem *addViewButton = [[UIBarButtonItem alloc]
-                                      initWithTitle:self.addPageButtonTitle
-                                      style:UIBarButtonItemStyleBordered
-                                      target:tabView
-                                      action:@selector(insertNewView)];
+    _addViewButton.title = self.addPageButtonTitle;
     UIBarButtonItem *space = [[UIBarButtonItem alloc]
                               initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                               target:nil
@@ -168,7 +184,7 @@ willDeselectViewAtIndex:(NSUInteger)__unused index {
                                style:UIBarButtonItemStyleDone
                                target:tabView
                                action:@selector(selectCurrentView)];
-    NSArray *items = @[addViewButton, space, button];
+    NSArray *items = @[_addViewButton, space, button];
 
     _toolBar.userInteractionEnabled = NO;
     [_toolBar setItems:items animated:YES];
@@ -196,6 +212,9 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
         atIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
+
+    NSUInteger numberOfViews = [self numberOfViewsInTabView:self.tabView];
+    _addViewButton.enabled = self.maxNumberOfViews > numberOfViews;
 
     _toolBar.userInteractionEnabled = YES;
 }

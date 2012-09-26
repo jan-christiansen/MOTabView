@@ -51,5 +51,7 @@
 
 @property(strong, nonatomic) NSString *addPageButtonTitle;
 
+@property(assign, nonatomic) NSUInteger maxNumberOfViews;
+
 
 @end
