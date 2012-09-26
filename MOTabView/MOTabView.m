@@ -428,6 +428,7 @@ static const CGFloat kWidthFactor = 0.73f;
     // selecting the view may be the last step in inserting a new tab
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         [self tabViewDidEditView];
+        _editingStyle = MOTabViewEditingStyleNone;
     }
 }
 
@@ -679,10 +680,6 @@ static const CGFloat kWidthFactor = 0.73f;
                          completion:^(BOOL __unused finished){
                              [self selectCurrentViewAnimated:YES];
                          }];
-    }
-
-    if (_editingStyle == MOTabViewEditingStyleInsert) {
-        _editingStyle = MOTabViewEditingStyleNone;
     }
 
     if (_editingStyle == MOTabViewEditingStyleDelete) {
