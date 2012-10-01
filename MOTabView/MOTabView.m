@@ -428,7 +428,6 @@ static const CGFloat kWidthFactor = 0.73f;
     // selecting the view may be the last step in inserting a new tab
     if (_editingStyle == MOTabViewEditingStyleInsert) {
         [self tabViewDidEditView];
-        _editingStyle = MOTabViewEditingStyleNone;
     }
 }
 
@@ -451,19 +450,45 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)tabViewWillEditView {
 
+    NSUInteger numberOfViewsBeforeEdit = [_delegate numberOfViewsInTabView:self];
+
     if (_delegateRespondsToWillEdit) {
         [_delegate tabView:self willEditView:_editingStyle atIndex:_currentIndex];
+    }
+
+    NSUInteger numberOfViewsAfterEdit = [_delegate numberOfViewsInTabView:self];
+
+    if (_editingStyle == MOTabViewEditingStyleInsert) {
+        NSString *desc = [NSString stringWithFormat:@"Number of views before insertion %d, after insertion %d, should be %d",
+                          numberOfViewsBeforeEdit,
+                          numberOfViewsAfterEdit,
+                          numberOfViewsBeforeEdit+1];
+        NSAssert(numberOfViewsBeforeEdit + 1 == numberOfViewsAfterEdit, desc);
+    } else if (_editingStyle == MOTabViewEditingStyleDelete) {
+        NSString *desc = [NSString stringWithFormat:@"Number of views before deletion %d, after deletion %d, should be %d",
+                          numberOfViewsBeforeEdit,
+                          numberOfViewsAfterEdit,
+                          numberOfViewsBeforeEdit-1];
+        NSAssert(numberOfViewsBeforeEdit - 1 == numberOfViewsAfterEdit, desc);
     }
 }
 
 - (void)tabViewDidEditView {
 
-    [self updatePageControl];
     [self updateTitles];
+
+    // if we have deleted a tab we have to adjust the content size
+    if (_editingStyle == MOTabViewEditingStyleDelete) {
+        CGSize newContentSize;
+        newContentSize.width = _scrollView.contentSize.width - kWidthFactor * _scrollView.bounds.size.width;
+        newContentSize.height = _scrollView.contentSize.height;
+        _scrollView.contentSize = newContentSize;
+    }
 
     if (_delegateRespondsToDidEdit) {
         [_delegate tabView:self didEditView:_editingStyle atIndex:_currentIndex];
     }
+    _editingStyle = MOTabViewEditingStyleNone;
 }
 
 - (void)tabViewDidEditTitle:(NSString *)title {
@@ -682,9 +707,10 @@ static const CGFloat kWidthFactor = 0.73f;
                          }];
     }
 
+    // after the deletion animation finished we inform the delegate
     if (_editingStyle == MOTabViewEditingStyleDelete) {
+        [self updatePageControl];
         [self tabViewDidEditView];
-        _editingStyle = MOTabViewEditingStyleNone;
     }
 }
 
@@ -715,8 +741,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // index where new tab is added
     NSUInteger newIndex = 0;
+    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
     if (_addingStyle == MOTabViewAddingAtLastIndex) {
-        NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
         newIndex = numberOfViews;
     } else if (_addingStyle == MOTabViewAddingAtNextIndex) {
         newIndex = _currentIndex + 1;
@@ -730,27 +756,7 @@ static const CGFloat kWidthFactor = 0.73f;
           willEditView:_editingStyle
                atIndex:newIndex];
 
-    if (_addingStyle == MOTabViewAddingAtLastIndex) {
-
-        if (_currentIndex + 1 == newIndex) {
-            _rightTabContentView = [self tabContentViewAtIndex:newIndex];
-            _rightTabContentView.hidden = YES;
-        } else {
-            _hideLastTabContentView = YES;
-        }
-
-        CFTimeInterval duration;
-        if (abs((NSInteger) (newIndex - _currentIndex)) > 3) {
-            duration = 1;
-        } else {
-            duration = 0.5;
-        }
-
-        [self scrollToViewAtIndex:newIndex
-               withTimingFunction:_easeInTimingFunction
-                         duration:duration];
-
-    } else if (_addingStyle == MOTabViewAddingAtNextIndex) {
+    if (_addingStyle == MOTabViewAddingAtNextIndex) {
 
         // move all three views to the right
         CGRect newLeftFrame = _leftTabContentView.frame;
@@ -773,7 +779,11 @@ static const CGFloat kWidthFactor = 0.73f;
         // this way we can later move the left and the center view to the left
         // and make room for a new tab
 
-        _currentIndex = _currentIndex + 1;
+        if (numberOfViews == 0) {
+            _currentIndex = 0;
+        } else {
+            _currentIndex = _currentIndex + 1;
+        }
         [self updatePageControl];
 
         [UIView animateWithDuration:0.3
@@ -787,7 +797,7 @@ static const CGFloat kWidthFactor = 0.73f;
                              _centerTabContentView.frame = newCenterFrame;
                              _centerTabContentView.visibility = 0;
                          }
-                         completion:^(BOOL __unused finished){
+                         completion:^(BOOL __unused finished) {
 
                              // after changing frames the center view becomes
                              // the left view
@@ -795,7 +805,7 @@ static const CGFloat kWidthFactor = 0.73f;
                              _leftTabContentView = _centerTabContentView;
                              _centerTabContentView = nil;
 
-// TODO: revise this code
+                             // TODO: revise this code
                              MOTabView *temp = self;
                              [self addNewCenterViewAnimated:YES
                                                  completion:^(BOOL __unused finished) {
@@ -803,6 +813,25 @@ static const CGFloat kWidthFactor = 0.73f;
                                                  }];
                          }];
 
+    } else if (_addingStyle == MOTabViewAddingAtLastIndex) {
+
+        if (_currentIndex + 1 == newIndex) {
+            _rightTabContentView = [self tabContentViewAtIndex:newIndex];
+            _rightTabContentView.hidden = YES;
+        } else {
+            _hideLastTabContentView = YES;
+        }
+
+        CFTimeInterval duration;
+        if (abs((NSInteger) (newIndex - _currentIndex)) > 3) {
+            duration = 1;
+        } else {
+            duration = 0.5;
+        }
+
+        [self scrollToViewAtIndex:newIndex
+               withTimingFunction:_easeInTimingFunction
+                         duration:duration];
     }
 }
 
@@ -852,30 +881,49 @@ static const CGFloat kWidthFactor = 0.73f;
 
     UIView *contentView = [_dataSource tabView:self
                                   viewForIndex:_currentIndex];
-    CGRect centerFrame = _leftTabContentView.frame;
-    centerFrame.origin.x += kWidthFactor * self.bounds.size.width;
-    _centerTabContentView = [[MOTabContentView alloc] initWithFrame:centerFrame];
-    _centerTabContentView.delegate = self;
-    _centerTabContentView.contentView = contentView;
-    _centerTabContentView.visibility = 1;
-    _centerTabContentView.alpha = 0;
+    if (_leftTabContentView) {
+        CGRect centerFrame = _leftTabContentView.frame;
+        centerFrame.origin.x += kWidthFactor * self.bounds.size.width;
+        _centerTabContentView = [[MOTabContentView alloc] initWithFrame:centerFrame];
+        _centerTabContentView.delegate = self;
+        _centerTabContentView.contentView = contentView;
+        _centerTabContentView.visibility = 1;
+        _centerTabContentView.alpha = 0;
+    } else {
+        _centerTabContentView = [self tabContentView];
+        _centerTabContentView.delegate = self;
+        _centerTabContentView.contentView = contentView;
+//        [self selectCurrentViewAnimated:NO];
+//        [self updateTitles];
+    }
     [_scrollView addSubview:_centerTabContentView];
 
-    [UIView animateWithDuration:0.5
-                     animations:^{
-                         _centerTabContentView.alpha = 1;
-                     }
-                     completion:completion];
+//    [UIView animateWithDuration:0.5
+//                     animations:^{
+//                         _centerTabContentView.alpha = 1;
+//                     }
+//                     completion:completion];
 }
 
 
 - (void)deleteCurrentView {
 
+    // if we are about to delete the last remaining tab, we first add a new one
+    NSUInteger numberOfViews = [_delegate numberOfViewsInTabView:self];
+    if (numberOfViews == 1) {
+        [_offsets addObject:[NSNumber numberWithFloat:0]];
+        _editingStyle = MOTabViewEditingStyleInsert;
+        [self tabViewWillEditView];
+        _rightTabContentView = [self tabContentViewAtIndex:1];
+        [_scrollView addSubview:_rightTabContentView];
+        [self tabViewDidEditView];
+
+        numberOfViews = [_delegate numberOfViewsInTabView:self];;
+    }
+
     _editingStyle = MOTabViewEditingStyleDelete;
 
     [_offsets removeObjectAtIndex:_currentIndex];
-
-    NSUInteger numberOfViews = [self.dataSource numberOfViewsInTabView:self];
 
     // inform delegate that view will be deleted
     [self tabViewWillEditView];
@@ -911,6 +959,7 @@ static const CGFloat kWidthFactor = 0.73f;
                                                   _rightTabContentView.center = newRightCenter;
                                               }
                                               completion:^(BOOL __unused finished){
+                                                  [self updatePageControl];
                                                   [self tabViewDidEditView];
                                               }];
                          }
