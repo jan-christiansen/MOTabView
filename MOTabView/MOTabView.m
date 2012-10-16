@@ -835,6 +835,28 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
+- (void)insertViewAtIndex:(NSUInteger)newIndex {
+    
+    _editingStyle = MOTabViewEditingStyleInsert;
+    
+    CGSize newContentSize;
+    newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
+    newContentSize.height = _scrollView.contentSize.height;
+    _scrollView.contentSize = newContentSize;
+    
+    // add the offset for the new view to the array of offsets
+    [self initOffsetForIndex:newIndex];
+
+    if (_currentIndex + 1 == newIndex) {
+        _rightTabContentView = [self tabContentViewAtIndex:newIndex];
+
+    }
+
+    // in case the scrollView is visible during a dropbox synchronization
+    [self updatePageControl];
+
+}
+
 - (CGRect)newFrame:(CGRect)frame forIndex:(NSUInteger)index {
 
     NSInteger factor = (NSInteger) index - (NSInteger) _currentIndex;

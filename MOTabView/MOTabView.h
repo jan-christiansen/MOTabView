@@ -138,8 +138,9 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 
 - (void)insertNewView;
 
-- (void)deleteCurrentView;
+- (void)insertViewAtIndex:(NSUInteger)newIndex;
 
+- (void)deleteCurrentView;
 
 /**
  * Yields the view for a specific index if the view is currently visible. If it
