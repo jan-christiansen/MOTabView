@@ -68,6 +68,7 @@ static const CGFloat kWidthFactor = 0.73f;
     BOOL _delegateRespondsToWillEdit;
     BOOL _delegateRespondsToDidEdit;
     BOOL _delegateRespondsToDidEditTitle;
+    BOOL _delegateRespondsToTitleForIndex;
 
     id<MOTabViewDataSource> _dataSource;
 
@@ -260,8 +261,10 @@ static const CGFloat kWidthFactor = 0.73f;
         _navigationBarField.enabled = NO;
         _navigationBarField.delegate = self;
         _navigationBarField.returnKeyType = UIReturnKeyDone;
-        NSString *temp = [self.dataSource titleForIndex:_currentIndex];
-        _navigationBarField.text = temp;
+
+        if (_delegateRespondsToTitleForIndex) {
+            _navigationBarField.text = [self.dataSource titleForIndex:_currentIndex];
+        }
         item.titleView = _navigationBarField;
         [_navigationBar pushNavigationItem:item animated:NO];
         [self addSubview:_navigationBar];
@@ -340,6 +343,7 @@ static const CGFloat kWidthFactor = 0.73f;
     _delegateRespondsToWillEdit = [_delegate respondsToSelector:@selector(tabView:willEditView:atIndex:)];
     _delegateRespondsToDidEdit = [_delegate respondsToSelector:@selector(tabView:didEditView:atIndex:)];
     _delegateRespondsToDidEditTitle = [_delegate respondsToSelector:@selector(tabView:didEditTitle:atIndex:)];
+    _delegateRespondsToTitleForIndex = [_delegate respondsToSelector:@selector(titleForIndex:)];
 
     [self tabViewWillSelectView];
     [self tabViewDidDeselectView];
@@ -503,11 +507,13 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)updateTitles {
 
-    NSString *title = [self.dataSource titleForIndex:_currentIndex];
-    _titleField.text = title;
-    _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
-    if (!_navigationBarHidden) {
-        _navigationBarField.text = title;
+    if (_delegateRespondsToTitleForIndex) {
+        NSString *title = [self.dataSource titleForIndex:_currentIndex];
+        _titleField.text = title;
+        _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
+        if (!_navigationBarHidden) {
+            _navigationBarField.text = title;
+        }
     }
 }
 
