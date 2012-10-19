@@ -253,6 +253,7 @@ static const CGFloat kWidthFactor = 0.73f;
     _navigationBarHidden = navigationBarHidden;
 
     if (!_navigationBarHidden) {
+
         CGRect navigationBarFrame = CGRectMake(0, 0, self.bounds.size.width, 44);
         _navigationBar = [[UINavigationBar alloc] initWithFrame:navigationBarFrame];
         UINavigationItem* item = [[UINavigationItem alloc] init];
@@ -1038,6 +1039,11 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (void)deselectCurrentView {
 
+    [self deselectCurrentViewAnimated:YES];
+}
+
+- (void)deselectCurrentViewAnimated:(BOOL)animated {
+
     if (!_navigationBarHidden
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
 
@@ -1068,7 +1074,7 @@ static const CGFloat kWidthFactor = 0.73f;
     [self updateTitles];
     _scrollView.scrollEnabled = YES;
 
-    if (!_navigationBarHidden) {
+    if (animated && !_navigationBarHidden) {
         [UIView animateWithDuration:0.3
                          animations:^{
                              _navigationBar.alpha = 0;
@@ -1076,7 +1082,7 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 
 #warning informs the delegate at the end of the animation, not guarenteed that navigationbar animation is finised
-    [_centerTabContentView deselectAnimated:YES];
+    [_centerTabContentView deselectAnimated:animated];
 }
 
 - (UIView *)viewForIndex:(NSUInteger)index {
@@ -1099,6 +1105,50 @@ static const CGFloat kWidthFactor = 0.73f;
     } else {
         return nil;
     }
+}
+
+- (void)selectViewAtIndex:(NSUInteger)index {
+
+    [_leftTabContentView removeFromSuperview];
+    _leftTabContentView = nil;
+    [_centerTabContentView removeFromSuperview];
+    _centerTabContentView = nil;
+    [_rightTabContentView removeFromSuperview];
+    _rightTabContentView = nil;
+
+    NSUInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
+
+    NSString *desc = [NSString stringWithFormat:@"Index %d is not a valid index", index];
+    NSAssert(index < numberOfViews, desc);
+
+    _currentIndex = index;
+    [self updatePageControl];
+
+    // initialize center view
+    UIView *contentView = [_dataSource tabView:self viewForIndex:index];
+    CGRect contentViewFrame = self.frame;
+// TODO: refactor this code
+    CGRect temp = CGRectMake(contentViewFrame.origin.x + index * kWidthFactor * self.bounds.size.width, contentViewFrame.origin.y, contentViewFrame.size.width, contentViewFrame.size.height);
+    _centerTabContentView = [[MOTabContentView alloc] initWithFrame:temp];
+
+    _centerTabContentView.delegate = self;
+    _centerTabContentView.contentView = contentView;
+    [_scrollView addSubview:_centerTabContentView];
+    [self selectCurrentViewAnimated:NO];
+    [self updateTitles];
+
+    // initialize left view
+    if (index > 0) {
+        _leftTabContentView = [self tabContentViewAtIndex:index-1];
+    }
+
+    // initialize right view
+    if (index+1 < numberOfViews) {
+        _rightTabContentView = [self tabContentViewAtIndex:index+1];
+    }
+
+    CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
+    _scrollView.contentOffset = contentOffset;
 }
 
 

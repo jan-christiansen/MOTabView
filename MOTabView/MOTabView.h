@@ -128,9 +128,7 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 @property(assign, nonatomic) MOTabViewAddinngStyle addingStyle;
 
 
-- (void)scrollToViewAtIndex:(NSUInteger)newIndex
-         withTimingFunction:(CAMediaTimingFunction *)timingFunction
-                   duration:(CFTimeInterval)duration;
+- (void)selectViewAtIndex:(NSUInteger)index;
 
 - (void)selectCurrentView;
 
