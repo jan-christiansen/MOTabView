@@ -82,6 +82,8 @@ willSelectViewAtIndex:(NSUInteger)index;
 
 - (void)tabView:(MOTabView *)tabView didDeselectViewAtIndex:(NSUInteger)index;
 
+- (void)tabView:(MOTabView *)tabView didChangeIndex:(NSUInteger)index;
+
 - (void)tabView:(MOTabView* )tabView
    willEditView:(MOTabViewEditingStyle)editingStyle
         atIndex:(NSUInteger)index;

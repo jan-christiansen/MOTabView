@@ -219,5 +219,12 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
     _toolBar.userInteractionEnabled = YES;
 }
 
+// dummy method, overwritten by subclass
+- (void)tabView:(MOTabView *)__unused tabView
+ didChangeIndex:(NSUInteger)__unused index {
+
+    return;
+}
+
 
 @end

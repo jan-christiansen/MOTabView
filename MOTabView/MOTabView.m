@@ -68,6 +68,7 @@ static const CGFloat kWidthFactor = 0.73f;
     BOOL _delegateRespondsToWillEdit;
     BOOL _delegateRespondsToDidEdit;
     BOOL _delegateRespondsToDidEditTitle;
+    BOOL _delegateRespondsToDidChange;
     BOOL _delegateRespondsToTitleForIndex;
 
     id<MOTabViewDataSource> _dataSource;
@@ -344,6 +345,7 @@ static const CGFloat kWidthFactor = 0.73f;
     _delegateRespondsToWillEdit = [_delegate respondsToSelector:@selector(tabView:willEditView:atIndex:)];
     _delegateRespondsToDidEdit = [_delegate respondsToSelector:@selector(tabView:didEditView:atIndex:)];
     _delegateRespondsToDidEditTitle = [_delegate respondsToSelector:@selector(tabView:didEditTitle:atIndex:)];
+    _delegateRespondsToDidChange = [_delegate respondsToSelector:@selector(tabView:didChangeIndex:)];
     _delegateRespondsToTitleForIndex = [_delegate respondsToSelector:@selector(titleForIndex:)];
 
     [self tabViewWillSelectView];
@@ -450,6 +452,13 @@ static const CGFloat kWidthFactor = 0.73f;
 
     if (_delegateRespondsToDidDeselect) {
         [_delegate tabView:self didDeselectViewAtIndex:_currentIndex];
+    }
+}
+
+- (void)tabViewDidChange {
+
+    if (_delegateRespondsToDidChange) {
+        [_delegate tabView:self didChangeIndex:_currentIndex];
     }
 }
 
@@ -603,41 +612,42 @@ static const CGFloat kWidthFactor = 0.73f;
     if (potentialIndex >= 0 && potentialIndex < (NSInteger) numberOfViews) {
 
         NSUInteger newIndex = (NSUInteger) potentialIndex;
-        if (newIndex > _currentIndex) {
+        if (newIndex > _currentIndex || newIndex < _currentIndex) {
 
-            _currentIndex = newIndex;
+            if (newIndex > _currentIndex) {
 
-            [self updateTitles];
+                // scroll one view to the right
+                [_leftTabContentView removeFromSuperview];
 
-            // scroll one view to the right
-            [_leftTabContentView removeFromSuperview];
+                _leftTabContentView = _centerTabContentView;
+                _centerTabContentView = _rightTabContentView;
 
-            _leftTabContentView = _centerTabContentView;
-            _centerTabContentView = _rightTabContentView;
+                // add additional view to the right
+                _rightTabContentView = [self tabContentViewAtIndex:newIndex+1];
 
-            // add additional view to the right
-            _rightTabContentView = [self tabContentViewAtIndex:newIndex+1];
+                // if right view was just added by insert, hide it
+                if (_hideLastTabContentView && newIndex+1 == numberOfViews-1) {
+                    _rightTabContentView.hidden = YES;
+                    _hideLastTabContentView = NO;
+                }
 
-            // if right view was just added by insert, hide it
-            if (_hideLastTabContentView && newIndex+1 == numberOfViews-1) {
-                _rightTabContentView.hidden = YES;
-                _hideLastTabContentView = NO;
+            } else if (newIndex < _currentIndex) {
+
+                // scroll one view to the left
+                [_rightTabContentView removeFromSuperview];
+
+                _rightTabContentView = _centerTabContentView;
+                _centerTabContentView = _leftTabContentView;
+
+                //
+                _leftTabContentView = [self tabContentViewAtIndex:newIndex-1];
             }
 
-        } else if (newIndex < _currentIndex) {
-
             _currentIndex = newIndex;
+            [self tabViewDidChange];
 
             [self updateTitles];
 
-            // scroll one view to the left
-            [_rightTabContentView removeFromSuperview];
-
-            _rightTabContentView = _centerTabContentView;
-            _centerTabContentView = _leftTabContentView;
-
-            //
-            _leftTabContentView = [self tabContentViewAtIndex:newIndex-1];
         } else {
             [self updatePageControl];
         }
@@ -1107,7 +1117,7 @@ static const CGFloat kWidthFactor = 0.73f;
     } else if (view == _rightTabContentView.contentView) {
         return _currentIndex+1;
     } else {
-//        return;
+        return 0;
     }
 }
 
