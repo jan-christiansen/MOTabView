@@ -876,9 +876,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
 - (CGRect)newFrame:(CGRect)frame forIndex:(NSUInteger)index {
 
-    NSInteger factor = (NSInteger) index - (NSInteger) _currentIndex;
     CGRect newFrame = frame;
-    newFrame.origin.x = newFrame.origin.x + factor * kWidthFactor * self.bounds.size.width;
+    newFrame.origin.x = newFrame.origin.x + index * kWidthFactor * self.bounds.size.width;
     return newFrame;
 }
 
@@ -889,7 +888,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
     if (index < numberOfViews) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:index];
-        CGRect newFrame = [self newFrame:_centerTabContentView.frame forIndex:index];
+        CGRect newFrame = [self newFrame:self.bounds forIndex:index];
 
         if (!_navigationBarHidden && [contentView.class isSubclassOfClass:[UITableView class]]) {
             UITableView *tableView = (UITableView *)contentView;
