@@ -146,6 +146,8 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
  */
 - (UIView *)viewForIndex:(NSUInteger)index;
 
+- (NSUInteger)indexOfContentView:(UIView *)view;
+
 /**
  * Yields the currently selected view if one is selected and `nil` otherwise.
  */

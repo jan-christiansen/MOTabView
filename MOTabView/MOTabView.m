@@ -1098,6 +1098,19 @@ static const CGFloat kWidthFactor = 0.73f;
     }
 }
 
+- (NSUInteger)indexOfContentView:(UIView *)view {
+
+    if (view == _leftTabContentView.contentView) {
+        return _currentIndex-1;
+    } else if (view == _centerTabContentView.contentView) {
+        return _currentIndex;
+    } else if (view == _rightTabContentView.contentView) {
+        return _currentIndex+1;
+    } else {
+//        return;
+    }
+}
+
 - (UIView *)selectedView {
     
     if (_centerTabContentView.isSelected) {
