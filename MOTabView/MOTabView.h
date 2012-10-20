@@ -155,5 +155,7 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
  */
 - (UIView *)selectedView;
 
+- (UIView *)reusableView;
+
 
 @end

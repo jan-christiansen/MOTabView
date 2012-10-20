@@ -101,6 +101,8 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // y component of contentOffset, saved if content views are table views
     NSMutableArray *_offsets;
+
+    NSMutableArray *_reusableContentViews;
 }
 
 
@@ -205,6 +207,8 @@ static const CGFloat kWidthFactor = 0.73f;
     _navigationBarHidden = YES;
 
     _offsets = @[].mutableCopy;
+    
+    _reusableContentViews = @[].mutableCopy;
 }
 
 - (MOTabContentView *)tabContentView {
@@ -624,6 +628,10 @@ static const CGFloat kWidthFactor = 0.73f;
 
                 // save left view for reuse
                 MOTabContentView *reuseTabContentView = _leftTabContentView;
+                if (reuseTabContentView.contentView) {
+                    [_reusableContentViews addObject:reuseTabContentView.contentView];
+                    reuseTabContentView.contentView = nil;
+                }
 
                 _leftTabContentView = _centerTabContentView;
                 _centerTabContentView = _rightTabContentView;
@@ -642,6 +650,10 @@ static const CGFloat kWidthFactor = 0.73f;
 
                 // save right view for reuse
                 MOTabContentView *reuseTabContentView = _rightTabContentView;
+                if (reuseTabContentView.contentView) {
+                    [_reusableContentViews addObject:reuseTabContentView.contentView];
+                    reuseTabContentView.contentView = nil;
+                }
 
                 _rightTabContentView = _centerTabContentView;
                 _centerTabContentView = _leftTabContentView;
@@ -901,7 +913,7 @@ static const CGFloat kWidthFactor = 0.73f;
     if (reuseView) {
         tabContentView = reuseView;
     } else {
-        tabContentView = [[MOTabContentView alloc] initWithFrame:CGRectZero];
+        tabContentView = [[MOTabContentView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
         tabContentView.delegate = self;
         tabContentView.visibility = 0;
         [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
@@ -1183,17 +1195,23 @@ static const CGFloat kWidthFactor = 0.73f;
     [self updateTitles];
 
     // initialize left view
-    if (index > 0) {
-        _leftTabContentView = [self tabContentViewAtIndex:index-1 withReuseView:nil];
-    }
+    _leftTabContentView = [self tabContentViewAtIndex:index-1 withReuseView:nil];
 
     // initialize right view
-    if (index+1 < numberOfViews) {
-        _rightTabContentView = [self tabContentViewAtIndex:index+1 withReuseView:nil];
-    }
+    _rightTabContentView = [self tabContentViewAtIndex:index+1 withReuseView:nil];
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
     _scrollView.contentOffset = contentOffset;
+}
+
+- (UIView *)reusableView {
+
+    UIView *reusableView = nil;
+    if (_reusableContentViews.count > 0) {
+        reusableView = [_reusableContentViews objectAtIndex:0];
+        [_reusableContentViews removeObjectAtIndex:0];
+    }
+    return reusableView;
 }
 
 
