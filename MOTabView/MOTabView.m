@@ -313,18 +313,24 @@ static const CGFloat kWidthFactor = 0.73f;
     _scrollView.contentSize = CGSizeMake((1 + kWidthFactor * (numberOfViews-1)) * self.bounds.size.width,
                                          self.bounds.size.height);
 
-    // initialize center view
+    // initialize the three views
+    _centerTabContentView = [self tabContentView];
+    _centerTabContentView.delegate = self;
+    [_scrollView addSubview:_centerTabContentView];
+
+    // initialize left view
+    _leftTabContentView = [self tabContentViewAtIndex:_currentIndex-1
+                                        withReuseView:nil];
+
+    // initialize right view
+    _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1
+                                         withReuseView:nil];
+
     if (numberOfViews > 0) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:0];
-        _centerTabContentView = [self tabContentView];
-        _centerTabContentView.delegate = self;
         _centerTabContentView.contentView = contentView;
-        [_scrollView addSubview:_centerTabContentView];
         [self selectCurrentViewAnimated:NO];
         [self updateTitles];
-
-        // initialize right view
-        _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
     }
 }
 
@@ -616,14 +622,15 @@ static const CGFloat kWidthFactor = 0.73f;
 
             if (newIndex > _currentIndex) {
 
-                // scroll one view to the right
-                [_leftTabContentView removeFromSuperview];
+                // save left view for reuse
+                MOTabContentView *reuseTabContentView = _leftTabContentView;
 
                 _leftTabContentView = _centerTabContentView;
                 _centerTabContentView = _rightTabContentView;
 
                 // add additional view to the right
-                _rightTabContentView = [self tabContentViewAtIndex:newIndex+1];
+                _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex+1
+                                                     withReuseView:reuseTabContentView];
 
                 // if right view was just added by insert, hide it
                 if (_hideLastTabContentView && newIndex+1 == numberOfViews-1) {
@@ -633,14 +640,15 @@ static const CGFloat kWidthFactor = 0.73f;
 
             } else if (newIndex < _currentIndex) {
 
-                // scroll one view to the left
-                [_rightTabContentView removeFromSuperview];
+                // save right view for reuse
+                MOTabContentView *reuseTabContentView = _rightTabContentView;
 
                 _rightTabContentView = _centerTabContentView;
                 _centerTabContentView = _leftTabContentView;
 
                 //
-                _leftTabContentView = [self tabContentViewAtIndex:newIndex-1];
+                _leftTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex-1
+                                                    withReuseView:reuseTabContentView];
             }
 
             _currentIndex = newIndex;
@@ -833,7 +841,8 @@ static const CGFloat kWidthFactor = 0.73f;
     } else if (_addingStyle == MOTabViewAddingAtLastIndex) {
 
         if (_currentIndex + 1 == newIndex) {
-            _rightTabContentView = [self tabContentViewAtIndex:newIndex];
+            _rightTabContentView = [self tabContentViewAtIndex:newIndex
+                                                 withReuseView:nil];
             _rightTabContentView.hidden = YES;
         } else {
             _hideLastTabContentView = YES;
@@ -865,7 +874,8 @@ static const CGFloat kWidthFactor = 0.73f;
     [self initOffsetForIndex:newIndex];
 
     if (_currentIndex + 1 == newIndex) {
-        _rightTabContentView = [self tabContentViewAtIndex:newIndex];
+        _rightTabContentView = [self tabContentViewAtIndex:newIndex
+                                             withReuseView:nil];
 
     }
 
@@ -881,33 +891,45 @@ static const CGFloat kWidthFactor = 0.73f;
     return newFrame;
 }
 
-- (MOTabContentView *)tabContentViewAtIndex:(NSUInteger)index {
+- (MOTabContentView *)tabContentViewAtIndex:(NSInteger)index
+                              withReuseView:(MOTabContentView *)reuseView {
 
+    // if the index is out of bounds, the view is hidden
     NSUInteger numberOfViews = [_dataSource numberOfViewsInTabView:self];
     MOTabContentView *tabContentView = nil;
 
-    if (index < numberOfViews) {
-        UIView *contentView = [_dataSource tabView:self viewForIndex:index];
-        CGRect newFrame = [self newFrame:self.bounds forIndex:index];
+    if (reuseView) {
+        tabContentView = reuseView;
+    } else {
+        tabContentView = [[MOTabContentView alloc] initWithFrame:CGRectZero];
+        tabContentView.delegate = self;
+        tabContentView.visibility = 0;
+        [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
+    }
+
+    if (0 <= index && index < (NSInteger)numberOfViews) {
+        // the index is within the bounds
+        UIView *contentView = [_dataSource tabView:self viewForIndex:(NSUInteger)index];
+        CGRect newFrame = [self newFrame:self.bounds forIndex:(NSUInteger)index];
+        tabContentView.frame = newFrame;
+        tabContentView.contentView = contentView;
+        tabContentView.hidden = NO;
 
         if (!_navigationBarHidden && [contentView.class isSubclassOfClass:[UITableView class]]) {
             UITableView *tableView = (UITableView *)contentView;
-
-            float offset = [self offsetForIndex:index];
+            
+            float offset = [self offsetForIndex:(NSUInteger)index];
 
             CGRect navigationFrame = _navigationBar.frame;
             navigationFrame.origin.y -= offset;
             _navigationBar.frame = navigationFrame;
-
+            
             newFrame.origin.y = MAX(_navigationBar.bounds.size.height - offset, 0);
             tableView.contentOffset = CGPointMake(0, MAX(offset - _navigationBar.bounds.size.height,0));
         }
-
-        tabContentView = [[MOTabContentView alloc] initWithFrame:newFrame];
-        tabContentView.contentView = contentView;
-        tabContentView.delegate = self;
-        tabContentView.visibility = 0;
-        [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
+    } else {
+        // the view is out of bounds and, therefore, not dislayed
+        tabContentView.hidden = YES;
     }
 
     return tabContentView;
@@ -952,7 +974,7 @@ static const CGFloat kWidthFactor = 0.73f;
         [_offsets addObject:[NSNumber numberWithFloat:0]];
         _editingStyle = MOTabViewEditingStyleInsert;
         [self tabViewWillEditView];
-        _rightTabContentView = [self tabContentViewAtIndex:1];
+        _rightTabContentView = [self tabContentViewAtIndex:1 withReuseView:nil];
         [_scrollView addSubview:_rightTabContentView];
         [self tabViewDidEditView];
 
@@ -984,7 +1006,8 @@ static const CGFloat kWidthFactor = 0.73f;
                          } else {
 
                              // add new right view
-                             _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1];
+                             _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1
+                                                                  withReuseView:nil];
 
                              [UIView animateWithDuration:0.5
                                               animations:^{
@@ -1161,12 +1184,12 @@ static const CGFloat kWidthFactor = 0.73f;
 
     // initialize left view
     if (index > 0) {
-        _leftTabContentView = [self tabContentViewAtIndex:index-1];
+        _leftTabContentView = [self tabContentViewAtIndex:index-1 withReuseView:nil];
     }
 
     // initialize right view
     if (index+1 < numberOfViews) {
-        _rightTabContentView = [self tabContentViewAtIndex:index+1];
+        _rightTabContentView = [self tabContentViewAtIndex:index+1 withReuseView:nil];
     }
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
