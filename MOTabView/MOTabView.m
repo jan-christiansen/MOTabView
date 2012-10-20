@@ -700,7 +700,7 @@ static const CGFloat kWidthFactor = 0.73f;
         // scroll view to next index
         [self scrollToViewAtIndex:nextIndex
                withTimingFunction:_easeOutTimingFunction
-                         duration:0.2];
+                         duration:0.3];
     }
 }
 
