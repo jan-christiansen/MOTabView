@@ -323,11 +323,11 @@ static const CGFloat kWidthFactor = 0.73f;
     [_scrollView addSubview:_centerTabContentView];
 
     // initialize left view
-    _leftTabContentView = [self tabContentViewAtIndex:_currentIndex-1
+    _leftTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex-1
                                         withReuseView:nil];
 
     // initialize right view
-    _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1
+    _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex+1
                                          withReuseView:nil];
 
     if (numberOfViews > 0) {
@@ -853,7 +853,7 @@ static const CGFloat kWidthFactor = 0.73f;
     } else if (_addingStyle == MOTabViewAddingAtLastIndex) {
 
         if (_currentIndex + 1 == newIndex) {
-            _rightTabContentView = [self tabContentViewAtIndex:newIndex
+            _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex
                                                  withReuseView:nil];
             _rightTabContentView.hidden = YES;
         } else {
@@ -886,7 +886,7 @@ static const CGFloat kWidthFactor = 0.73f;
     [self initOffsetForIndex:newIndex];
 
     if (_currentIndex + 1 == newIndex) {
-        _rightTabContentView = [self tabContentViewAtIndex:newIndex
+        _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex
                                              withReuseView:nil];
 
     }
@@ -913,7 +913,7 @@ static const CGFloat kWidthFactor = 0.73f;
     if (reuseView) {
         tabContentView = reuseView;
     } else {
-        tabContentView = [[MOTabContentView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
+        tabContentView = [[MOTabContentView alloc] initWithFrame:CGRectZero];
         tabContentView.delegate = self;
         tabContentView.visibility = 0;
         [_scrollView insertSubview:tabContentView belowSubview:_centerTabContentView];
@@ -1018,8 +1018,11 @@ static const CGFloat kWidthFactor = 0.73f;
                          } else {
 
                              // add new right view
-                             _rightTabContentView = [self tabContentViewAtIndex:_currentIndex+1
+                             _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex+1
                                                                   withReuseView:nil];
+                             CGPoint newRightCenter = _rightTabContentView.center;
+                             newRightCenter.x += kWidthFactor * self.bounds.size.width;
+                             _rightTabContentView.center = newRightCenter;
 
                              [UIView animateWithDuration:0.5
                                               animations:^{
@@ -1195,10 +1198,12 @@ static const CGFloat kWidthFactor = 0.73f;
     [self updateTitles];
 
     // initialize left view
-    _leftTabContentView = [self tabContentViewAtIndex:index-1 withReuseView:nil];
+    _leftTabContentView = [self tabContentViewAtIndex:(NSInteger)index-1
+                                        withReuseView:nil];
 
     // initialize right view
-    _rightTabContentView = [self tabContentViewAtIndex:index+1 withReuseView:nil];
+    _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)index+1
+                                         withReuseView:nil];
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
     _scrollView.contentOffset = contentOffset;
