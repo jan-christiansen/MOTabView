@@ -94,6 +94,8 @@
                       style:UIBarButtonItemStyleBordered
                       target:_tabView
                       action:@selector(insertNewView)];
+
+    self.maxNumberOfViews = 8;
 }
 
 
