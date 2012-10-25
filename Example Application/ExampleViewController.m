@@ -37,6 +37,7 @@
 //
 
 #import "ExampleViewController.h"
+#import "ExampleContentView.h"
 
 
 @implementation ExampleViewController {
@@ -94,18 +95,15 @@
 
 - (UIView *)tabView:(MOTabView *)tabView viewForIndex:(NSUInteger)index {
 
-    UIView *contentView = [[UIView alloc] initWithFrame:tabView.bounds];
-    contentView.backgroundColor = [UIColor whiteColor];
-    CGRect labelFrame = CGRectMake(0.5*tabView.bounds.size.width-50,
-                                   0.5*tabView.bounds.size.height-50,
-                                   100,
-                                   100);
-    UILabel *label = [[UILabel alloc] initWithFrame:labelFrame];
-    label.backgroundColor = [UIColor clearColor];
-    label.text = _model[index];
-    label.font = [UIFont systemFontOfSize:50];
-    label.textAlignment = UITextAlignmentCenter;
-    [contentView addSubview:label];
+    // ask the tab view for a reusalbe view
+    ExampleContentView *contentView = (ExampleContentView *)[self.tabView reusableView];
+    if (!contentView) {
+        // if we did not get a view, we have to build a new one
+        contentView = [[ExampleContentView alloc] initWithFrame:tabView.bounds];
+    }
+
+    contentView.text = _model[index];
+
     return contentView;
 }
 
