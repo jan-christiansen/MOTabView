@@ -331,11 +331,11 @@ static const BOOL kDebugMode = NO;
 
     // initialize left view
     _leftTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex-1
-                                        withReuseView:nil];
+                                        withReuseView:_leftTabContentView];
 
     // initialize right view
     _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex+1
-                                         withReuseView:nil];
+                                         withReuseView:_rightTabContentView];
 
     if (numberOfViews > 0) {
         UIView *contentView = [_dataSource tabView:self viewForIndex:0];
@@ -1219,11 +1219,11 @@ static const BOOL kDebugMode = NO;
 
     // initialize left view
     _leftTabContentView = [self tabContentViewAtIndex:(NSInteger)index-1
-                                        withReuseView:nil];
+                                        withReuseView:_leftTabContentView];
 
     // initialize right view
     _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)index+1
-                                         withReuseView:nil];
+                                         withReuseView:_rightTabContentView];
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
     _scrollView.contentOffset = contentOffset;
