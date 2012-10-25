@@ -133,7 +133,12 @@ static const CGFloat kDeselectedOriginY = 20;
 
 - (void)setContentView:(UIView *)contentView {
 
+    // if user interactions are disabled (because the view is minimized/deselected)
+    // we have to disable the interactions of the new content view as well
     contentView.userInteractionEnabled = _contentView.userInteractionEnabled;
+
+    // we remove the old content view  and add the new one
+    [_contentView removeFromSuperview];
     _contentView = contentView;
     [_containerView addSubview:_contentView];
 }
