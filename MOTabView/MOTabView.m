@@ -55,6 +55,9 @@ static const CGFloat kDarkGrayBlue = 0.48f;
 
 static const CGFloat kWidthFactor = 0.73f;
 
+// turns on/off a global debugging mode that show normally hidden views
+static const BOOL kDebugMode = NO;
+
 
 @implementation MOTabView {
 
@@ -77,6 +80,10 @@ static const CGFloat kWidthFactor = 0.73f;
     NSUInteger _currentIndex;
 
     UIView *_backgroundView;
+
+    // this scrollview always contains three views, some of these may be hidden,
+    // if current only one or two content view are displayed
+    // these views are reused when the user scrolls
     MOScrollView *_scrollView;
     UIPageControl *_pageControl;
     MOTitleTextField *_titleField;
@@ -854,7 +861,7 @@ static const CGFloat kWidthFactor = 0.73f;
 
         if (_currentIndex + 1 == newIndex) {
             _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex
-                                                 withReuseView:nil];
+                                                 withReuseView:_rightTabContentView];
             _rightTabContentView.hidden = YES;
         } else {
             _hideLastTabContentView = YES;
@@ -874,29 +881,27 @@ static const CGFloat kWidthFactor = 0.73f;
 }
 
 - (void)insertViewAtIndex:(NSUInteger)newIndex {
-    
+
     _editingStyle = MOTabViewEditingStyleInsert;
-    
+
     CGSize newContentSize;
     newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
     newContentSize.height = _scrollView.contentSize.height;
     _scrollView.contentSize = newContentSize;
-    
+
+    [self tabViewWillEditView];
+
     // add the offset for the new view to the array of offsets
     [self initOffsetForIndex:newIndex];
 
     if (_currentIndex + 1 == newIndex) {
         _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex
-                                             withReuseView:nil];
+                                             withReuseView:_rightTabContentView];
 
     }
-
-    // in case the scrollView is visible during a dropbox synchronization
-    [self updatePageControl];
-
 }
 
-- (CGRect)newFrame:(CGRect)frame forIndex:(NSUInteger)index {
+- (CGRect)newFrame:(CGRect)frame forIndex:(NSInteger)index {
 
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + index * kWidthFactor * self.bounds.size.width;
@@ -922,7 +927,7 @@ static const CGFloat kWidthFactor = 0.73f;
     if (0 <= index && index < (NSInteger)numberOfViews) {
         // the index is within the bounds
         UIView *contentView = [_dataSource tabView:self viewForIndex:(NSUInteger)index];
-        CGRect newFrame = [self newFrame:self.bounds forIndex:(NSUInteger)index];
+        CGRect newFrame = [self newFrame:self.bounds forIndex:index];
         tabContentView.frame = newFrame;
         tabContentView.contentView = contentView;
         tabContentView.hidden = NO;
@@ -939,9 +944,25 @@ static const CGFloat kWidthFactor = 0.73f;
             newFrame.origin.y = MAX(_navigationBar.bounds.size.height - offset, 0);
             tableView.contentOffset = CGPointMake(0, MAX(offset - _navigationBar.bounds.size.height,0));
         }
+
+        if (kDebugMode) {
+            tabContentView.userInteractionEnabled = YES;
+        }
+
     } else {
+
         // the view is out of bounds and, therefore, not dislayed
         tabContentView.hidden = YES;
+
+        if (kDebugMode) {
+            // code for debugging purposes, displays the hidden views
+            UIView *debugContentView = [[UIView alloc] initWithFrame:self.bounds];
+            debugContentView.backgroundColor = [UIColor redColor];
+            tabContentView.hidden = NO;
+            tabContentView.contentView = debugContentView;
+            tabContentView.frame = [self newFrame:self.bounds forIndex:index];
+            tabContentView.userInteractionEnabled = NO;
+        }
     }
 
     return tabContentView;
@@ -983,14 +1004,10 @@ static const CGFloat kWidthFactor = 0.73f;
     // if we are about to delete the last remaining tab, we first add a new one
     NSUInteger numberOfViews = [_delegate numberOfViewsInTabView:self];
     if (numberOfViews == 1) {
-        [_offsets addObject:[NSNumber numberWithFloat:0]];
-        _editingStyle = MOTabViewEditingStyleInsert;
-        [self tabViewWillEditView];
-        _rightTabContentView = [self tabContentViewAtIndex:1 withReuseView:nil];
-        [_scrollView addSubview:_rightTabContentView];
-        [self tabViewDidEditView];
+        [self insertViewAtIndex:1];
 
-        numberOfViews = [_delegate numberOfViewsInTabView:self];;
+        // reset the number of view to correct value after adding a view
+        numberOfViews++;
     }
 
     _editingStyle = MOTabViewEditingStyleDelete;
@@ -1005,27 +1022,36 @@ static const CGFloat kWidthFactor = 0.73f;
                          _centerTabContentView.alpha = 0;
                      }
                      completion:^(BOOL __unused finished) {
-                         [_centerTabContentView removeFromSuperview];
 
-                         // the previous right view will be the new center view
-                         // if we delete the rightmost view _rightTabContentView is nil
-                         _centerTabContentView = _rightTabContentView;
+                         _centerTabContentView.alpha = _rightTabContentView.alpha;
+                         _centerTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex
+                                                               withReuseView:_centerTabContentView];
 
                          if (_currentIndex == numberOfViews-1) {
+
                              [self scrollToViewAtIndex:_currentIndex-1
                                     withTimingFunction:_easeInEaseOutTimingFunction
                                               duration:0.5];
                          } else {
 
+                             // the new center view moves in from the right,
+                             // thus we set its position appropriately
+                             CGPoint newCenterCenter = _centerTabContentView.center;
+                             newCenterCenter.x += kWidthFactor * self.bounds.size.width;
+                             _centerTabContentView.center = newCenterCenter;
+
                              // add new right view
                              _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex+1
-                                                                  withReuseView:nil];
+                                                                  withReuseView:_rightTabContentView];
+
+                             // the new right center view moves in from the right, too
                              CGPoint newRightCenter = _rightTabContentView.center;
                              newRightCenter.x += kWidthFactor * self.bounds.size.width;
                              _rightTabContentView.center = newRightCenter;
 
                              [UIView animateWithDuration:0.5
                                               animations:^{
+                                                  // move the two view to their target position
                                                   CGPoint newCenterCenter = _centerTabContentView.center;
                                                   newCenterCenter.x -= kWidthFactor * self.bounds.size.width;
                                                   _centerTabContentView.center = newCenterCenter;
@@ -1040,12 +1066,6 @@ static const CGFloat kWidthFactor = 0.73f;
                                               }];
                          }
                      }];
-
-    // check whether we have deleted the last remaining view
-    //    NSInteger numberOfViews = [_dataSource numberOfViewsInSelectionView:self];
-    //    if (numberOfViews == 0) {
-    //
-    //    }
 }
 
 - (void)selectCurrentView {
