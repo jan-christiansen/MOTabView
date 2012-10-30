@@ -283,6 +283,7 @@ static const BOOL kDebugMode = NO;
         [self addSubview:_navigationBar];
 
         // necessary if dataSource is not already set
+        // existing content views are offset to the bottom by the height of the navigation bar
         CGRect newLeftFrame = _leftTabContentView.frame;
         newLeftFrame.origin.y = newLeftFrame.origin.y + _navigationBar.bounds.size.height;
         _leftTabContentView.frame = newLeftFrame;
@@ -905,6 +906,13 @@ static const BOOL kDebugMode = NO;
 
     CGRect newFrame = frame;
     newFrame.origin.x = newFrame.origin.x + index * kWidthFactor * self.bounds.size.width;
+
+    if (!_navigationBarHidden) {
+        // if the navigation bar is displayed views are offset to the bottom
+        // by the height of the naviation bar
+        newFrame.origin.y = newFrame.origin.y + _navigationBar.bounds.size.height;
+    }
+
     return newFrame;
 }
 
@@ -934,13 +942,13 @@ static const BOOL kDebugMode = NO;
 
         if (!_navigationBarHidden && [contentView.class isSubclassOfClass:[UITableView class]]) {
             UITableView *tableView = (UITableView *)contentView;
-            
+
             float offset = [self offsetForIndex:(NSUInteger)index];
 
             CGRect navigationFrame = _navigationBar.frame;
             navigationFrame.origin.y -= offset;
             _navigationBar.frame = navigationFrame;
-            
+
             newFrame.origin.y = MAX(_navigationBar.bounds.size.height - offset, 0);
             tableView.contentOffset = CGPointMake(0, MAX(offset - _navigationBar.bounds.size.height,0));
         }
@@ -1087,8 +1095,13 @@ static const BOOL kDebugMode = NO;
 
     [self tabViewWillSelectView];
 
-    [_scrollView bringSubviewToFront:_centerTabContentView];
-    [self bringSubviewToFront:_scrollView];
+    if (!_navigationBarHidden) {
+        [_scrollView bringSubviewToFront:_centerTabContentView];
+        [self insertSubview:_scrollView belowSubview:_navigationBar];
+    } else {
+        [_scrollView bringSubviewToFront:_centerTabContentView];
+        [self bringSubviewToFront:_scrollView];
+    }
     _scrollView.scrollEnabled = NO;
 
     [self updateTitles];
