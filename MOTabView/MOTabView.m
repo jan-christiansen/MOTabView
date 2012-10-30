@@ -637,7 +637,7 @@ static const BOOL kDebugMode = NO;
                 // save left view for reuse
                 MOTabContentView *reuseTabContentView = _leftTabContentView;
                 if (reuseTabContentView.contentView) {
-                    [_reusableContentViews addObject:reuseTabContentView.contentView];
+                    [self storeReusableView:reuseTabContentView.contentView];
                     reuseTabContentView.contentView = nil;
                 }
 
@@ -659,7 +659,7 @@ static const BOOL kDebugMode = NO;
                 // save right view for reuse
                 MOTabContentView *reuseTabContentView = _rightTabContentView;
                 if (reuseTabContentView.contentView) {
-                    [_reusableContentViews addObject:reuseTabContentView.contentView];
+                    [self storeReusableView:reuseTabContentView.contentView];
                     reuseTabContentView.contentView = nil;
                 }
 
@@ -1240,6 +1240,13 @@ static const BOOL kDebugMode = NO;
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
     _scrollView.contentOffset = contentOffset;
+}
+
+- (void)storeReusableView:(UIView *)contentView {
+
+    if (_reusableContentViews.count < 3) {
+        [_reusableContentViews addObject:contentView];
+    }
 }
 
 - (UIView *)reusableView {

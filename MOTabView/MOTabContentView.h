@@ -66,7 +66,7 @@
 
 @property(assign, nonatomic) float visibility;
 
-@property(assign, nonatomic) UIView *contentView;
+@property(strong, nonatomic) UIView *contentView;
 
 
 - (void)selectAnimated:(BOOL)animated;

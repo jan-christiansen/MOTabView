@@ -148,10 +148,10 @@
 - (void)tabView:(MOTabView *)tabView
 willSelectViewAtIndex:(NSUInteger)__unused index {
 
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]
-                              initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                              target:nil
-                              action:nil];
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
+                                      initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                      target:nil
+                                      action:nil];
     NSUInteger numberOfViews = [self numberOfViewsInTabView:tabView];
     NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
     UIBarButtonItem *button = [[UIBarButtonItem alloc]
@@ -159,9 +159,13 @@ willSelectViewAtIndex:(NSUInteger)__unused index {
                                style:UIBarButtonItemStylePlain
                                target:tabView
                                action:@selector(deselectCurrentView)];
+    UIBarButtonItem *smallSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                target:nil
+                                                                                action:nil];
+    smallSpace.width = 10;
 
     _toolBar.userInteractionEnabled = NO;
-    [_toolBar setItems:@[space, button] animated:YES];
+    [_toolBar setItems:@[flexibleSpace, button, smallSpace] animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
