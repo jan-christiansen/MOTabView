@@ -67,7 +67,8 @@
 typedef NS_ENUM(NSUInteger, MOTabViewEditingStyle) {
     MOTabViewEditingStyleNone,
     MOTabViewEditingStyleDelete,
-    MOTabViewEditingStyleInsert
+    MOTabViewEditingStyleInsert,
+    MOTabViewEditingStyleUserInsert
 };
 
 

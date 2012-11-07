@@ -451,7 +451,7 @@ static const BOOL kDebugMode = NO;
     }
 
     // selecting the view may be the last step in inserting a new tab
-    if (_editingStyle == MOTabViewEditingStyleInsert) {
+    if (_editingStyle == MOTabViewEditingStyleUserInsert) {
         [self tabViewDidEditView];
     }
 }
@@ -490,7 +490,7 @@ static const BOOL kDebugMode = NO;
 
     NSUInteger numberOfViewsAfterEdit = [_delegate numberOfViewsInTabView:self];
 
-    if (_editingStyle == MOTabViewEditingStyleInsert) {
+    if (_editingStyle == MOTabViewEditingStyleUserInsert) {
         NSString *desc = [NSString stringWithFormat:@"Number of views before insertion %d, after insertion %d, should be %d",
                           numberOfViewsBeforeEdit,
                           numberOfViewsAfterEdit,
@@ -777,7 +777,7 @@ static const BOOL kDebugMode = NO;
 
 - (void)insertNewView {
 
-    _editingStyle = MOTabViewEditingStyleInsert;
+    _editingStyle = MOTabViewEditingStyleUserInsert;
 
     CGSize newContentSize;
     newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
@@ -900,6 +900,8 @@ static const BOOL kDebugMode = NO;
                                              withReuseView:_rightTabContentView];
 
     }
+
+    [self tabViewDidEditView];
 }
 
 - (CGRect)newFrame:(CGRect)frame forIndex:(NSInteger)index {

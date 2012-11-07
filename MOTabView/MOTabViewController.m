@@ -44,6 +44,7 @@
 @implementation MOTabViewController {
 
     UIBarButtonItem *_addViewButton;
+    UIBarButtonItem *_numberOfViewsButton;
 }
 
 
@@ -143,29 +144,38 @@
 }
 
 
-#pragma mark - MOTabViewDelegate
+#pragma mark - Change Appearance
 
-- (void)tabView:(MOTabView *)tabView
-willSelectViewAtIndex:(NSUInteger)__unused index {
+- (void)setNumberOfPagesButtonTitle:(NSString *)title animated:(BOOL)animated {
 
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                       target:nil
                                       action:nil];
-    NSUInteger numberOfViews = [self numberOfViewsInTabView:tabView];
-    NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
-    UIBarButtonItem *button = [[UIBarButtonItem alloc]
-                               initWithTitle:buttonTitle
-                               style:UIBarButtonItemStylePlain
-                               target:tabView
-                               action:@selector(deselectCurrentView)];
+    _numberOfViewsButton = [[UIBarButtonItem alloc]
+                            initWithTitle:title
+                            style:UIBarButtonItemStylePlain
+                            target:self.tabView
+                            action:@selector(deselectCurrentView)];
     UIBarButtonItem *smallSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                                 target:nil
                                                                                 action:nil];
     smallSpace.width = 10;
 
     _toolBar.userInteractionEnabled = NO;
-    [_toolBar setItems:@[flexibleSpace, button, smallSpace] animated:YES];
+    [_toolBar setItems:@[flexibleSpace, _numberOfViewsButton, smallSpace]
+              animated:animated];
+}
+
+
+#pragma mark - MOTabViewDelegate
+
+- (void)tabView:(MOTabView *)tabView
+willSelectViewAtIndex:(NSUInteger)__unused index {
+
+    NSUInteger numberOfViews = [self numberOfViewsInTabView:tabView];
+    NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
+    [self setNumberOfPagesButtonTitle:buttonTitle animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
@@ -214,13 +224,18 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
 
 // dummy method, overwritten by subclass
 - (void)tabView:(MOTabView *)__unused tabView
-    didEditView:(MOTabViewEditingStyle)__unused editingStyle
+    didEditView:(MOTabViewEditingStyle)editingStyle
         atIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
     NSUInteger numberOfViews = [self numberOfViewsInTabView:self.tabView];
     _addViewButton.enabled = self.maxNumberOfViews > numberOfViews;
+
+    if (editingStyle == MOTabViewEditingStyleInsert) {
+        NSString *buttonTitle = [NSString stringWithFormat:@"%d!", numberOfViews];
+        _numberOfViewsButton.title = buttonTitle;
+    }
 
     _toolBar.userInteractionEnabled = YES;
 }

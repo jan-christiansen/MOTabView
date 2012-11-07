@@ -149,7 +149,7 @@
         [self.titles removeObjectAtIndex:index];
     }
 
-    if (editingStyle == MOTabViewEditingStyleInsert) {
+    if (editingStyle == MOTabViewEditingStyleUserInsert) {
 
 //        NSLog(@"%s insert %d", __PRETTY_FUNCTION__, index);
 

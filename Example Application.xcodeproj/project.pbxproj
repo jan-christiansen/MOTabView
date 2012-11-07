@@ -17,9 +17,6 @@
 		01193FDE15CAC7330042D7D6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01193FDD15CAC7330042D7D6 /* QuartzCore.framework */; };
 		01395D3515CBDFF2003797E9 /* libMOTabView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01395D3315CBDEB1003797E9 /* libMOTabView.a */; };
 		018617DF1639598600A9ABB5 /* ExampleContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 018617DE1639598600A9ABB5 /* ExampleContentView.m */; };
-		01ACB46F160F393E00233B5E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01ACB46E160F393E00233B5E /* SenTestingKit.framework */; };
-		01ACB470160F393E00233B5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01193F9E15CABC790042D7D6 /* UIKit.framework */; };
-		01ACB471160F393E00233B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01193FA015CABC790042D7D6 /* Foundation.framework */; };
 		01B1D7FD15D02DF300DFE12B /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FA15D02DF300DFE12B /* closeButton.png */; };
 		01B1D7FE15D02DF300DFE12B /* closeButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */; };
 /* End PBXBuildFile section */
@@ -53,7 +50,6 @@
 		0180B7A515CD18AB00A06867 /* MOTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOTabViewController.h; path = ../MOTabView/MOTabViewController.h; sourceTree = "<group>"; };
 		018617DD1639598600A9ABB5 /* ExampleContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleContentView.h; sourceTree = "<group>"; };
 		018617DE1639598600A9ABB5 /* ExampleContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleContentView.m; sourceTree = "<group>"; };
-		01ACB46D160F393E00233B5E /* Example Application Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Example Application Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		01ACB46E160F393E00233B5E /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		01B1D7FA15D02DF300DFE12B /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
 		01B1D7FB15D02DF300DFE12B /* closeButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closeButton@2x.png"; sourceTree = "<group>"; };
@@ -69,16 +65,6 @@
 				01193F9F15CABC790042D7D6 /* UIKit.framework in Frameworks */,
 				01193FA115CABC790042D7D6 /* Foundation.framework in Frameworks */,
 				01193FA315CABC790042D7D6 /* CoreGraphics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01ACB469160F393E00233B5E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				01ACB46F160F393E00233B5E /* SenTestingKit.framework in Frameworks */,
-				01ACB470160F393E00233B5E /* UIKit.framework in Frameworks */,
-				01ACB471160F393E00233B5E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				01193F9A15CABC790042D7D6 /* Example Application.app */,
-				01ACB46D160F393E00233B5E /* Example Application Tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,24 +175,6 @@
 			productReference = 01193F9A15CABC790042D7D6 /* Example Application.app */;
 			productType = "com.apple.product-type.application";
 		};
-		01ACB46C160F393E00233B5E /* Example Application Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 01ACB47C160F393E00233B5E /* Build configuration list for PBXNativeTarget "Example Application Tests" */;
-			buildPhases = (
-				01ACB468160F393E00233B5E /* Sources */,
-				01ACB469160F393E00233B5E /* Frameworks */,
-				01ACB46A160F393E00233B5E /* Resources */,
-				01ACB46B160F393E00233B5E /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Example Application Tests";
-			productName = "Example Application Tests";
-			productReference = 01ACB46D160F393E00233B5E /* Example Application Tests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -236,7 +203,6 @@
 			projectRoot = "";
 			targets = (
 				01193F9915CABC790042D7D6 /* Example Application */,
-				01ACB46C160F393E00233B5E /* Example Application Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -262,30 +228,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		01ACB46A160F393E00233B5E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		01ACB46B160F393E00233B5E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		01193F9615CABC790042D7D6 /* Sources */ = {
@@ -296,13 +239,6 @@
 				01193FAF15CABC790042D7D6 /* AppDelegate.m in Sources */,
 				01193FCA15CABD680042D7D6 /* ExampleViewController.m in Sources */,
 				018617DF1639598600A9ABB5 /* ExampleContentView.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01ACB468160F393E00233B5E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,46 +334,6 @@
 			};
 			name = Release;
 		};
-		01ACB47D160F393E00233B5E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Example Application.app/Example Application";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Example Application Tests/Example Application Tests-Prefix.pch";
-				INFOPLIST_FILE = "Example Application Tests/Example Application Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		01ACB47E160F393E00233B5E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Example Application.app/Example Application";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Example Application Tests/Example Application Tests-Prefix.pch";
-				INFOPLIST_FILE = "Example Application Tests/Example Application Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -455,15 +351,6 @@
 			buildConfigurations = (
 				01193FB915CABC790042D7D6 /* Debug */,
 				01193FBA15CABC790042D7D6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		01ACB47C160F393E00233B5E /* Build configuration list for PBXNativeTarget "Example Application Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				01ACB47D160F393E00233B5E /* Debug */,
-				01ACB47E160F393E00233B5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
