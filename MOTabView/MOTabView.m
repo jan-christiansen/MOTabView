@@ -452,7 +452,7 @@ static const BOOL kDebugMode = NO;
 
     // selecting the view may be the last step in inserting a new tab
     if (_editingStyle == MOTabViewEditingStyleUserInsert) {
-        [self tabViewDidEditView];
+        [self tabViewDidEditViewAtIndex:_currentIndex];
     }
 }
 
@@ -480,12 +480,12 @@ static const BOOL kDebugMode = NO;
     }
 }
 
-- (void)tabViewWillEditView {
+- (void)tabViewWillEditViewAtIndex:(NSUInteger)index {
 
     NSUInteger numberOfViewsBeforeEdit = [_delegate numberOfViewsInTabView:self];
 
     if (_delegateRespondsToWillEdit) {
-        [_delegate tabView:self willEditView:_editingStyle atIndex:_currentIndex];
+        [_delegate tabView:self willEditView:_editingStyle atIndex:index];
     }
 
     NSUInteger numberOfViewsAfterEdit = [_delegate numberOfViewsInTabView:self];
@@ -505,7 +505,7 @@ static const BOOL kDebugMode = NO;
     }
 }
 
-- (void)tabViewDidEditView {
+- (void)tabViewDidEditViewAtIndex:(NSUInteger)index {
 
     [self updateTitles];
 
@@ -518,7 +518,7 @@ static const BOOL kDebugMode = NO;
     }
 
     if (_delegateRespondsToDidEdit) {
-        [_delegate tabView:self didEditView:_editingStyle atIndex:_currentIndex];
+        [_delegate tabView:self didEditView:_editingStyle atIndex:index];
     }
     _editingStyle = MOTabViewEditingStyleNone;
 }
@@ -755,7 +755,7 @@ static const BOOL kDebugMode = NO;
     // after the deletion animation finished we inform the delegate
     if (_editingStyle == MOTabViewEditingStyleDelete) {
         [self updatePageControl];
-        [self tabViewDidEditView];
+        [self tabViewDidEditViewAtIndex:_currentIndex];
     }
 }
 
@@ -885,12 +885,17 @@ static const BOOL kDebugMode = NO;
 
     _editingStyle = MOTabViewEditingStyleInsert;
 
+    [self privateInsertViewAtIndex:newIndex];
+}
+
+- (void)privateInsertViewAtIndex:(NSUInteger)newIndex {
+
     CGSize newContentSize;
     newContentSize.width = _scrollView.contentSize.width + kWidthFactor * _scrollView.bounds.size.width;
     newContentSize.height = _scrollView.contentSize.height;
     _scrollView.contentSize = newContentSize;
 
-    [self tabViewWillEditView];
+    [self tabViewWillEditViewAtIndex:newIndex];
 
     // add the offset for the new view to the array of offsets
     [self initOffsetForIndex:newIndex];
@@ -901,7 +906,7 @@ static const BOOL kDebugMode = NO;
 
     }
 
-    [self tabViewDidEditView];
+    [self tabViewDidEditViewAtIndex:newIndex];
 }
 
 - (CGRect)newFrame:(CGRect)frame forIndex:(NSInteger)index {
@@ -1014,7 +1019,10 @@ static const BOOL kDebugMode = NO;
     // if we are about to delete the last remaining tab, we first add a new one
     NSUInteger numberOfViews = [_delegate numberOfViewsInTabView:self];
     if (numberOfViews == 1) {
-        [self insertViewAtIndex:1];
+        // editingStyle is user insert because it is caused by a user action
+        _editingStyle = MOTabViewEditingStyleUserInsert;
+
+        [self privateInsertViewAtIndex:1];
 
         // reset the number of view to correct value after adding a view
         numberOfViews++;
@@ -1024,14 +1032,14 @@ static const BOOL kDebugMode = NO;
 
     [_offsets removeObjectAtIndex:_currentIndex];
 
-    // inform delegate that view will be deleted
-    [self tabViewWillEditView];
-
     [UIView animateWithDuration:0.5
                      animations:^{
                          _centerTabContentView.alpha = 0;
                      }
                      completion:^(BOOL __unused finished) {
+
+                         // inform delegate that view will be deleted
+                         [self tabViewWillEditViewAtIndex:_currentIndex];
 
                          _centerTabContentView.alpha = _rightTabContentView.alpha;
                          _centerTabContentView = [self tabContentViewAtIndex:(NSInteger)_currentIndex
@@ -1072,7 +1080,7 @@ static const BOOL kDebugMode = NO;
                                               }
                                               completion:^(BOOL __unused finished){
                                                   [self updatePageControl];
-                                                  [self tabViewDidEditView];
+                                                  [self tabViewDidEditViewAtIndex:_currentIndex];
                                               }];
                          }
                      }];
