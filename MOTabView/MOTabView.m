@@ -271,8 +271,8 @@ static const BOOL kDebugMode = NO;
         UINavigationItem* item = [[UINavigationItem alloc] init];
         CGRect titleFrame = CGRectMake(0, 0, 200, 25);
         _navigationBarField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
-        _navigationBarField.enabled = NO;
         _navigationBarField.delegate = self;
+        _navigationBarField.enabled = self.editableTitles;
         _navigationBarField.returnKeyType = UIReturnKeyDone;
 
         if (_delegateRespondsToTitleForIndex) {
