@@ -118,6 +118,9 @@ typedef NS_ENUM(NSUInteger, MOTabViewAddinngStyle) {
 @property(assign, nonatomic) IBOutlet id<MOTabViewDelegate> delegate;
 
 @property(assign, nonatomic) BOOL navigationBarHidden;
+
+@property(assign, nonatomic) BOOL navigationBarScrolls;
+
 @property(strong, nonatomic) UINavigationBar *navigationBar;
 
 @property(assign, nonatomic) BOOL editableTitles;

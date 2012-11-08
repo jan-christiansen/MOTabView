@@ -427,6 +427,7 @@ static const BOOL kDebugMode = NO;
 - (void)tabViewDidSelectView {
 
     if (!_navigationBarHidden
+        && _navigationBarScrolls
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
 
@@ -947,7 +948,9 @@ static const BOOL kDebugMode = NO;
         tabContentView.contentView = contentView;
         tabContentView.hidden = NO;
 
-        if (!_navigationBarHidden && [contentView.class isSubclassOfClass:[UITableView class]]) {
+        if (!_navigationBarHidden
+            && _navigationBarScrolls
+            && [contentView.class isSubclassOfClass:[UITableView class]]) {
             UITableView *tableView = (UITableView *)contentView;
 
             float offset = [self offsetForIndex:(NSUInteger)index];
@@ -1094,6 +1097,7 @@ static const BOOL kDebugMode = NO;
 - (void)selectCurrentViewAnimated:(BOOL)animated {
 
     if (!_navigationBarHidden
+        && _navigationBarScrolls
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
         // set the navigation bar to the correct position
         CGRect newNavigationFrame = _navigationBar.frame;
@@ -1135,6 +1139,7 @@ static const BOOL kDebugMode = NO;
 - (void)deselectCurrentViewAnimated:(BOOL)animated {
 
     if (!_navigationBarHidden
+        && _navigationBarScrolls
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
 
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
