@@ -109,6 +109,9 @@ static const BOOL kDebugMode = NO;
     // y component of contentOffset, saved if content views are table views
     NSMutableArray *_offsets;
 
+    // contentInset, saved if content views are table views
+    NSMutableArray *_insets;
+
     NSMutableArray *_reusableContentViews;
 }
 
@@ -214,7 +217,8 @@ static const BOOL kDebugMode = NO;
     _navigationBarHidden = YES;
 
     _offsets = @[].mutableCopy;
-    
+    _insets = @[].mutableCopy;
+
     _reusableContentViews = @[].mutableCopy;
 }
 
@@ -285,20 +289,20 @@ static const BOOL kDebugMode = NO;
         // necessary if dataSource is not already set
         // existing content views are offset to the bottom by the height of the navigation bar
         CGRect newLeftFrame = _leftTabContentView.frame;
-        newLeftFrame.origin.y = newLeftFrame.origin.y + _navigationBar.bounds.size.height;
+        newLeftFrame.origin.y += _navigationBar.bounds.size.height;
         _leftTabContentView.frame = newLeftFrame;
 
         CGRect newCenterFrame = _centerTabContentView.frame;
-        newCenterFrame.origin.y = newCenterFrame.origin.y + _navigationBar.bounds.size.height;
+        newCenterFrame.origin.y += _navigationBar.bounds.size.height;
         _centerTabContentView.frame = newCenterFrame;
 
         CGRect newRightFrame = _rightTabContentView.frame;
-        newRightFrame.origin.y = newRightFrame.origin.y + _navigationBar.bounds.size.height;
+        newRightFrame.origin.y += _navigationBar.bounds.size.height;
         _rightTabContentView.frame = newRightFrame;
 
-        if (_centerTabContentView.isSelected) {
-            [self selectCurrentViewAnimated:NO];
-        }
+//        if (_centerTabContentView.isSelected) {
+//            [self selectCurrentViewAnimated:NO];
+//        }
     }
 }
 
@@ -320,6 +324,7 @@ static const BOOL kDebugMode = NO;
 
     for (int i = 0; i < (NSInteger)numberOfViews; i++) {
         [_offsets addObject:[NSNumber numberWithFloat:0]];
+        [_insets addObject:[NSNumber numberWithFloat:0]];
     }
 
     _scrollView.contentSize = CGSizeMake((1 + kWidthFactor * (numberOfViews-1)) * self.bounds.size.width,
@@ -413,6 +418,26 @@ static const BOOL kDebugMode = NO;
 }
 
 
+#pragma mark - Wrapping _insets Array
+
+- (float)insetForIndex:(NSUInteger)index {
+
+    NSNumber *insetNumber = [_insets objectAtIndex:index];
+    return insetNumber.floatValue;
+}
+
+- (void)initInsetForIndex:(NSUInteger)index {
+
+    [_insets insertObject:[NSNumber numberWithFloat:0] atIndex:index];
+}
+
+- (void)replaceInsetAtIndex:(NSUInteger)index withInset:(float)inset {
+
+    [_insets replaceObjectAtIndex:index
+                       withObject:[NSNumber numberWithFloat:inset]];
+}
+
+
 #pragma mark - Informing the Delegate
 
 - (void)tabViewWillSelectView {
@@ -445,6 +470,33 @@ static const BOOL kDebugMode = NO;
 
         float offset = [self offsetForIndex:_currentIndex];
         tableView.contentOffset = CGPointMake(0, offset);
+    }
+
+    if (!_navigationBarHidden
+        && !_navigationBarScrolls
+        && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+        
+        UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
+        
+        // check whether the inset at the bottom would be visible
+        CGFloat contentOffsetY = [self offsetForIndex:_currentIndex];
+        CGPoint newContentOffset = tableView.contentOffset;
+        newContentOffset.y = contentOffsetY;
+        tableView.contentOffset = newContentOffset;
+
+        CGFloat diff = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
+
+        if (diff > 0) {
+            // move origin to the bottom by the amount we move it to the top
+            CGRect newCenterFrame = _centerTabContentView.frame;
+            newCenterFrame.origin.y += diff;
+            _centerTabContentView.frame = newCenterFrame;
+
+            // reset contentInset to the original value
+            UIEdgeInsets newContentInset = tableView.contentInset;
+            newContentInset.bottom = [self insetForIndex:_currentIndex];
+            tableView.contentInset = newContentInset;
+        }
     }
 
     if (_delegateRespondsToDidSelect) {
@@ -794,8 +846,9 @@ static const BOOL kDebugMode = NO;
         newIndex = _currentIndex + 1;
     }
 
-    // add the offset for the new view to the array of offsets
+    // remember offset and inset
     [self initOffsetForIndex:newIndex];
+    [self initInsetForIndex:newIndex];
 
     // inform delegate to update model
     [_delegate tabView:self
@@ -898,8 +951,9 @@ static const BOOL kDebugMode = NO;
 
     [self tabViewWillEditViewAtIndex:newIndex];
 
-    // add the offset for the new view to the array of offsets
+    // remember offset and inset
     [self initOffsetForIndex:newIndex];
+    [self initInsetForIndex:newIndex];
 
     if (_currentIndex + 1 == newIndex) {
         _rightTabContentView = [self tabContentViewAtIndex:(NSInteger)newIndex
@@ -1162,6 +1216,34 @@ static const BOOL kDebugMode = NO;
         _centerTabContentView.frame = contentFrame;
 
         tableView.contentOffset = CGPointMake(0, MAX(contentOffsetY - _navigationBar.bounds.size.height, 0));
+    }
+
+    if (!_navigationBarHidden
+        && !_navigationBarScrolls
+        && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
+
+        UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
+        // check whether the inset at the bottom is visible
+        CGFloat diff = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
+
+        [self replaceOffsetAtIndex:_currentIndex
+                        withOffset:tableView.contentOffset.y];
+
+        if (diff > 0) {
+            // move origin by the same amount to the top
+            CGRect newCenterFrame = _centerTabContentView.frame;
+            newCenterFrame.origin.y -= diff;
+            _centerTabContentView.frame = newCenterFrame;
+
+            // remember inset to reset it later
+            [self replaceInsetAtIndex:_currentIndex
+                            withInset:tableView.contentInset.bottom];
+
+            // remove inset
+            UIEdgeInsets newContentInset = tableView.contentInset;
+            newContentInset.bottom = 0;
+            tableView.contentInset = newContentInset;
+        }
     }
 
     [self tabViewWillDeselectView];
