@@ -56,6 +56,7 @@
         _gradientLayer = [CAGradientLayer layer];
         _gradientLayer.frame = frame;
         _gradientLayer.colors = @[(id) topColor.CGColor, (id) bottomColor.CGColor];
+        _gradientLayer.shouldRasterize = YES;
         [self.layer addSublayer:_gradientLayer];
     }
     return self;

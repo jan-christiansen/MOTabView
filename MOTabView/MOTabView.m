@@ -72,7 +72,8 @@ static const BOOL kDebugMode = NO;
     BOOL _delegateRespondsToDidEdit;
     BOOL _delegateRespondsToDidEditTitle;
     BOOL _delegateRespondsToDidChange;
-    BOOL _delegateRespondsToTitleForIndex;
+    BOOL _dataSourceRespondsToTitleForIndex;
+    BOOL _dataSourceRespondsToSubtitleForIndex;
 
     id<MOTabViewDataSource> _dataSource;
 
@@ -85,6 +86,7 @@ static const BOOL kDebugMode = NO;
     // if current only one or two content view are displayed
     // these views are reused when the user scrolls
     MOScrollView *_scrollView;
+//    UIScrollView *_scrollView;
     UIPageControl *_pageControl;
     MOTitleTextField *_titleField;
     MOTitleTextField *_navigationBarField;
@@ -158,33 +160,9 @@ static const BOOL kDebugMode = NO;
     _backgroundView = [[MOGradientView alloc] initWithFrame:self.bounds
                                                    topColor:lightGray
                                                 bottomColor:darkGray];
+//    _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
     _backgroundView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     [self addSubview:_backgroundView];
-
-    // title label
-    CGRect titleFrame = CGRectMake(10, 19, self.bounds.size.width-20, 40);
-    _titleField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
-    _titleField.delegate = self;
-    _titleField.enabled = NO;
-    _titleField.returnKeyType = UIReturnKeyDone;
-//    _titleField.lineBreakMode = UILineBreakModeMiddleTruncation;v
-    [self insertSubview:_titleField aboveSubview:_backgroundView];
-
-    // subtitle label
-    CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
-    _subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
-    UIColor *subtitleColor = [UIColor colorWithRed:0.76f
-                                             green:0.8f
-                                              blue:0.83f
-                                             alpha:1];
-    _subtitleLabel.textColor = subtitleColor;
-    _subtitleLabel.backgroundColor = [UIColor clearColor];
-//    _subtitleLabel.shadowColor = shadowColor;
-    _subtitleLabel.shadowOffset = CGSizeMake(0, -1);
-    _subtitleLabel.textAlignment = UITextAlignmentCenter;
-    _subtitleLabel.font = [UIFont systemFontOfSize:14];
-    _subtitleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
-    [self insertSubview:_subtitleLabel aboveSubview:_backgroundView];
 
     // page control
     CGRect pageControlFrame = CGRectMake(0, 0, 320, 36);
@@ -200,14 +178,16 @@ static const BOOL kDebugMode = NO;
 
     // scrollview
     _scrollView = [[MOScrollView alloc] initWithFrame:self.bounds];
+//    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.delegate = self;
     _scrollView.contentSize = self.bounds.size;
     _scrollView.scrollEnabled = NO;
 
+    
 // TODO: Remove this hack
-    _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
+//    _scrollView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.01];
     // paging of the scrollview is implemented by using the delegate methods
     [self addSubview:_scrollView];
 
@@ -221,6 +201,40 @@ static const BOOL kDebugMode = NO;
 
     _reusableContentViews = @[].mutableCopy;
 }
+
+- (void)initializeTitles {
+
+    if (_dataSourceRespondsToTitleForIndex) {
+        // title label
+        CGRect titleFrame = CGRectMake(10, 19, self.bounds.size.width-20, 40);
+        _titleField = [[MOTitleTextField alloc] initWithFrame:titleFrame];
+        _titleField.delegate = self;
+        _titleField.enabled = NO;
+        _titleField.returnKeyType = UIReturnKeyDone;
+        //    _titleField.lineBreakMode = UILineBreakModeMiddleTruncation;v
+        [self insertSubview:_titleField aboveSubview:_backgroundView];
+    }
+
+    if (_dataSourceRespondsToSubtitleForIndex) {
+        // subtitle label
+        CGRect subtitleFrame = CGRectMake(10, 46, self.bounds.size.width-20, 40);
+        _subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
+        UIColor *subtitleColor = [UIColor colorWithRed:0.76f
+                                                 green:0.8f
+                                                  blue:0.83f
+                                                 alpha:1];
+        _subtitleLabel.textColor = subtitleColor;
+        _subtitleLabel.backgroundColor = [UIColor clearColor];
+        //    _subtitleLabel.shadowColor = shadowColor;
+        _subtitleLabel.shadowOffset = CGSizeMake(0, -1);
+        _subtitleLabel.textAlignment = UITextAlignmentCenter;
+        _subtitleLabel.font = [UIFont systemFontOfSize:14];
+        _subtitleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+        _subtitleLabel.layer.shouldRasterize = YES;
+        [self insertSubview:_subtitleLabel aboveSubview:_backgroundView];
+    }
+}
+
 
 - (MOTabContentView *)tabContentView {
 
@@ -279,7 +293,7 @@ static const BOOL kDebugMode = NO;
         _navigationBarField.enabled = self.editableTitles;
         _navigationBarField.returnKeyType = UIReturnKeyDone;
 
-        if (_delegateRespondsToTitleForIndex) {
+        if (_dataSourceRespondsToTitleForIndex) {
             _navigationBarField.text = [self.dataSource titleForIndex:_currentIndex];
         }
         item.titleView = _navigationBarField;
@@ -315,6 +329,10 @@ static const BOOL kDebugMode = NO;
 
     // when the data source is set, views are initialized
     _dataSource = dataSource;
+
+    _dataSourceRespondsToTitleForIndex = [_dataSource respondsToSelector:@selector(titleForIndex:)];
+    _dataSourceRespondsToSubtitleForIndex = [_dataSource respondsToSelector:@selector(subtitleForIndex:)];
+    [self initializeTitles];
 
     [self updatePageControl];
 
@@ -369,7 +387,6 @@ static const BOOL kDebugMode = NO;
     _delegateRespondsToDidEdit = [_delegate respondsToSelector:@selector(tabView:didEditView:atIndex:)];
     _delegateRespondsToDidEditTitle = [_delegate respondsToSelector:@selector(tabView:didEditTitle:atIndex:)];
     _delegateRespondsToDidChange = [_delegate respondsToSelector:@selector(tabView:didChangeIndex:)];
-    _delegateRespondsToTitleForIndex = [_delegate respondsToSelector:@selector(titleForIndex:)];
 
     [self tabViewWillSelectView];
     [self tabViewDidDeselectView];
@@ -475,7 +492,7 @@ static const BOOL kDebugMode = NO;
     if (!_navigationBarHidden
         && !_navigationBarScrolls
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
-        
+
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
         
         // check whether the inset at the bottom would be visible
@@ -588,13 +605,15 @@ static const BOOL kDebugMode = NO;
 
 - (void)updateTitles {
 
-    if (_delegateRespondsToTitleForIndex) {
+    if (_dataSourceRespondsToTitleForIndex) {
         NSString *title = [self.dataSource titleForIndex:_currentIndex];
         _titleField.text = title;
-        _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
         if (!_navigationBarHidden) {
             _navigationBarField.text = title;
         }
+    }
+    if (_dataSourceRespondsToSubtitleForIndex) {
+        _subtitleLabel.text = [_dataSource subtitleForIndex:_currentIndex];
     }
 }
 
@@ -728,9 +747,6 @@ static const BOOL kDebugMode = NO;
             [self tabViewDidChange];
 
             [self updateTitles];
-
-        } else {
-            [self updatePageControl];
         }
     }
 
@@ -753,7 +769,7 @@ static const BOOL kDebugMode = NO;
 
         [self scrollToViewAtIndex:newIndex
                withTimingFunction:_easeOutTimingFunction
-                         duration:0.3];
+                         duration:0.25];
     }
 }
 
@@ -781,7 +797,7 @@ static const BOOL kDebugMode = NO;
         // scroll view to next index
         [self scrollToViewAtIndex:nextIndex
                withTimingFunction:_easeOutTimingFunction
-                         duration:0.3];
+                         duration:0.25];
     }
 }
 
@@ -826,6 +842,7 @@ static const BOOL kDebugMode = NO;
     [_scrollView setContentOffset:contentOffset
                withTimingFunction:timingFunction
                          duration:duration];
+//    [_scrollView setContentOffset:contentOffset animated:YES];
 }
 
 - (void)insertNewView {

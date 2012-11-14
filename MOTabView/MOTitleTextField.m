@@ -36,8 +36,9 @@
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "MOTitleTextField.h"
 #import <QuartzCore/QuartzCore.h>
+
+#import "MOTitleTextField.h"
 
 
 @implementation MOTitleTextField {
@@ -58,7 +59,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         _textColor = [UIColor whiteColor];
-        _placeholderColor = [UIColor colorWithRed:0.8f green:0.8f blue:0.8f alpha:1];
+        _placeholderColor = [UIColor colorWithWhite:0.8f alpha:1];
         _showsPlaceholder = NO;
 
         self.enabled = YES;
@@ -106,19 +107,23 @@
 
     if ([text isEqualToString:@""]) {
         if (_placeholder) {
+            if (!_showsPlaceholder) {
+                super.textColor = _placeholderColor;
+                super.clearsOnBeginEditing = YES;
+            }
             super.text = _placeholder;
             _showsPlaceholder = YES;
         } else {
             super.text = @"";
             _showsPlaceholder = NO;
         }
-        super.textColor = _placeholderColor;
-        super.clearsOnBeginEditing = YES;
     } else {
+        if (_showsPlaceholder) {
+            super.textColor = _textColor;
+            super.clearsOnBeginEditing = NO;
+            _showsPlaceholder = NO;
+        }
         super.text = text;
-        _showsPlaceholder = NO;
-        super.textColor = _textColor;
-        super.clearsOnBeginEditing = NO;
     }
 }
 
@@ -127,7 +132,9 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)__unused textField {
 
-    super.textColor = _textColor;
+    if (_showsPlaceholder) {
+        super.textColor = _textColor;
+    }
 }
 
 

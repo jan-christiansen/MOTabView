@@ -37,6 +37,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+
 #import "MOTabContentView.h"
 #import "MOShadowView.h"
 
@@ -66,6 +67,7 @@ static const CGFloat kDeselectedOriginY = 20;
     if (self) {
         // a container which is scaled
         _containerView = [[MOShadowView alloc] initWithFrame:self.bounds];
+//        _containerView = [[UIView alloc] initWithFrame:self.bounds];
         _containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_containerView];
 
@@ -84,6 +86,8 @@ static const CGFloat kDeselectedOriginY = 20;
         _deleteButton.center = self.frame.origin;
         _deleteButton.alpha = 0;
         [self insertSubview:_deleteButton aboveSubview:_containerView];
+
+        self.layer.shouldRasterize = YES;
 
         [self deselectNonAnimated];
     }
