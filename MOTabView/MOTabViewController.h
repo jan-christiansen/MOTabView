@@ -45,7 +45,9 @@
 
 @property(strong, nonatomic) MOTabView *tabView;
 
-@property(strong, nonatomic) UIToolbar *toolBar;
+@property(strong, nonatomic) UIToolbar *selectedToolbar;
+
+@property(strong, nonatomic) UIToolbar *deselectedToolbar;
 
 @property(strong, nonatomic) NSString *doneButtonTitle;
 

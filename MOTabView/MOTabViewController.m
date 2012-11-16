@@ -44,15 +44,6 @@
 @interface MOTabViewController ()
 
 
-@property(strong, nonatomic) UIToolbar *selectedToolbar;
-
-@property(strong, nonatomic) UIToolbar *deselectedToolbar;
-
-@property(strong, nonatomic) NSArray *selectedToolbarItems;
-
-@property(strong, nonatomic) NSArray *deselectedToolbarItems;
-
-
 @end
 
 
@@ -95,9 +86,8 @@
     _doneButtonTitle = @"Done";
     _addPageButtonTitle = @"New Page";
 
-    _toolBar = [[UIToolbar alloc]
-                initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
-    [self.view addSubview:_toolBar];
+    [self.view addSubview:self.selectedToolbar];
+    [self.view addSubview:self.deselectedToolbar];
 
     CGRect tabViewFrame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44);
     _tabView = [[MOTabView alloc] initWithFrame:tabViewFrame];
@@ -127,9 +117,21 @@
     _addViewButton.enabled = maxNumberOfViews > numberOfViews;
 }
 
-- (NSArray *)selectedToolbarItems {
+- (void)tabViewDeselectCurrentView {
 
-    if (!_selectedToolbarItems) {
+    [self.tabView deselectCurrentView];
+}
+
+- (void)tabViewSelectCurrentView {
+
+    [self.tabView selectCurrentView];
+}
+
+- (UIToolbar *)selectedToolbar {
+
+    if (!_selectedToolbar) {
+        _selectedToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
+
         UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
                                           initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                           target:nil
@@ -137,22 +139,22 @@
         _numberOfViewsButton = [[UIBarButtonItem alloc]
                                 initWithTitle:@""
                                 style:UIBarButtonItemStylePlain
-                                target:self.tabView
-                                action:@selector(deselectCurrentView)];
+                                target:self
+                                action:@selector(tabViewDeselectCurrentView)];
         UIBarButtonItem *smallSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                                     target:nil
                                                                                     action:nil];
         smallSpace.width = 10;
 
-        _selectedToolbarItems = @[flexibleSpace, _numberOfViewsButton, smallSpace];
+        _selectedToolbar.items = @[flexibleSpace, _numberOfViewsButton, smallSpace];
     }
-    return _selectedToolbarItems;
+    return _selectedToolbar;
 }
 
-- (NSArray *)deselectedToolbarItems {
-
-    if (!_deselectedToolbarItems) {
-
+- (UIToolbar *)deselectedToolbar {
+    
+    if (!_deselectedToolbar) {
+        _deselectedToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height-44, self.view.bounds.size.width, 44)];
         _addViewButton = [[UIBarButtonItem alloc]
                           initWithTitle:self.addPageButtonTitle
                           style:UIBarButtonItemStyleBordered
@@ -165,11 +167,11 @@
         UIBarButtonItem *button = [[UIBarButtonItem alloc]
                                    initWithTitle:self.doneButtonTitle
                                    style:UIBarButtonItemStyleDone
-                                   target:self.tabView
-                                   action:@selector(selectCurrentView)];
-        _deselectedToolbarItems = @[_addViewButton, space, button];
+                                   target:self
+                                   action:@selector(tabViewSelectCurrentView)];
+        _deselectedToolbar.items = @[_addViewButton, space, button];
     }
-    return _deselectedToolbarItems;
+    return _deselectedToolbar;
 }
 
 
@@ -207,7 +209,14 @@ willSelectViewAtIndex:(NSUInteger)__unused index {
     NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
     _numberOfViewsButton.title = buttonTitle;
 
-    [_toolBar setItems:self.selectedToolbarItems animated:YES];
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         self.deselectedToolbar.alpha = 0;
+                     }
+                     completion:^(BOOL __unused finished) {
+                         [self.view sendSubviewToBack:self.deselectedToolbar];
+                         self.deselectedToolbar.alpha = 1;
+                     }];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
@@ -218,22 +227,32 @@ didSelectViewAtIndex:(NSUInteger)__unused index {
     // update toolbar when a page view is deselected
     _addViewButton.title = self.addPageButtonTitle;
 
-    _toolBar.userInteractionEnabled = YES;
+    self.selectedToolbar.userInteractionEnabled = YES;
+    
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
 willDeselectViewAtIndex:(NSUInteger)__unused index {
 
-    _toolBar.userInteractionEnabled = NO;
+    self.selectedToolbar.userInteractionEnabled = NO;
+    self.deselectedToolbar.userInteractionEnabled = NO;
 
     // update toolbar when a page view is deselected
-    [_toolBar setItems:self.deselectedToolbarItems animated:YES];
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         self.selectedToolbar.alpha = 0;
+                     }
+                     completion:^(BOOL __unused finished) {
+                         [self.view sendSubviewToBack:self.selectedToolbar];
+                         self.selectedToolbar.alpha = 1;
+                     }];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
 didDeselectViewAtIndex:(NSUInteger)__unused index {
 
-    _toolBar.userInteractionEnabled = YES;
+    self.selectedToolbar.userInteractionEnabled = YES;
+    self.deselectedToolbar.userInteractionEnabled = YES;
 }
 
 // dummy method, overwritten by subclass
@@ -243,7 +262,8 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    _toolBar.userInteractionEnabled = NO;
+    self.selectedToolbar.userInteractionEnabled = NO;
+    self.deselectedToolbar.userInteractionEnabled = NO;
 }
 
 // dummy method, overwritten by subclass
@@ -261,7 +281,8 @@ didDeselectViewAtIndex:(NSUInteger)__unused index {
         _numberOfViewsButton.title = buttonTitle;
     }
 
-    _toolBar.userInteractionEnabled = YES;
+    self.selectedToolbar.userInteractionEnabled = YES;
+    self.deselectedToolbar.userInteractionEnabled = YES;
 }
 
 // dummy method, overwritten by subclass
