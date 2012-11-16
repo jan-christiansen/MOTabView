@@ -127,6 +127,11 @@
     [self.tabView selectCurrentView];
 }
 
+- (void)tabViewInsertNewView {
+
+    [self.tabView insertNewView];
+}
+
 - (UIToolbar *)selectedToolbar {
 
     if (!_selectedToolbar) {
@@ -158,8 +163,8 @@
         _addViewButton = [[UIBarButtonItem alloc]
                           initWithTitle:self.addPageButtonTitle
                           style:UIBarButtonItemStyleBordered
-                          target:_tabView
-                          action:@selector(insertNewView)];
+                          target:self
+                          action:@selector(tabViewInsertNewView)];
         UIBarButtonItem *space = [[UIBarButtonItem alloc]
                                   initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                   target:nil
