@@ -1214,7 +1214,8 @@ static const BOOL kDebugMode = NO;
 
     if (!_navigationBarHidden) {
         [_scrollView bringSubviewToFront:_centerTabContentView];
-        [self insertSubview:_scrollView belowSubview:_navigationBar];
+        [self bringSubviewToFront:_scrollView];
+        [self bringSubviewToFront:_navigationBar];
     } else {
         [_scrollView bringSubviewToFront:_centerTabContentView];
         [self bringSubviewToFront:_scrollView];
