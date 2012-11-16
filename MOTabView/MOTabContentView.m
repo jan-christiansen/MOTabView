@@ -87,8 +87,6 @@ static const CGFloat kDeselectedOriginY = 20;
         _deleteButton.alpha = 0;
         [self insertSubview:_deleteButton aboveSubview:_containerView];
 
-        self.layer.shouldRasterize = YES;
-
         [self deselectNonAnimated];
     }
     return self;

@@ -230,7 +230,6 @@ static const BOOL kDebugMode = NO;
         _subtitleLabel.textAlignment = UITextAlignmentCenter;
         _subtitleLabel.font = [UIFont systemFontOfSize:14];
         _subtitleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
-        _subtitleLabel.layer.shouldRasterize = YES;
         [self insertSubview:_subtitleLabel aboveSubview:_backgroundView];
     }
 }
@@ -548,6 +547,8 @@ static const BOOL kDebugMode = NO;
     if (_delegateRespondsToDidChange) {
         [_delegate tabView:self didChangeIndex:_currentIndex];
     }
+
+    [self updatePageControl];
 }
 
 - (void)tabViewWillEditViewAtIndex:(NSUInteger)index {
@@ -585,6 +586,8 @@ static const BOOL kDebugMode = NO;
         newContentSize.width = _scrollView.contentSize.width - kWidthFactor * _scrollView.bounds.size.width;
         newContentSize.height = _scrollView.contentSize.height;
         _scrollView.contentSize = newContentSize;
+
+        [self updatePageControl];
     }
 
     if (_delegateRespondsToDidEdit) {
@@ -806,7 +809,6 @@ static const BOOL kDebugMode = NO;
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
     self.userInteractionEnabled = YES;
-    [self updatePageControl];
 
     if (_centerTabContentView.hidden) {
 
@@ -823,13 +825,12 @@ static const BOOL kDebugMode = NO;
 
     // after the deletion animation finished we inform the delegate
     if (_editingStyle == MOTabViewEditingStyleDelete) {
-        [self updatePageControl];
         [self tabViewDidEditViewAtIndex:_currentIndex];
     }
 }
 
 
-#pragma mark - 
+#pragma mark -
 
 - (void)scrollToViewAtIndex:(NSUInteger)newIndex
          withTimingFunction:(CAMediaTimingFunction *)timingFunction
@@ -1153,7 +1154,6 @@ static const BOOL kDebugMode = NO;
                                                   _rightTabContentView.center = newRightCenter;
                                               }
                                               completion:^(BOOL __unused finished){
-                                                  [self updatePageControl];
                                                   [self tabViewDidEditViewAtIndex:_currentIndex];
                                               }];
                          }
