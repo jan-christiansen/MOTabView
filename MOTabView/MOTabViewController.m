@@ -41,6 +41,21 @@
 #import "MOTabView.h"
 
 
+@interface MOTabViewController ()
+
+
+@property(strong, nonatomic) UIToolbar *selectedToolbar;
+
+@property(strong, nonatomic) UIToolbar *deselectedToolbar;
+
+@property(strong, nonatomic) NSArray *selectedToolbarItems;
+
+@property(strong, nonatomic) NSArray *deselectedToolbarItems;
+
+
+@end
+
+
 @implementation MOTabViewController {
 
     UIBarButtonItem *_addViewButton;
@@ -90,12 +105,6 @@
     _tabView.dataSource = self;
     [self.view addSubview:_tabView];
 
-    _addViewButton = [[UIBarButtonItem alloc]
-                      initWithTitle:self.addPageButtonTitle
-                      style:UIBarButtonItemStyleBordered
-                      target:_tabView
-                      action:@selector(insertNewView)];
-
     self.maxNumberOfViews = 8;
 }
 
@@ -116,6 +125,51 @@
 
     NSUInteger numberOfViews = [self numberOfViewsInTabView:self.tabView];
     _addViewButton.enabled = maxNumberOfViews > numberOfViews;
+}
+
+- (NSArray *)selectedToolbarItems {
+
+    if (!_selectedToolbarItems) {
+        UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
+                                          initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                          target:nil
+                                          action:nil];
+        _numberOfViewsButton = [[UIBarButtonItem alloc]
+                                initWithTitle:@""
+                                style:UIBarButtonItemStylePlain
+                                target:self.tabView
+                                action:@selector(deselectCurrentView)];
+        UIBarButtonItem *smallSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                    target:nil
+                                                                                    action:nil];
+        smallSpace.width = 10;
+
+        _selectedToolbarItems = @[flexibleSpace, _numberOfViewsButton, smallSpace];
+    }
+    return _selectedToolbarItems;
+}
+
+- (NSArray *)deselectedToolbarItems {
+
+    if (!_deselectedToolbarItems) {
+
+        _addViewButton = [[UIBarButtonItem alloc]
+                          initWithTitle:self.addPageButtonTitle
+                          style:UIBarButtonItemStyleBordered
+                          target:_tabView
+                          action:@selector(insertNewView)];
+        UIBarButtonItem *space = [[UIBarButtonItem alloc]
+                                  initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                  target:nil
+                                  action:nil];
+        UIBarButtonItem *button = [[UIBarButtonItem alloc]
+                                   initWithTitle:self.doneButtonTitle
+                                   style:UIBarButtonItemStyleDone
+                                   target:self.tabView
+                                   action:@selector(selectCurrentView)];
+        _deselectedToolbarItems = @[_addViewButton, space, button];
+    }
+    return _deselectedToolbarItems;
 }
 
 
@@ -144,30 +198,6 @@
 }
 
 
-#pragma mark - Change Appearance
-
-- (void)setNumberOfPagesButtonTitle:(NSString *)title animated:(BOOL)animated {
-
-    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
-                                      initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                      target:nil
-                                      action:nil];
-    _numberOfViewsButton = [[UIBarButtonItem alloc]
-                            initWithTitle:title
-                            style:UIBarButtonItemStylePlain
-                            target:self.tabView
-                            action:@selector(deselectCurrentView)];
-    UIBarButtonItem *smallSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                                target:nil
-                                                                                action:nil];
-    smallSpace.width = 10;
-
-    _toolBar.userInteractionEnabled = NO;
-    [_toolBar setItems:@[flexibleSpace, _numberOfViewsButton, smallSpace]
-              animated:animated];
-}
-
-
 #pragma mark - MOTabViewDelegate
 
 - (void)tabView:(MOTabView *)tabView
@@ -175,7 +205,9 @@ willSelectViewAtIndex:(NSUInteger)__unused index {
 
     NSUInteger numberOfViews = [self numberOfViewsInTabView:tabView];
     NSString *buttonTitle = [NSString stringWithFormat:@"%d", numberOfViews];
-    [self setNumberOfPagesButtonTitle:buttonTitle animated:YES];
+    _numberOfViewsButton.title = buttonTitle;
+
+    [_toolBar setItems:self.selectedToolbarItems animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
@@ -183,27 +215,19 @@ didSelectViewAtIndex:(NSUInteger)__unused index {
 
 //    NSLog(@"%s", __PRETTY_FUNCTION__);
 
+    // update toolbar when a page view is deselected
+    _addViewButton.title = self.addPageButtonTitle;
+
     _toolBar.userInteractionEnabled = YES;
 }
 
-- (void)tabView:(MOTabView *)tabView
+- (void)tabView:(MOTabView *)__unused tabView
 willDeselectViewAtIndex:(NSUInteger)__unused index {
 
-    // update toolbar when a page view is deselected
-    _addViewButton.title = self.addPageButtonTitle;
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]
-                              initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                              target:nil
-                              action:nil];
-    UIBarButtonItem *button = [[UIBarButtonItem alloc]
-                               initWithTitle:self.doneButtonTitle
-                               style:UIBarButtonItemStyleDone
-                               target:tabView
-                               action:@selector(selectCurrentView)];
-    NSArray *items = @[_addViewButton, space, button];
-
     _toolBar.userInteractionEnabled = NO;
-    [_toolBar setItems:items animated:YES];
+
+    // update toolbar when a page view is deselected
+    [_toolBar setItems:self.deselectedToolbarItems animated:YES];
 }
 
 - (void)tabView:(MOTabView *)__unused tabView
