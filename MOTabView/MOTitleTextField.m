@@ -134,6 +134,8 @@
 
     if (_showsPlaceholder) {
         super.textColor = _textColor;
+        super.clearsOnBeginEditing = NO;
+        _showsPlaceholder = NO;
     }
 }
 
