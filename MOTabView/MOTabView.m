@@ -1415,7 +1415,6 @@ static const BOOL kDebugMode = NO;
     _centerTabContentView.delegate = self;
     _centerTabContentView.contentView = contentView;
     [_scrollView addSubview:_centerTabContentView];
-    [self selectCurrentViewAnimated:NO];
     [self updateTitles];
 
     // initialize left view
@@ -1428,6 +1427,8 @@ static const BOOL kDebugMode = NO;
 
     CGPoint contentOffset = CGPointMake(index * kWidthFactor * self.bounds.size.width, 0);
     _scrollView.contentOffset = contentOffset;
+
+    [_centerTabContentView selectAnimated:NO];
 }
 
 - (void)storeReusableView:(UIView *)contentView {
