@@ -499,25 +499,28 @@ static const BOOL kDebugMode = NO;
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
 
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
-        
+
         // check whether the inset at the bottom would be visible
         CGFloat contentOffsetY = [self offsetForIndex:_currentIndex];
         CGPoint newContentOffset = tableView.contentOffset;
         newContentOffset.y = contentOffsetY;
         tableView.contentOffset = newContentOffset;
 
-        CGFloat diff = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
+        CGFloat bottomBounceDist = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
 
-        if (diff > 0) {
+        if (bottomBounceDist > 0) {
             // move origin to the bottom by the amount we move it to the top
             CGRect newCenterFrame = _centerTabContentView.frame;
-            newCenterFrame.origin.y += diff;
+            newCenterFrame.origin.y += bottomBounceDist;
             _centerTabContentView.frame = newCenterFrame;
 
-            // reset contentInset to the original value
+            // reset insets to the original value
             UIEdgeInsets newContentInset = tableView.contentInset;
             newContentInset.bottom = [self insetForIndex:_currentIndex];
             tableView.contentInset = newContentInset;
+            UIEdgeInsets newScrollInsets = tableView.scrollIndicatorInsets;
+            newScrollInsets.bottom = [self insetForIndex:_currentIndex];
+            tableView.scrollIndicatorInsets = newScrollInsets;
         }
     }
 
@@ -1248,9 +1251,6 @@ static const BOOL kDebugMode = NO;
 
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
 
-        [self replaceOffsetAtIndex:_currentIndex
-                        withOffset:tableView.contentOffset.y];
-
         // careful, removing tableHeaderView changes contentOffset
         // therefore, we save it into a variable
         float contentOffsetY = tableView.contentOffset.y;
@@ -1273,6 +1273,13 @@ static const BOOL kDebugMode = NO;
         && [_centerTabContentView.contentView.class isSubclassOfClass:[UITableView class]]) {
 
         UITableView *tableView = (UITableView *)_centerTabContentView.contentView;
+
+#warning ugly implementation, improve this!
+        // if the user currenly touches the table view we don't deselect the view
+        if (tableView.tracking) {
+            return;
+        }
+
         [self adapt:tableView];
     }
 
@@ -1295,25 +1302,54 @@ static const BOOL kDebugMode = NO;
 - (void)adapt:(UITableView *)tableView {
 
     // check whether the inset at the bottom is visible
-    CGFloat diff = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
+    CGFloat bottomBounceDist = tableView.bounds.size.height + tableView.contentOffset.y - tableView.contentSize.height;
 
-    [self replaceOffsetAtIndex:_currentIndex
-                    withOffset:tableView.contentOffset.y];
+    if (tableView.contentOffset.y < 0) {
+        // scroll view bounces at the top
+        // hide bouncing area
+        CGPoint newContentOffset = tableView.contentOffset;
+        newContentOffset.y = 0;
+        [tableView setContentOffset:newContentOffset animated:YES];
+        [self replaceOffsetAtIndex:_currentIndex
+                        withOffset:0];
+    } else if (bottomBounceDist > 0) {
 
-    if (diff > 0) {
-        // move origin by the same amount to the top
+        CGFloat bottomBoundDistWithoutInset = bottomBounceDist - tableView.contentInset.bottom;
+
+        // move view to the top by the amount the bottom inset is shown
         CGRect newCenterFrame = _centerTabContentView.frame;
-        newCenterFrame.origin.y -= diff;
+        newCenterFrame.origin.y -= MIN(tableView.contentInset.bottom, bottomBounceDist);
         _centerTabContentView.frame = newCenterFrame;
+
+        if (bottomBoundDistWithoutInset > 0) {
+            // table view bounces at the bottom
+            CGPoint newContentOffset = tableView.contentOffset;
+            newContentOffset.y -= bottomBoundDistWithoutInset;
+            [self replaceOffsetAtIndex:_currentIndex
+                            withOffset:newContentOffset.y];
+            // we don't have to adjust the contentOffset as setting the inset
+            // adjust the offset as well
+        } else {
+            // table view does not bounce at the bottom
+            [self replaceOffsetAtIndex:_currentIndex
+                            withOffset:tableView.contentOffset.y];
+        }
 
         // remember inset to reset it later
         [self replaceInsetAtIndex:_currentIndex
                         withInset:tableView.contentInset.bottom];
 
-        // remove inset
+        // remove insets
         UIEdgeInsets newContentInset = tableView.contentInset;
         newContentInset.bottom = 0;
         tableView.contentInset = newContentInset;
+        UIEdgeInsets newScrollInsets = tableView.scrollIndicatorInsets;
+        newScrollInsets.bottom = 0;
+        tableView.scrollIndicatorInsets = newScrollInsets;
+
+    } else {
+        [self replaceOffsetAtIndex:_currentIndex
+                        withOffset:tableView.contentOffset.y];
     }
 }
 
