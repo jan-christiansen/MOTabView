@@ -124,7 +124,9 @@ static const CGFloat kDeselectedOriginY = 20;
 - (void)setVisibility:(float)visibility {
 
     _visibility = visibility;
-    _deleteButton.alpha = visibility;
+    if (!_isSelected) {
+        _deleteButton.alpha = visibility;
+    }
     self.alpha = MAX(visibility, 0.5);
 }
 
@@ -187,15 +189,15 @@ static const CGFloat kDeselectedOriginY = 20;
                              [self selectNonAnimated];
                          }
                          completion:^(BOOL __unused finished) {
-                             _tapRecognizer.enabled = NO;
                              [_delegate tabContentViewDidSelect:self];
                          }];
     } else {
         [self selectNonAnimated];
-        _tapRecognizer.enabled = NO;
         [_delegate tabContentViewDidSelect:self];
     }
 
+    _tapRecognizer.enabled = NO;
+    _contentView.userInteractionEnabled = YES;
     _isSelected = YES;
 }
 
@@ -205,8 +207,6 @@ static const CGFloat kDeselectedOriginY = 20;
 
     [self recenterDeleteButton];
     _deleteButton.alpha = 0;
-
-    _contentView.userInteractionEnabled = YES;
 }
 
 - (void)deselectAnimated:(BOOL)animated {
@@ -219,15 +219,15 @@ static const CGFloat kDeselectedOriginY = 20;
                              [self deselectNonAnimated];
                          }
                          completion:^(BOOL __unused finished){
-                             _tapRecognizer.enabled = YES;
                              [_delegate tabContentViewDidDeselect:self];
                          }];
     } else {
         [self deselectNonAnimated];
-        _tapRecognizer.enabled = YES;
         [_delegate tabContentViewDidDeselect:self];
     }
 
+    _tapRecognizer.enabled = YES;
+    _contentView.userInteractionEnabled = NO;
     _isSelected = NO;
 }
 
@@ -240,8 +240,6 @@ static const CGFloat kDeselectedOriginY = 20;
 
     [self recenterDeleteButton];
     _deleteButton.alpha = 1;
-
-    _contentView.userInteractionEnabled = NO;
 }
 
 
